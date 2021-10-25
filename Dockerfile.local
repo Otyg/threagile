@@ -3,7 +3,7 @@
 ######
 FROM alpine/git as clone
 WORKDIR /app
-#RUN git clone https://github.com/threagile/threagile.git
+RUN git clone https://github.com/Otyg/threagile-rules.git
 COPY . /app/threagile
 
 
@@ -14,12 +14,15 @@ FROM golang as build
 ENV GO111MODULE=on
 WORKDIR /app
 COPY --from=clone /app/threagile /app
-RUN go mod download
-RUN go version
-RUN GOOS=linux go build -a -trimpath -ldflags="-s -w -X main.buildTimestamp=$(date '+%Y%m%d%H%M%S')" -gcflags="all=-trimpath=/src" -asmflags="all=-trimpath=/src" -buildmode=plugin -o raa.so raa/raa/raa.go
-RUN GOOS=linux go build -a -trimpath -ldflags="-s -w -X main.buildTimestamp=$(date '+%Y%m%d%H%M%S')" -gcflags="all=-trimpath=/src" -asmflags="all=-trimpath=/src" -buildmode=plugin -o dummy.so raa/dummy/dummy.go
-RUN GOOS=linux go build -a -trimpath -ldflags="-s -w -X main.buildTimestamp=$(date '+%Y%m%d%H%M%S')" -gcflags="all=-trimpath=/src" -asmflags="all=-trimpath=/src" -buildmode=plugin -o demo-rule.so risks/custom/demo/demo-rule.go
-RUN GOOS=linux go build -a -trimpath -ldflags="-s -w -X main.buildTimestamp=$(date '+%Y%m%d%H%M%S')" -gcflags="all=-trimpath=/src" -asmflags="all=-trimpath=/src" -o threagile
+COPY --from=clone /app/threagile-rules/risks /app/custom
+COPY ./build-threagile.sh /app/
+RUN chmod +x build-threagile.sh && ./build-threagile.sh
+#RUN go mod download
+#RUN go version
+#RUN GOOS=linux go build -a -trimpath -ldflags="-s -w -X main.buildTimestamp=$(date '+%Y%m%d%H%M%S')" -gcflags="all=-trimpath=/src" -asmflags="all=-trimpath=/src" -buildmode=plugin -o raa.so raa/raa/raa.go
+#RUN GOOS=linux go build -a -trimpath -ldflags="-s -w -X main.buildTimestamp=$(date '+%Y%m%d%H%M%S')" -gcflags="all=-trimpath=/src" -asmflags="all=-trimpath=/src" -buildmode=plugin -o dummy.so raa/dummy/dummy.go
+#RUN GOOS=linux go build -a -trimpath -ldflags="-s -w -X main.buildTimestamp=$(date '+%Y%m%d%H%M%S')" -gcflags="all=-trimpath=/src" -asmflags="all=-trimpath=/src" -buildmode=plugin -o demo-rule.so risks/custom/demo/demo-rule.go
+#RUN GOOS=linux go build -a -trimpath -ldflags="-s -w -X main.buildTimestamp=$(date '+%Y%m%d%H%M%S')" -gcflags="all=-trimpath=/src" -asmflags="all=-trimpath=/src" -o threagile
 # add the -race parameter to go build call in order to instrument with race condition detector: https://blog.golang.org/race-detector
 
 
@@ -53,6 +56,11 @@ COPY --from=build /app/support/render-data-flow-diagram.sh /app/render-data-flow
 COPY --from=build /app/server /app/server
 COPY --from=build /app/demo/example/threagile.yaml /app/threagile-example-model.yaml
 COPY --from=build /app/demo/stub/threagile.yaml /app/threagile-stub-model.yaml
+COPY --from=build /app/missing-monitoring-rule.so /app/missing-monitoring-rule.so
+COPY --from=build /app/accidental-logging-of-sensitive-data-rule.so /app/accidental-logging-of-sensitive-data-rule.so
+COPY --from=build /app/missing-audit-of-sensitive-asset-rule.so /app/missing-audit-of-sensitive-asset-rule.so
+COPY --from=build /app/credential-stored-outside-of-vault-rule.so /app/credential-stored-outside-of-vault-rule.so
+COPY --from=build /app/insecure-handling-of-sensitive-data-rule.so /app/insecure-handling-of-sensitive-data-rule.so
 
 RUN mkdir /data
 
@@ -62,5 +70,5 @@ USER 1000:1000
 ENV PATH=/app:$PATH
 ENV GIN_MODE=release
 
-ENTRYPOINT ["/app/threagile"]
+ENTRYPOINT ["/app/threagile", "-custom-risk-rules-plugins", "accidental-logging-of-sensitive-data-rule.so,missing-monitoring-rule.so,missing-audit-of-sensitive-asset-rule.so,credential-stored-outside-of-vault-rule.so,insecure-handling-of-sensitive-data-rule.so"]
 CMD ["-help"]
