@@ -61,10 +61,16 @@ func WriteDefectdojoGeneric(filename string) {
 			finding.CWE = risk.Category.CWE
 			finding.Date = time.Now().Format("2006-01-02")
 			finding.Title = strings.Title(risk.Category.Function.String()) + ": " + strings.Title(strings.ReplaceAll(strings.ReplaceAll(strings.ToLower(risk.Title), "<b>", ""), "</b>", ""))
-			finding.Mitigation = risk.Category.Mitigation + "\nCheck: " + risk.Category.Check + "\nASVS: " + risk.Category.ASVS + "\nCheatSheet: " + risk.Category.CheatSheet
-			finding.Impact = risk.Category.Impact
-			var description string = "STRIDE: " + strings.Title(risk.Category.STRIDE.String()) + "\n\n" + risk.Category.Description
-			finding.Description = description
+			finding.Mitigation = risk.Category.Mitigation +
+				"\nCheck: " + risk.Category.Check +
+				"\nASVS: " + risk.Category.ASVS +
+				"\nCheatSheet: " + risk.Category.CheatSheet
+			finding.Impact = risk.Category.Impact +
+				"\nRisk assessment: " + risk.Category.RiskAssessment +
+				"\nFalse positives: " + risk.Category.FalsePositives
+			finding.Description = "STRIDE: " + strings.Title(risk.Category.STRIDE.String()) +
+				"\n" + risk.Category.Description +
+				"\nDetection logic: " + risk.Category.DetectionLogic
 			references := make([]string, 0)
 			references = append(references, "https://owasp.org/www-project-application-security-verification-standard/")
 			references = append(references, risk.Category.CheatSheet)
