@@ -2,9 +2,10 @@ package report
 
 import (
 	"encoding/json"
+	"hash/fnv"
 	"io/ioutil"
+	"strconv"
 	"strings"
-	"time"
 
 	"github.com/threagile/threagile/model"
 )
@@ -28,14 +29,19 @@ import (
 	// TODO: refactor all "Id" here to "ID"?
 }*/
 type Finding struct {
-	Title       string   `json:"title"`
-	Description string   `json:"description"`
-	Severity    string   `json:"severity"`
-	Mitigation  string   `json:"mitigation"`
-	Date        string   `json:"date"`
-	CWE         int      `json:"cwe"`
-	Impact      string   `json:"impact"`
-	References  []string `json:"references"`
+	Title                 string `json:"title"`
+	Description           string `json:"description"`
+	Severity              string `json:"severity"`
+	Mitigation            string `json:"mitigation"`
+	CWE                   int    `json:"cwe"`
+	Impact                string `json:"impact"`
+	SeverityJustification string `json:"severity_justification"`
+	References            string `json:"references"`
+	StaticFinding         bool   `json:"static_finding"`
+	DynamicFinding        bool   `json:"dynamic_finding"`
+	UniqId                string `json:"unique_id_from_tool"`
+	VulnId                string `json:"vuln_id_from_tool"`
+	HashCode              string `json:"hash_code"`
 }
 
 func WriteDefectdojoGeneric(filename string) {
@@ -57,24 +63,24 @@ func WriteDefectdojoGeneric(filename string) {
 			case "critical":
 				finding.Severity = "Critical"
 			}
-
+			finding.StaticFinding = true
+			finding.DynamicFinding = false
 			finding.CWE = risk.Category.CWE
-			finding.Date = time.Now().Format("2006-01-02")
 			finding.Title = strings.Title(risk.Category.Function.String()) + ": " + strings.Title(strings.ReplaceAll(strings.ReplaceAll(strings.ToLower(risk.Title), "<b>", ""), "</b>", ""))
 			finding.Mitigation = risk.Category.Mitigation +
 				"\nCheck: " + risk.Category.Check +
 				"\nASVS: " + risk.Category.ASVS +
 				"\nCheatSheet: " + risk.Category.CheatSheet
-			finding.Impact = risk.Category.Impact +
-				"\nRisk assessment: " + risk.Category.RiskAssessment +
-				"\nFalse positives: " + risk.Category.FalsePositives
+			finding.Impact = risk.Category.Impact
+			finding.SeverityJustification = risk.Category.RiskAssessment
 			finding.Description = "STRIDE: " + strings.Title(risk.Category.STRIDE.String()) +
 				"\n" + risk.Category.Description +
-				"\nDetection logic: " + risk.Category.DetectionLogic
-			references := make([]string, 0)
-			references = append(references, "https://owasp.org/www-project-application-security-verification-standard/")
-			references = append(references, risk.Category.CheatSheet)
-			finding.References = references
+				"\nDetection logic: " + risk.Category.DetectionLogic +
+				"\nFalse positives: " + risk.Category.FalsePositives
+			finding.References = "https://owasp.org/www-project-application-security-verification-standard/ \n" + strings.ReplaceAll(risk.Category.CheatSheet, ",", "\n")
+			finding.UniqId = risk.SyntheticId
+			finding.VulnId = risk.CategoryId
+			finding.HashCode = generateHashCode(risk.SyntheticId)
 			findings = append(findings, finding)
 		}
 
@@ -89,4 +95,10 @@ func WriteDefectdojoGeneric(filename string) {
 	if err != nil {
 		panic(err)
 	}
+
+}
+func generateHashCode(meh string) string {
+	h := fnv.New64a()
+	h.Write([]byte(meh))
+	return strconv.FormatUint(h.Sum64(), 10)
 }
