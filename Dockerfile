@@ -14,6 +14,11 @@ RUN chmod +x build-threagile.sh && ./build-threagile.sh
 FROM alpine
 
 LABEL type="threagile"
+LABEL org.opencontainers.image.authors="Christian Schneider <mail@christian-schneider.net>, Martin Vesterlund <Otyg@users.noreply.github.com>"
+LABEL org.opencontainers.image.url="https://github.com/Threagile/threagile, https://github.com/Otyg/threagile"
+LABEL org.opencontainers.image.source="https://github.com/Otyg/threagile"
+LABEL org.opencontainers.image.vendor="https://github.com/Otyg/"
+LABEL org.opencontainers.image.licenses="MIT"
 RUN apk add --update --no-cache graphviz ttf-freefont && apk add ca-certificates && apk add curl && rm -rf /var/cache/apk/*
 RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
 WORKDIR /app
