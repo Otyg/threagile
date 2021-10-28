@@ -2,9 +2,7 @@ package report
 
 import (
 	"encoding/json"
-	"hash/fnv"
 	"io/ioutil"
-	"strconv"
 	"strings"
 
 	"github.com/threagile/threagile/model"
@@ -41,7 +39,7 @@ type Finding struct {
 	DynamicFinding        bool   `json:"dynamic_finding"`
 	UniqId                string `json:"unique_id_from_tool"`
 	VulnId                string `json:"vuln_id_from_tool"`
-	HashCode              string `json:"hash_code"`
+	Component             string `json:"component_name"`
 }
 
 func WriteDefectdojoGeneric(filename string) {
@@ -80,7 +78,7 @@ func WriteDefectdojoGeneric(filename string) {
 			finding.References = "https://owasp.org/www-project-application-security-verification-standard/ \n" + strings.ReplaceAll(risk.Category.CheatSheet, ",", "\n")
 			finding.UniqId = risk.SyntheticId
 			finding.VulnId = risk.CategoryId
-			finding.HashCode = generateHashCode(risk.SyntheticId)
+			finding.Component = strings.Title(risk.Category.Function.String())
 			findings = append(findings, finding)
 		}
 
@@ -96,9 +94,4 @@ func WriteDefectdojoGeneric(filename string) {
 		panic(err)
 	}
 
-}
-func generateHashCode(meh string) string {
-	h := fnv.New64a()
-	h.Write([]byte(meh))
-	return strconv.FormatUint(h.Sum64(), 10)
 }
