@@ -7,9 +7,8 @@ COPY . /app/threagile
 FROM golang as build
 ENV GO111MODULE=on
 WORKDIR /app
-COPY --from=clone /app/threagile /app
+COPY . /app
 COPY --from=clone /app/threagile-rules/risks /app/custom
-COPY ./build-threagile.sh /app/
 RUN chmod +x build-threagile.sh && ./build-threagile.sh
 FROM alpine
 
