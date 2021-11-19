@@ -42,10 +42,12 @@ import (
 	seed_tags "github.com/threagile/threagile/macros/built-in/seed-tags"
 	"github.com/threagile/threagile/model"
 	"github.com/threagile/threagile/report"
+	accidental_logging_of_sensitive_data "github.com/threagile/threagile/risks/built-in/accidental-logging-of-sensitive-data"
 	accidental_secret_leak "github.com/threagile/threagile/risks/built-in/accidental-secret-leak"
 	code_backdooring "github.com/threagile/threagile/risks/built-in/code-backdooring"
 	container_baseimage_backdooring "github.com/threagile/threagile/risks/built-in/container-baseimage-backdooring"
 	container_platform_escape "github.com/threagile/threagile/risks/built-in/container-platform-escape"
+	credential_stored_outside_of_vault "github.com/threagile/threagile/risks/built-in/credential-stored-outside-of-vault"
 	cross_site_request_forgery "github.com/threagile/threagile/risks/built-in/cross-site-request-forgery"
 	cross_site_scripting "github.com/threagile/threagile/risks/built-in/cross-site-scripting"
 	dos_risky_access_across_trust_boundary "github.com/threagile/threagile/risks/built-in/dos-risky-access-across-trust-boundary"
@@ -60,6 +62,7 @@ import (
 	missing_identity_propagation "github.com/threagile/threagile/risks/built-in/missing-identity-propagation"
 	missing_identity_provider_isolation "github.com/threagile/threagile/risks/built-in/missing-identity-provider-isolation"
 	missing_identity_store "github.com/threagile/threagile/risks/built-in/missing-identity-store"
+	missing_monitoring "github.com/threagile/threagile/risks/built-in/missing-monitoring"
 	missing_network_segmentation "github.com/threagile/threagile/risks/built-in/missing-network-segmentation"
 	missing_vault "github.com/threagile/threagile/risks/built-in/missing-vault"
 	missing_vault_isolation "github.com/threagile/threagile/risks/built-in/missing-vault-isolation"
@@ -120,6 +123,27 @@ func applyRiskGeneration() {
 	if len(*skipRiskRules) > 0 {
 		for _, id := range strings.Split(*skipRiskRules, ",") {
 			skippedRules[id] = true
+		}
+	}
+	if _, ok := skippedRules[credential_stored_outside_of_vault.Category().Id]; ok {
+		fmt.Println("Skipping risk rule:", credential_stored_outside_of_vault.Category().Id)
+		delete(skippedRules, credential_stored_outside_of_vault.Category().Id)
+	} else {
+		model.AddToListOfSupportedTags(credential_stored_outside_of_vault.SupportedTags())
+		risks := credential_stored_outside_of_vault.GenerateRisks()
+		if len(risks) > 0 {
+			model.GeneratedRisksByCategory[credential_stored_outside_of_vault.Category()] = risks
+		}
+	}
+
+	if _, ok := skippedRules[missing_monitoring.Category().Id]; ok {
+		fmt.Println("Skipping risk rule:", missing_monitoring.Category().Id)
+		delete(skippedRules, missing_monitoring.Category().Id)
+	} else {
+		model.AddToListOfSupportedTags(missing_monitoring.SupportedTags())
+		risks := missing_monitoring.GenerateRisks()
+		if len(risks) > 0 {
+			model.GeneratedRisksByCategory[missing_monitoring.Category()] = risks
 		}
 	}
 
@@ -452,7 +476,16 @@ func applyRiskGeneration() {
 			model.GeneratedRisksByCategory[accidental_secret_leak.Category()] = risks
 		}
 	}
-
+	if _, ok := skippedRules[accidental_logging_of_sensitive_data.Category().Id]; ok {
+		fmt.Println("Skipping risk rule:", accidental_logging_of_sensitive_data.Category().Id)
+		delete(skippedRules, accidental_logging_of_sensitive_data.Category().Id)
+	} else {
+		model.AddToListOfSupportedTags(accidental_logging_of_sensitive_data.SupportedTags())
+		risks := accidental_logging_of_sensitive_data.GenerateRisks()
+		if len(risks) > 0 {
+			model.GeneratedRisksByCategory[accidental_logging_of_sensitive_data.Category()] = risks
+		}
+	}
 	if _, ok := skippedRules[code_backdooring.Category().Id]; ok {
 		fmt.Println("Skipping risk rule:", code_backdooring.Category().Id)
 		delete(skippedRules, code_backdooring.Category().Id)
@@ -1593,6 +1626,15 @@ func addSupportedTags(input []byte) []byte {
 		for _, tag := range customRule.SupportedTags() {
 			supportedTags[strings.ToLower(tag)] = true
 		}
+	}
+	for _, tag := range missing_monitoring.SupportedTags() {
+		supportedTags[strings.ToLower(tag)] = true
+	}
+	for _, tag := range accidental_logging_of_sensitive_data.SupportedTags() {
+		supportedTags[strings.ToLower(tag)] = true
+	}
+	for _, tag := range credential_stored_outside_of_vault.SupportedTags() {
+		supportedTags[strings.ToLower(tag)] = true
 	}
 	for _, tag := range accidental_secret_leak.SupportedTags() {
 		supportedTags[strings.ToLower(tag)] = true
