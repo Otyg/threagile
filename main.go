@@ -4865,6 +4865,7 @@ func parseModel(inputFilename string) {
 				Impact:                     fmt.Sprintf("%v", indivCat.Impact),
 				ASVS:                       fmt.Sprintf("%v", indivCat.ASVS),
 				CheatSheet:                 fmt.Sprintf("%v", indivCat.Cheat_sheet),
+				TestingGuide:               fmt.Sprintf("%v", indivCat.Testing_guide),
 				Action:                     fmt.Sprintf("%v", indivCat.Action),
 				Mitigation:                 fmt.Sprintf("%v", indivCat.Mitigation),
 				Check:                      fmt.Sprintf("%v", indivCat.Check),
