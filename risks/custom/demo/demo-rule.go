@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/threagile/threagile/model"
+	"github.com/otyg/threagile/model"
 )
 
 type customRiskRule string

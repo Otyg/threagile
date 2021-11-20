@@ -1,7 +1,7 @@
 package unnecessary_technical_asset
 
 import (
-	"github.com/threagile/threagile/model"
+	"github.com/otyg/threagile/model"
 )
 
 func Category() model.RiskCategory {

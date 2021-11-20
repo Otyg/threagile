@@ -2,8 +2,9 @@ package report
 
 import (
 	"encoding/json"
-	"github.com/threagile/threagile/model"
 	"io/ioutil"
+
+	"github.com/otyg/threagile/model"
 )
 
 func WriteRisksJSON(filename string) {

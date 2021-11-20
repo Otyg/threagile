@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/threagile/threagile/model"
+	"github.com/otyg/threagile/model"
 )
 
 /*type Risk struct {
