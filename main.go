@@ -42,15 +42,20 @@ import (
 	seed_tags "github.com/threagile/threagile/macros/built-in/seed-tags"
 	"github.com/threagile/threagile/model"
 	"github.com/threagile/threagile/report"
+
+	accidental_logging_of_sensitive_data "github.com/threagile/threagile/risks/built-in/accidental-logging-of-sensitive-data"
 	accidental_secret_leak "github.com/threagile/threagile/risks/built-in/accidental-secret-leak"
 	code_backdooring "github.com/threagile/threagile/risks/built-in/code-backdooring"
 	container_baseimage_backdooring "github.com/threagile/threagile/risks/built-in/container-baseimage-backdooring"
 	container_platform_escape "github.com/threagile/threagile/risks/built-in/container-platform-escape"
+	credential_stored_outside_of_vault "github.com/threagile/threagile/risks/built-in/credential-stored-outside-of-vault"
 	cross_site_request_forgery "github.com/threagile/threagile/risks/built-in/cross-site-request-forgery"
 	cross_site_scripting "github.com/threagile/threagile/risks/built-in/cross-site-scripting"
 	dos_risky_access_across_trust_boundary "github.com/threagile/threagile/risks/built-in/dos-risky-access-across-trust-boundary"
 	incomplete_model "github.com/threagile/threagile/risks/built-in/incomplete-model"
+	insecure_handling_of_sensitive_data "github.com/threagile/threagile/risks/built-in/insecure-handling-of-sensitive-data"
 	ldap_injection "github.com/threagile/threagile/risks/built-in/ldap-injection"
+	missing_audit_of_sensitive_asset "github.com/threagile/threagile/risks/built-in/missing-audit-of-sensitive-asset"
 	missing_authentication "github.com/threagile/threagile/risks/built-in/missing-authentication"
 	missing_authentication_second_factor "github.com/threagile/threagile/risks/built-in/missing-authentication-second-factor"
 	missing_build_infrastructure "github.com/threagile/threagile/risks/built-in/missing-build-infrastructure"
@@ -60,6 +65,7 @@ import (
 	missing_identity_propagation "github.com/threagile/threagile/risks/built-in/missing-identity-propagation"
 	missing_identity_provider_isolation "github.com/threagile/threagile/risks/built-in/missing-identity-provider-isolation"
 	missing_identity_store "github.com/threagile/threagile/risks/built-in/missing-identity-store"
+	missing_monitoring "github.com/threagile/threagile/risks/built-in/missing-monitoring"
 	missing_network_segmentation "github.com/threagile/threagile/risks/built-in/missing-network-segmentation"
 	missing_vault "github.com/threagile/threagile/risks/built-in/missing-vault"
 	missing_vault_isolation "github.com/threagile/threagile/risks/built-in/missing-vault-isolation"
@@ -67,6 +73,7 @@ import (
 	mixed_targets_on_shared_runtime "github.com/threagile/threagile/risks/built-in/mixed-targets-on-shared-runtime"
 	path_traversal "github.com/threagile/threagile/risks/built-in/path-traversal"
 	push_instead_of_pull_deployment "github.com/threagile/threagile/risks/built-in/push-instead-of-pull-deployment"
+	running_as_privileged_user "github.com/threagile/threagile/risks/built-in/running-as-privileged-user"
 	search_query_injection "github.com/threagile/threagile/risks/built-in/search-query-injection"
 	server_side_request_forgery "github.com/threagile/threagile/risks/built-in/server-side-request-forgery"
 	service_registry_poisoning "github.com/threagile/threagile/risks/built-in/service-registry-poisoning"
@@ -81,6 +88,8 @@ import (
 	unnecessary_data_transfer "github.com/threagile/threagile/risks/built-in/unnecessary-data-transfer"
 	unnecessary_technical_asset "github.com/threagile/threagile/risks/built-in/unnecessary-technical-asset"
 	untrusted_deserialization "github.com/threagile/threagile/risks/built-in/untrusted-deserialization"
+	use_of_weak_cryptography "github.com/threagile/threagile/risks/built-in/use-of-weak-cryptography"
+	use_of_weak_cryptography_in_transit "github.com/threagile/threagile/risks/built-in/use-of-weak-cryptography-in-transit"
 	wrong_communication_link_content "github.com/threagile/threagile/risks/built-in/wrong-communication-link-content"
 	wrong_trust_boundary_content "github.com/threagile/threagile/risks/built-in/wrong-trust-boundary-content"
 	xml_external_entity "github.com/threagile/threagile/risks/built-in/xml-external-entity"
@@ -120,6 +129,78 @@ func applyRiskGeneration() {
 	if len(*skipRiskRules) > 0 {
 		for _, id := range strings.Split(*skipRiskRules, ",") {
 			skippedRules[id] = true
+		}
+	}
+	//FIXME: Find a more general way to do this to avoid repetition of block
+	if _, ok := skippedRules[insecure_handling_of_sensitive_data.Category().Id]; ok {
+		fmt.Println("Skipping risk rule:", insecure_handling_of_sensitive_data.Category().Id)
+		delete(skippedRules, insecure_handling_of_sensitive_data.Category().Id)
+	} else {
+		model.AddToListOfSupportedTags(insecure_handling_of_sensitive_data.SupportedTags())
+		risks := insecure_handling_of_sensitive_data.GenerateRisks()
+		if len(risks) > 0 {
+			model.GeneratedRisksByCategory[insecure_handling_of_sensitive_data.Category()] = risks
+		}
+	}
+	if _, ok := skippedRules[missing_audit_of_sensitive_asset.Category().Id]; ok {
+		fmt.Println("Skipping risk rule:", missing_audit_of_sensitive_asset.Category().Id)
+		delete(skippedRules, missing_audit_of_sensitive_asset.Category().Id)
+	} else {
+		model.AddToListOfSupportedTags(missing_audit_of_sensitive_asset.SupportedTags())
+		risks := missing_audit_of_sensitive_asset.GenerateRisks()
+		if len(risks) > 0 {
+			model.GeneratedRisksByCategory[missing_audit_of_sensitive_asset.Category()] = risks
+		}
+	}
+	if _, ok := skippedRules[running_as_privileged_user.Category().Id]; ok {
+		fmt.Println("Skipping risk rule:", running_as_privileged_user.Category().Id)
+		delete(skippedRules, running_as_privileged_user.Category().Id)
+	} else {
+		model.AddToListOfSupportedTags(running_as_privileged_user.SupportedTags())
+		risks := running_as_privileged_user.GenerateRisks()
+		if len(risks) > 0 {
+			model.GeneratedRisksByCategory[running_as_privileged_user.Category()] = risks
+		}
+	}
+	if _, ok := skippedRules[use_of_weak_cryptography.Category().Id]; ok {
+		fmt.Println("Skipping risk rule:", use_of_weak_cryptography.Category().Id)
+		delete(skippedRules, use_of_weak_cryptography.Category().Id)
+	} else {
+		model.AddToListOfSupportedTags(use_of_weak_cryptography.SupportedTags())
+		risks := use_of_weak_cryptography.GenerateRisks()
+		if len(risks) > 0 {
+			model.GeneratedRisksByCategory[use_of_weak_cryptography.Category()] = risks
+		}
+	}
+	if _, ok := skippedRules[use_of_weak_cryptography_in_transit.Category().Id]; ok {
+		fmt.Println("Skipping risk rule:", use_of_weak_cryptography_in_transit.Category().Id)
+		delete(skippedRules, use_of_weak_cryptography_in_transit.Category().Id)
+	} else {
+		model.AddToListOfSupportedTags(use_of_weak_cryptography_in_transit.SupportedTags())
+		risks := use_of_weak_cryptography_in_transit.GenerateRisks()
+		if len(risks) > 0 {
+			model.GeneratedRisksByCategory[use_of_weak_cryptography_in_transit.Category()] = risks
+		}
+	}
+	if _, ok := skippedRules[credential_stored_outside_of_vault.Category().Id]; ok {
+		fmt.Println("Skipping risk rule:", credential_stored_outside_of_vault.Category().Id)
+		delete(skippedRules, credential_stored_outside_of_vault.Category().Id)
+	} else {
+		model.AddToListOfSupportedTags(credential_stored_outside_of_vault.SupportedTags())
+		risks := credential_stored_outside_of_vault.GenerateRisks()
+		if len(risks) > 0 {
+			model.GeneratedRisksByCategory[credential_stored_outside_of_vault.Category()] = risks
+		}
+	}
+
+	if _, ok := skippedRules[missing_monitoring.Category().Id]; ok {
+		fmt.Println("Skipping risk rule:", missing_monitoring.Category().Id)
+		delete(skippedRules, missing_monitoring.Category().Id)
+	} else {
+		model.AddToListOfSupportedTags(missing_monitoring.SupportedTags())
+		risks := missing_monitoring.GenerateRisks()
+		if len(risks) > 0 {
+			model.GeneratedRisksByCategory[missing_monitoring.Category()] = risks
 		}
 	}
 
@@ -452,7 +533,16 @@ func applyRiskGeneration() {
 			model.GeneratedRisksByCategory[accidental_secret_leak.Category()] = risks
 		}
 	}
-
+	if _, ok := skippedRules[accidental_logging_of_sensitive_data.Category().Id]; ok {
+		fmt.Println("Skipping risk rule:", accidental_logging_of_sensitive_data.Category().Id)
+		delete(skippedRules, accidental_logging_of_sensitive_data.Category().Id)
+	} else {
+		model.AddToListOfSupportedTags(accidental_logging_of_sensitive_data.SupportedTags())
+		risks := accidental_logging_of_sensitive_data.GenerateRisks()
+		if len(risks) > 0 {
+			model.GeneratedRisksByCategory[accidental_logging_of_sensitive_data.Category()] = risks
+		}
+	}
 	if _, ok := skippedRules[code_backdooring.Category().Id]; ok {
 		fmt.Println("Skipping risk rule:", code_backdooring.Category().Id)
 		delete(skippedRules, code_backdooring.Category().Id)
@@ -1593,6 +1683,30 @@ func addSupportedTags(input []byte) []byte {
 		for _, tag := range customRule.SupportedTags() {
 			supportedTags[strings.ToLower(tag)] = true
 		}
+	}
+	for _, tag := range missing_monitoring.SupportedTags() {
+		supportedTags[strings.ToLower(tag)] = true
+	}
+	for _, tag := range accidental_logging_of_sensitive_data.SupportedTags() {
+		supportedTags[strings.ToLower(tag)] = true
+	}
+	for _, tag := range credential_stored_outside_of_vault.SupportedTags() {
+		supportedTags[strings.ToLower(tag)] = true
+	}
+	for _, tag := range insecure_handling_of_sensitive_data.SupportedTags() {
+		supportedTags[strings.ToLower(tag)] = true
+	}
+	for _, tag := range missing_audit_of_sensitive_asset.SupportedTags() {
+		supportedTags[strings.ToLower(tag)] = true
+	}
+	for _, tag := range running_as_privileged_user.SupportedTags() {
+		supportedTags[strings.ToLower(tag)] = true
+	}
+	for _, tag := range use_of_weak_cryptography.SupportedTags() {
+		supportedTags[strings.ToLower(tag)] = true
+	}
+	for _, tag := range use_of_weak_cryptography.SupportedTags() {
+		supportedTags[strings.ToLower(tag)] = true
 	}
 	for _, tag := range accidental_secret_leak.SupportedTags() {
 		supportedTags[strings.ToLower(tag)] = true
@@ -3760,6 +3874,18 @@ func parseCommandlineArgs() {
 		fmt.Println(wrong_communication_link_content.Category().Id, "-->", wrong_communication_link_content.Category().Title, "--> with tags:", wrong_communication_link_content.SupportedTags())
 		fmt.Println(wrong_trust_boundary_content.Category().Id, "-->", wrong_trust_boundary_content.Category().Title, "--> with tags:", wrong_trust_boundary_content.SupportedTags())
 		fmt.Println(xml_external_entity.Category().Id, "-->", xml_external_entity.Category().Title, "--> with tags:", xml_external_entity.SupportedTags())
+		fmt.Println()
+		fmt.Println("--------------------")
+		fmt.Println("Built-in contributed risk rules:")
+		fmt.Println("--------------------")
+		fmt.Println(accidental_logging_of_sensitive_data.Category().Id, "-->", accidental_logging_of_sensitive_data.Category().Title, "--> with tags:", accidental_logging_of_sensitive_data.SupportedTags())
+		fmt.Println(credential_stored_outside_of_vault.Category().Id, "-->", credential_stored_outside_of_vault.Category().Title, "--> with tags:", credential_stored_outside_of_vault.SupportedTags())
+		fmt.Println(insecure_handling_of_sensitive_data.Category().Id, "-->", insecure_handling_of_sensitive_data.Category().Title, "--> with tags:", insecure_handling_of_sensitive_data.SupportedTags())
+		fmt.Println(missing_audit_of_sensitive_asset.Category().Id, "-->", missing_audit_of_sensitive_asset.Category().Title, "--> with tags:", missing_audit_of_sensitive_asset.SupportedTags())
+		fmt.Println(missing_monitoring.Category().Id, "-->", missing_monitoring.Category().Title, "--> with tags:", missing_monitoring.SupportedTags())
+		fmt.Println(running_as_privileged_user.Category().Id, "-->", running_as_privileged_user.Category().Title, "--> with tags:", running_as_privileged_user.SupportedTags())
+		fmt.Println(use_of_weak_cryptography.Category().Id, "-->", use_of_weak_cryptography.Category().Title, "--> with tags:", use_of_weak_cryptography.SupportedTags())
+		fmt.Println(use_of_weak_cryptography_in_transit.Category().Id, "-->", use_of_weak_cryptography_in_transit.Category().Title, "--> with tags:", use_of_weak_cryptography_in_transit.SupportedTags())
 		fmt.Println()
 		os.Exit(0)
 	}

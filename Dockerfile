@@ -1,15 +1,7 @@
-FROM alpine/git as clone
-WORKDIR /app
-RUN git clone https://github.com/Otyg/threagile-rules.git
-COPY . /app/threagile
-
-
 FROM golang as build
 ENV GO111MODULE=on
 WORKDIR /app
 COPY . /app
-COPY --from=clone /app/threagile-rules/risks /app/custom
-COPY --from=clone /app/threagile-rules/build-threagile.sh /app/build-threagile.sh
 RUN chmod +x build-threagile.sh && ./build-threagile.sh
 FROM alpine
 
@@ -35,5 +27,5 @@ RUN chown -R 1000:1000 /app /data
 USER 1000:1000
 ENV PATH=/app:$PATH
 ENV GIN_MODE=release
-ENTRYPOINT ["/app/threagile", "-custom-risk-rules-plugins", "accidental-logging-of-sensitive-data-rule.so,missing-monitoring-rule.so,missing-audit-of-sensitive-asset-rule.so,credential-stored-outside-of-vault-rule.so,insecure-handling-of-sensitive-data-rule.so,running-as-privileged-user.so,,use-of-weak-cryptography.so,secure-communication.so"]
+ENTRYPOINT ["/app/threagile"]
 CMD ["-help"]
