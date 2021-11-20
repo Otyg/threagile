@@ -1,7 +1,7 @@
 package missing_authentication
 
 import (
-	"github.com/threagile/threagile/model"
+	"github.com/otyg/threagile/model"
 )
 
 func Category() model.RiskCategory {

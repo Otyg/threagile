@@ -1,6 +1,6 @@
 package pretty_print
 
-import "github.com/threagile/threagile/model"
+import "github.com/otyg/threagile/model"
 
 func GetMacroDetails() model.MacroDetails {
 	return model.MacroDetails{

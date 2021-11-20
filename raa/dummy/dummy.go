@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/threagile/threagile/model"
 	"math/rand"
+
+	"github.com/otyg/threagile/model"
 )
 
 // JUST A DUMMY TO HAVE AN ALTERNATIVE PLUGIN TO USE/TEST

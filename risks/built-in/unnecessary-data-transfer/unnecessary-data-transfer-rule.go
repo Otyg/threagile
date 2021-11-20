@@ -1,8 +1,9 @@
 package unnecessary_data_transfer
 
 import (
-	"github.com/threagile/threagile/model"
 	"sort"
+
+	"github.com/otyg/threagile/model"
 )
 
 func Category() model.RiskCategory {

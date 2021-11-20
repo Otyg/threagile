@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/threagile/threagile/model"
 	"sort"
+
+	"github.com/otyg/threagile/model"
 )
 
 // used from plugin caller:

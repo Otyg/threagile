@@ -1,9 +1,10 @@
 package remove_unused_tags
 
 import (
-	"github.com/threagile/threagile/model"
 	"sort"
 	"strconv"
+
+	"github.com/otyg/threagile/model"
 )
 
 func GetMacroDetails() model.MacroDetails {

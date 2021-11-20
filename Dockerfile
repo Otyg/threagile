@@ -7,7 +7,7 @@ FROM alpine
 
 LABEL type="threagile"
 LABEL org.opencontainers.image.authors="Christian Schneider <mail@christian-schneider.net>, Martin Vesterlund <Otyg@users.noreply.github.com>"
-LABEL org.opencontainers.image.url="https://github.com/Threagile/threagile, https://github.com/Otyg/threagile"
+LABEL org.opencontainers.image.url="https://github.com/threagile/threagile, https://github.com/Otyg/threagile"
 LABEL org.opencontainers.image.source="https://github.com/Otyg/threagile"
 LABEL org.opencontainers.image.vendor="https://github.com/Otyg/"
 LABEL org.opencontainers.image.licenses="MIT"

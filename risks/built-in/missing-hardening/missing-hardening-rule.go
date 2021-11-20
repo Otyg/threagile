@@ -1,8 +1,9 @@
 package missing_hardening
 
 import (
-	"github.com/threagile/threagile/model"
 	"strconv"
+
+	"github.com/otyg/threagile/model"
 )
 
 const raaLimit = 55

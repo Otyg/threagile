@@ -1,7 +1,7 @@
 package path_traversal
 
 import (
-	"github.com/threagile/threagile/model"
+	"github.com/otyg/threagile/model"
 )
 
 func Category() model.RiskCategory {

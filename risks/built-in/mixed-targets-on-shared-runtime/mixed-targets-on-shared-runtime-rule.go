@@ -1,8 +1,9 @@
 package mixed_targets_on_shared_runtime
 
 import (
-	"github.com/threagile/threagile/model"
 	"sort"
+
+	"github.com/otyg/threagile/model"
 )
 
 func Category() model.RiskCategory {

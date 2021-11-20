@@ -1,7 +1,7 @@
 package unguarded_direct_datastore_access
 
 import (
-	"github.com/threagile/threagile/model"
+	"github.com/otyg/threagile/model"
 )
 
 func Category() model.RiskCategory {
