@@ -1,14 +1,10 @@
-package main
+package insecure_handling_of_sensitive_data
 
 import (
 	"github.com/threagile/threagile/model"
 )
 
-type insecureHandlingOfSensitiveData string
-
-var CustomRiskRule insecureHandlingOfSensitiveData
-
-func (r insecureHandlingOfSensitiveData) Category() model.RiskCategory {
+func Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:                         "insecure-handling-of-sensitive-data",
 		Title:                      "Insecure Handling of Sensitive Data",
@@ -29,11 +25,11 @@ func (r insecureHandlingOfSensitiveData) Category() model.RiskCategory {
 	}
 }
 
-func (r insecureHandlingOfSensitiveData) SupportedTags() []string {
+func SupportedTags() []string {
 	return []string{"PII"}
 }
 
-func (r insecureHandlingOfSensitiveData) GenerateRisks() []model.Risk {
+func GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, technicalAsset := range model.SortedTechnicalAssetsByTitle() {
 		if technicalAsset.Confidentiality == model.StrictlyConfidential || technicalAsset.OutOfScope {
@@ -103,7 +99,7 @@ func (r insecureHandlingOfSensitiveData) GenerateRisks() []model.Risk {
 func createRisk(class model.Confidentiality, technicalAsset model.TechnicalAsset, impact model.RiskExploitationImpact, probability model.RiskExploitationLikelihood, mostCriticalDataId string, dataProbability model.DataBreachProbability) model.Risk {
 	title := "<b>Potential insecure handling of " + class.String() + " data</b> at <b>" + technicalAsset.Title + "</b>"
 	risk := model.Risk{
-		Category:                     CustomRiskRule.Category(),
+		Category:                     Category(),
 		Severity:                     model.CalculateSeverity(probability, impact),
 		ExploitationLikelihood:       probability,
 		ExploitationImpact:           impact,

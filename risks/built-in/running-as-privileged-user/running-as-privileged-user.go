@@ -1,14 +1,10 @@
-package main
+package running_as_privileged_user
 
 import (
 	"github.com/threagile/threagile/model"
 )
 
-type runningAsPrivilegedUser string
-
-var CustomRiskRule runningAsPrivilegedUser
-
-func (r runningAsPrivilegedUser) Category() model.RiskCategory {
+func Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:                         "running-as-privileged-user",
 		Title:                      "Execution as Privileged User",
@@ -29,18 +25,18 @@ func (r runningAsPrivilegedUser) Category() model.RiskCategory {
 	}
 }
 
-func (r runningAsPrivilegedUser) SupportedTags() []string {
+func SupportedTags() []string {
 	return []string{"non-root", "unprivileged", "isNotAdmin"}
 }
 
-func (r runningAsPrivilegedUser) GenerateRisks() []model.Risk {
+func GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		techAsset := model.ParsedModelRoot.TechnicalAssets[id]
 		if techAsset.OutOfScope || techAsset.Technology.IsClient() {
 			continue
 		}
-		if !techAsset.IsTaggedWithAny(CustomRiskRule.SupportedTags()...) {
+		if !techAsset.IsTaggedWithAny(SupportedTags()...) {
 			var impact = model.MediumImpact
 			var likelihood = model.Likely
 			if techAsset.RAA < 0.2 {
@@ -59,7 +55,7 @@ func (r runningAsPrivilegedUser) GenerateRisks() []model.Risk {
 func createRisk(technicalAsset model.TechnicalAsset, impact model.RiskExploitationImpact, likelihood model.RiskExploitationLikelihood) model.Risk {
 	title := "<b>Running as privileged user</b> risk at <b>" + technicalAsset.Title + "</b>"
 	risk := model.Risk{
-		Category:                     CustomRiskRule.Category(),
+		Category:                     Category(),
 		Severity:                     model.CalculateSeverity(likelihood, impact),
 		ExploitationLikelihood:       likelihood,
 		ExploitationImpact:           impact,

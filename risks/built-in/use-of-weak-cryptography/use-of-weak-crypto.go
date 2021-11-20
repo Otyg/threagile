@@ -1,14 +1,10 @@
-package main
+package use_of_weak_cryptography
 
 import (
 	"github.com/threagile/threagile/model"
 )
 
-type useOfWeakCrypto string
-
-var CustomRiskRule useOfWeakCrypto
-
-func (r useOfWeakCrypto) Category() model.RiskCategory {
+func Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:                         "use-of-weak-cryptograhpy-at-rest",
 		Title:                      "Use Of Weak Cryptography At Rest",
@@ -28,10 +24,10 @@ func (r useOfWeakCrypto) Category() model.RiskCategory {
 		CWE:                        327,
 	}
 }
-func (r useOfWeakCrypto) SupportedTags() []string {
+func SupportedTags() []string {
 	return []string{}
 }
-func (r useOfWeakCrypto) GenerateRisks() []model.Risk {
+func GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		techAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -67,7 +63,7 @@ func (r useOfWeakCrypto) GenerateRisks() []model.Risk {
 func createRisk(technicalAsset model.TechnicalAsset, impact model.RiskExploitationImpact, mostRelevantDataAssetId string) model.Risk {
 	title := "<b>Use of weak cryptography at rest</b> risk at <b>" + technicalAsset.Title + "</b>"
 	risk := model.Risk{
-		Category:                     CustomRiskRule.Category(),
+		Category:                     Category(),
 		Severity:                     model.CalculateSeverity(model.Unlikely, impact),
 		ExploitationLikelihood:       model.Unlikely,
 		ExploitationImpact:           impact,
