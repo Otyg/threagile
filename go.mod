@@ -1,4 +1,4 @@
-module github.com/threagile/threagile
+module github.com/otyg/threagile
 
 go 1.12
 

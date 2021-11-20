@@ -1,7 +1,7 @@
 package push_instead_of_pull_deployment
 
 import (
-	"github.com/threagile/threagile/model"
+	"github.com/otyg/threagile/model"
 )
 
 func Category() model.RiskCategory {

@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/threagile/threagile/colors"
 	"regexp"
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/otyg/threagile/colors"
 )
 
 const ThreagileVersion = "1.0.0" // Also update into example and stub model files and openapi.yaml

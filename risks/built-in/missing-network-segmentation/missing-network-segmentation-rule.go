@@ -1,8 +1,9 @@
 package missing_network_segmentation
 
 import (
-	"github.com/threagile/threagile/model"
 	"sort"
+
+	"github.com/otyg/threagile/model"
 )
 
 const raaLimit = 50

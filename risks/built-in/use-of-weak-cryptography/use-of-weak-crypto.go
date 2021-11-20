@@ -1,7 +1,7 @@
 package use_of_weak_cryptography
 
 import (
-	"github.com/threagile/threagile/model"
+	"github.com/otyg/threagile/model"
 )
 
 func Category() model.RiskCategory {

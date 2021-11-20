@@ -2,9 +2,10 @@ package add_build_pipeline
 
 import (
 	"fmt"
-	"github.com/threagile/threagile/model"
 	"sort"
 	"strings"
+
+	"github.com/otyg/threagile/model"
 )
 
 func GetMacroDetails() model.MacroDetails {

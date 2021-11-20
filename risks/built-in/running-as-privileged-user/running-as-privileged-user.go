@@ -1,7 +1,7 @@
 package running_as_privileged_user
 
 import (
-	"github.com/threagile/threagile/model"
+	"github.com/otyg/threagile/model"
 )
 
 func Category() model.RiskCategory {

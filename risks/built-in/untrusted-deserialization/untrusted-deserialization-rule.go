@@ -1,7 +1,7 @@
 package untrusted_deserialization
 
 import (
-	"github.com/threagile/threagile/model"
+	"github.com/otyg/threagile/model"
 )
 
 func Category() model.RiskCategory {
