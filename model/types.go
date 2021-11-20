@@ -2880,6 +2880,7 @@ type RiskCategory struct {
 	Impact                     string
 	ASVS                       string
 	CheatSheet                 string
+	TestingGuide               string
 	Action                     string
 	Mitigation                 string
 	Check                      string
