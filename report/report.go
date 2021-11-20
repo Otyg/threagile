@@ -2339,7 +2339,7 @@ func createRiskCategories() {
 					} else {
 						chapternumberText = strconv.Itoa(chapternumber)
 					}
-					text.WriteString("<br><br>Testing guide: <a href=\"https://owasp.org/www-project-web-security-testing-guide/" + version + "/4-Web_Application_Security_Testing/" + chapternumberText + "-" + strings.ReplaceAll(chapter[1], " ", "_") + "/\">" + testingGuideLink + "</a>")
+					text.WriteString("<br>Testing guide: <a href=\"https://owasp.org/www-project-web-security-testing-guide/" + version + "/4-Web_Application_Security_Testing/" + chapternumberText + "-" + strings.ReplaceAll(chapter[1], " ", "_") + "/\">" + testingGuideLink + "</a>")
 				}
 			}
 		}
