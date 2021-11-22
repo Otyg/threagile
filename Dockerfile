@@ -1,5 +1,7 @@
 FROM golang as build
 ENV GO111MODULE=on
+# https://stackoverflow.com/questions/36279253/go-compiled-binary-wont-run-in-an-alpine-docker-container-on-ubuntu-host
+#ENV CGO_ENABLED=0 # cannot be set as otherwise plugins don't run
 WORKDIR /app
 COPY . /app
 RUN chmod +x build-threagile.sh && ./build-threagile.sh
@@ -11,8 +13,16 @@ LABEL org.opencontainers.image.url="https://github.com/threagile/threagile, http
 LABEL org.opencontainers.image.source="https://github.com/Otyg/threagile"
 LABEL org.opencontainers.image.vendor="https://github.com/Otyg/"
 LABEL org.opencontainers.image.licenses="MIT"
-RUN apk add --update --no-cache graphviz ttf-freefont && apk add ca-certificates && apk add curl && rm -rf /var/cache/apk/*
-RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
+# add certificates
+RUN apk add ca-certificates
+# add graphviz, fonts
+RUN apk add --update --no-cache graphviz ttf-freefont
+# https://stackoverflow.com/questions/66963068/docker-alpine-executable-binary-not-found-even-if-in-path
+RUN apk add libc6-compat
+# https://stackoverflow.com/questions/34729748/installed-go-binary-not-found-in-path-on-alpine-linux-docker
+# clean apk cache
+RUN rm -rf /var/cache/apk/*
+
 WORKDIR /app
 COPY --from=build /app/threagile /app/threagile
 COPY --from=build /app/*.so /app/
