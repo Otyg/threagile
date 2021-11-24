@@ -7,12 +7,12 @@ name: Create and publish a Docker image
 
 on:
   release:
-    types: [released]
+    types: [created]
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  GITHUB_TOKEN: ${{ github.token }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   build-and-push-image:
@@ -49,6 +49,7 @@ jobs:
       - name: Generate SBOM
         uses: anchore/sbom-action@v0
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           image: ghcr.io/otyg/threagile:latest
           format: cyclonedx
 
