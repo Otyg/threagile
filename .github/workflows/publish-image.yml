@@ -50,6 +50,6 @@ jobs:
       - name: Generate SBOM
         uses: anchore/sbom-action@v0
         with:
-          image: ghcr.io/otyg/threagile:${{ steps.meta.outputs.tags }}
+          image: ${{ steps.meta.outputs.tags }}
           format: cyclonedx
 
