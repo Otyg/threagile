@@ -6,6 +6,8 @@
 name: Create and publish a Docker image
 
 on:
+  pull_request:
+    branches: [ develop ]
   release:
     types: [released]
 
@@ -48,6 +50,6 @@ jobs:
       - name: Generate SBOM
         uses: anchore/sbom-action@v0
         with:
-          image: ${{ env.IMAGE_NAME }}
+          image: ghcr.io/otyg/threagile:${{ steps.meta.outputs.tags }}
           format: cyclonedx
 
