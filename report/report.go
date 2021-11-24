@@ -2304,29 +2304,18 @@ func createRiskCategories() {
 		text.WriteString(category.Mitigation)
 
 		asvsChapter := category.ASVS
-		if len(asvsChapter) == 0 {
-			text.WriteString("<br><br>ASVS Chapter: n/a")
-		} else {
-			//TODO: Support ASVS-versioning, fix link to https://github.com/OWASP/ASVS/tree/<VERSION>/4.0/en
-			text.WriteString("<br><br>ASVS Chapter: <a href=\"https://owasp.org/www-project-application-security-verification-standard/\">" + asvsChapter + "</a>")
+		if len(asvsChapter) > 0 {
+			text.WriteString("<br><br>ASVS Chapter: " + support.GetHtmlLink(asvsChapter))
 		}
 
 		cheatSheetLink := category.CheatSheet
-		if len(cheatSheetLink) == 0 {
-			cheatSheetLink = "n/a"
-		} else {
-			lastLinkParts := strings.Split(cheatSheetLink, "/")
-			linkText := lastLinkParts[len(lastLinkParts)-1]
-			if strings.HasSuffix(linkText, ".html") || strings.HasSuffix(linkText, ".htm") {
-				var extension = filepath.Ext(linkText)
-				linkText = linkText[0 : len(linkText)-len(extension)]
-			}
-			cheatSheetLink = "<a href=\"" + cheatSheetLink + "\">" + linkText + "</a>"
+		if len(cheatSheetLink) > 0 {
+			text.WriteString("<br>Cheat Sheet: " + support.GetHtmlLink(cheatSheetLink))
 		}
-		text.WriteString("<br>Cheat Sheet: " + cheatSheetLink)
+
 		testingGuideLink := category.TestingGuide
 		if len(testingGuideLink) > 0 {
-			text.WriteString("<br>Testing guide: " + support.GetLinkFromMarkdownAsHtml(category.TestingGuide))
+			text.WriteString("<br>Testing guide: " + support.GetHtmlLink(category.TestingGuide))
 		}
 		text.WriteString("<br><br><br><b>Check</b><br><br>")
 		text.WriteString(category.Check)
