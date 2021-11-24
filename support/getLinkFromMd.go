@@ -12,7 +12,7 @@ func GetLinkFromMarkdownAsHtml(link string) string {
 	} else if strings.HasPrefix(link, "http") {
 		lastLinkParts := strings.Split(link, "/")
 		steps := 1
-		if strings.HasPrefix(link, "/") {
+		if strings.HasSuffix(link, "/") {
 			steps = 2
 		}
 		linkText := lastLinkParts[len(lastLinkParts)-steps]
