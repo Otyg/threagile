@@ -51,5 +51,6 @@ jobs:
         with:
           github-token: ${{ secrets.ACCESS_TOKEN }}
           image: ghcr.io/otyg/threagile:latest
+          artifact-name: sbom.xml
           format: cyclonedx
 
