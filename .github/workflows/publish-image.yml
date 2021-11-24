@@ -48,6 +48,6 @@ jobs:
       - name: Generate SBOM
         uses: anchore/sbom-action@v0
         with:
-          image: ${{ env.IMAGE_NAME }}
+          image: ${{ steps.meta.outputs.tags }}
           format: cyclonedx
 
