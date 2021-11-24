@@ -25,7 +25,7 @@ jobs:
       uses: anchore/scan-action@v3
       with:
         image: "localbuild/testimage:latest"
-        dockerfile-path: "Dockerfile"
+        path: "Dockerfile"
         acs-report-enable: true
     - name: Upload Anchore Scan Report
       uses: github/codeql-action/upload-sarif@v1
