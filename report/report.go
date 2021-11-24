@@ -61,6 +61,7 @@ import (
 	wrong_communication_link_content "github.com/otyg/threagile/risks/built-in/wrong-communication-link-content"
 	wrong_trust_boundary_content "github.com/otyg/threagile/risks/built-in/wrong-trust-boundary-content"
 	xml_external_entity "github.com/otyg/threagile/risks/built-in/xml-external-entity"
+	"github.com/otyg/threagile/support"
 	"github.com/wcharczuk/go-chart"
 	"github.com/wcharczuk/go-chart/drawing"
 )
@@ -2325,23 +2326,7 @@ func createRiskCategories() {
 		text.WriteString("<br>Cheat Sheet: " + cheatSheetLink)
 		testingGuideLink := category.TestingGuide
 		if len(testingGuideLink) > 0 {
-			versionAndChapter := strings.Split(testingGuideLink, "-")
-			version := strings.ReplaceAll(versionAndChapter[0], ".", "")
-			chapters := strings.Split(versionAndChapter[1], ".")
-			if len(chapters) == 2 {
-				//TODO: Handle subchapters
-				chapter := strings.Split(chapters[1], ": ")
-				chapternumber, err := strconv.Atoi(chapter[0])
-				if err == nil {
-					var chapternumberText string
-					if chapternumber < 10 {
-						chapternumberText = "0" + strconv.Itoa(chapternumber)
-					} else {
-						chapternumberText = strconv.Itoa(chapternumber)
-					}
-					text.WriteString("<br>Testing guide: <a href=\"https://owasp.org/www-project-web-security-testing-guide/" + version + "/4-Web_Application_Security_Testing/" + chapternumberText + "-" + strings.ReplaceAll(chapter[1], " ", "_") + "/\">" + testingGuideLink + "</a>")
-				}
-			}
+			text.WriteString("<br>Testing guide: " + support.GetLinkFromMarkdownAsHtml(category.TestingGuide))
 		}
 		text.WriteString("<br><br><br><b>Check</b><br><br>")
 		text.WriteString(category.Check)
