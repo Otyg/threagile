@@ -14,8 +14,8 @@ func Category() model.RiskCategory {
 			"an indicator for unnecessarily transferred data (or for an incomplete model). When the unnecessarily " +
 			"transferred data assets are sensitive, this poses an unnecessary risk of an increased attack surface.",
 		Impact:     "If this risk is unmitigated, attackers might be able to target unnecessarily transferred data.",
-		ASVS:       "V1 - Architecture, Design and Threat Modeling Requirements",
-		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/Attack_Surface_Analysis_Cheat_Sheet.html",
+		ASVS:       "[v4.0.3-V1 - Architecture, Design and Threat Modeling Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x10-V1-Architecture.md)",
+		CheatSheet: "[Attack_Surface_Analysis_Cheat_Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Attack_Surface_Analysis_Cheat_Sheet.html)",
 		Action:     "Attack Surface Reduction",
 		Mitigation: "Try to avoid sending or receiving sensitive data assets which are not required (i.e. neither " +
 			"processed or stored) by the involved technical asset.",

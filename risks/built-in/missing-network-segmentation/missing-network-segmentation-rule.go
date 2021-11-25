@@ -17,8 +17,8 @@ func Category() model.RiskCategory {
 			"by a network segmentation trust-boundary.",
 		Impact: "If this risk is unmitigated, attackers successfully attacking other components of the system might have an easy path towards " +
 			"more valuable targets, as they are not separated by network segmentation.",
-		ASVS:       "V1 - Architecture, Design and Threat Modeling Requirements",
-		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/Attack_Surface_Analysis_Cheat_Sheet.html",
+		ASVS:       "[v4.0.3-V1 - Architecture, Design and Threat Modeling Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x10-V1-Architecture.md)",
+		CheatSheet: "[Attack_Surface_Analysis_Cheat_Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Attack_Surface_Analysis_Cheat_Sheet.html)",
 		Action:     "Network Segmentation",
 		Mitigation: "Apply a network segmentation trust-boundary around the highly sensitive assets and/or datastores.",
 		Check:      "Are recommendations from the linked cheat sheet and referenced ASVS chapter applied?",

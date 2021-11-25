@@ -13,8 +13,8 @@ func Category() model.RiskCategory {
 		Description: "Cloud components should be hardened according to the cloud vendor best practices. This affects their " +
 			"configuration, auditing, and further areas.",
 		Impact:     "If this risk is unmitigated, attackers might access cloud components in an unintended way.",
-		ASVS:       "V1 - Architecture, Design and Threat Modeling Requirements",
-		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/Attack_Surface_Analysis_Cheat_Sheet.html",
+		ASVS:       "[v4.0.3-V1 - Architecture, Design and Threat Modeling Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x10-V1-Architecture.md)",
+		CheatSheet: "[Attack_Surface_Analysis_Cheat_Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Attack_Surface_Analysis_Cheat_Sheet.html)",
 		Action:     "Cloud Hardening",
 		Mitigation: "Apply hardening of all cloud components and services, taking special care to follow the individual risk descriptions (which " +
 			"depend on the cloud provider tags in the model). " +

@@ -11,7 +11,7 @@ func Category() model.RiskCategory {
 		Description: "When a communication link is defined as readonly, but does not receive any data asset, " +
 			"or when it is defined as not readonly, but does not send any data asset, it is likely to be a model failure.",
 		Impact:     "If this potential model error is not fixed, some risks might not be visible.",
-		ASVS:       "V1 - Architecture, Design and Threat Modeling Requirements",
+		ASVS:       "[v4.0.3-V1 - Architecture, Design and Threat Modeling Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x10-V1-Architecture.md)",
 		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html",
 		Action:     "Model Consistency",
 		Mitigation: "Try to model the correct readonly flag and/or data sent/received of communication links. " +
