@@ -11,8 +11,8 @@ func Category() model.RiskCategory {
 		Description: "Assets accessed across trust boundaries with critical or mission-critical availability rating " +
 			"are more prone to Denial-of-Service (DoS) risks.",
 		Impact:     "If this risk remains unmitigated, attackers might be able to disturb the availability of important parts of the system.",
-		ASVS:       "V1 - Architecture, Design and Threat Modeling Requirements",
-		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/Denial_of_Service_Cheat_Sheet.html",
+		ASVS:       "[v4.0.3-V1 - Architecture, Design and Threat Modeling Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x10-V1-Architecture.md)",
+		CheatSheet: "[Denial of Service Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Denial_of_Service_Cheat_Sheet.html)",
 		Action:     "Anti-DoS Measures",
 		Mitigation: "Apply anti-DoS techniques like throttling and/or per-client load blocking with quotas. " +
 			"Also for maintenance access routes consider applying a VPN instead of public reachable interfaces. " +

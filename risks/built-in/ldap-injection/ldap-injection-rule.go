@@ -10,10 +10,11 @@ func Category() model.RiskCategory {
 		Title: "LDAP-Injection",
 		Description: "When an LDAP server is accessed LDAP-Injection risks might arise. " +
 			"The risk rating depends on the sensitivity of the LDAP server itself and of the data assets processed or stored.",
-		Impact:     "If this risk remains unmitigated, attackers might be able to modify LDAP queries and access more data from the LDAP server than allowed.",
-		ASVS:       "V5 - Validation, Sanitization and Encoding Verification Requirements",
-		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/LDAP_Injection_Prevention_Cheat_Sheet.html",
-		Action:     "LDAP-Injection Prevention",
+		Impact:       "If this risk remains unmitigated, attackers might be able to modify LDAP queries and access more data from the LDAP server than allowed.",
+		ASVS:         "[v4.0.3-V5 - Validation, Sanitization and Encoding Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x13-V5-Validation-Sanitization-Encoding.md)",
+		CheatSheet:   "[LDAP Injection Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/LDAP_Injection_Prevention_Cheat_Sheet.html)",
+		TestingGuide: "[v4.2-4.7.6 - Testing for LDAP Injection](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/07-Input_Validation_Testing/06-Testing_for_LDAP_Injection)",
+		Action:       "LDAP-Injection Prevention",
 		Mitigation: "Try to use libraries that properly encode LDAP meta characters in searches and queries to access " +
 			"the LDAP sever in order to stay safe from LDAP-Injection vulnerabilities. " +
 			"When a third-party product is used instead of custom developed software, check if the product applies the proper mitigation and ensure a reasonable patch-level.",
