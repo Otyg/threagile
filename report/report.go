@@ -2313,13 +2313,12 @@ func createRiskCategories() {
 			text.WriteString("<br>Cheat Sheet: " + support.GetHtmlLink(cheatSheetLink))
 		}
 
+		text.WriteString("<br><br><br><b>Check</b><br><br>")
+		text.WriteString(category.Check)
 		testingGuideLink := category.TestingGuide
 		if len(testingGuideLink) > 0 {
 			text.WriteString("<br>Testing guide: " + support.GetHtmlLink(category.TestingGuide))
 		}
-		text.WriteString("<br><br><br><b>Check</b><br><br>")
-		text.WriteString(category.Check)
-
 		html.Write(5, text.String())
 		text.Reset()
 		pdf.SetTextColor(0, 0, 0)
