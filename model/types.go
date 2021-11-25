@@ -181,6 +181,7 @@ type InputIndividualRiskCategory struct {
 	Impact                        string                         `json:"impact"`
 	ASVS                          string                         `json:"asvs"`
 	Cheat_sheet                   string                         `json:"cheat_sheet"`
+	Testing_guide                 string                         `json:"testing_guide"`
 	Action                        string                         `json:"action"`
 	Mitigation                    string                         `json:"mitigation"`
 	Check                         string                         `json:"check"`
@@ -2880,6 +2881,7 @@ type RiskCategory struct {
 	Impact                     string
 	ASVS                       string
 	CheatSheet                 string
+	TestingGuide               string
 	Action                     string
 	Mitigation                 string
 	Check                      string

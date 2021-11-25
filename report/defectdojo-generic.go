@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/support"
 )
 
 /*type Risk struct {
@@ -67,15 +68,18 @@ func WriteDefectdojoGeneric(filename string) {
 			finding.Title = strings.Title(risk.Category.Function.String()) + ": " + strings.Title(strings.ReplaceAll(strings.ReplaceAll(strings.ToLower(risk.Title), "<b>", ""), "</b>", ""))
 			finding.Mitigation = risk.Category.Mitigation +
 				"\nCheck: " + risk.Category.Check +
-				"\nASVS: " + risk.Category.ASVS +
-				"\nCheatSheet: " + risk.Category.CheatSheet
+				"\nASVS: " + support.GetLinkText(risk.Category.ASVS) +
+				"\nCheatSheet: " + support.GetLinkText(risk.Category.CheatSheet) +
+				"\nTestingGuide: " + support.GetLinkText(risk.Category.TestingGuide)
 			finding.Impact = risk.Category.Impact
 			finding.SeverityJustification = risk.Category.RiskAssessment
 			finding.Description = "STRIDE: " + strings.Title(risk.Category.STRIDE.String()) +
 				"\n" + risk.Category.Description +
 				"\nDetection logic: " + risk.Category.DetectionLogic +
 				"\nFalse positives: " + risk.Category.FalsePositives
-			finding.References = "https://owasp.org/www-project-application-security-verification-standard/ \n" + strings.ReplaceAll(risk.Category.CheatSheet, ",", "\n")
+			finding.References = support.GetLinkUrl(risk.Category.ASVS) +
+				"\n" + support.GetLinkUrl(risk.Category.CheatSheet) +
+				"\n" + support.GetLinkUrl(risk.Category.TestingGuide)
 			finding.UniqId = risk.SyntheticId
 			finding.VulnId = risk.CategoryId
 			finding.Component = strings.Title(risk.Category.Function.String())
