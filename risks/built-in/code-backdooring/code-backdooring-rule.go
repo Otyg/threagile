@@ -13,8 +13,8 @@ func Category() model.RiskCategory {
 			"backdooring of dependencies and even of more lower-level build infrastructure, like backdooring compilers (similar to what the XcodeGhost malware did) or dependencies.",
 		Impact: "If this risk remains unmitigated, attackers might be able to execute code on and completely takeover " +
 			"production environments.",
-		ASVS:       "V10 - Malicious Code Verification Requirements",
-		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/Vulnerable_Dependency_Management_Cheat_Sheet.html",
+		ASVS:       "[V10 - Malicious Code Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x18-V10-Malicious.md)",
+		CheatSheet: "[Vulnerable Dependency Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Vulnerable_Dependency_Management_Cheat_Sheet.html)",
 		Action:     "Build Pipeline Hardening",
 		Mitigation: "Reduce the attack surface of backdooring the build pipeline by not directly exposing the build pipeline " +
 			"components on the public internet and also not exposing it in front of unmanaged (out-of-scope) developer clients." +
