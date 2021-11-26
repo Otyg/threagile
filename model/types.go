@@ -12,8 +12,8 @@ import (
 	"github.com/otyg/threagile/colors"
 )
 
-const ThreagileVersion = "1.0.0" // Also update into example and stub model files and openapi.yaml
-const TempFolder = "/dev/shm"    // TODO: make configurable via cmdline arg?
+var ThreagileVersion = ""     // Also update into example and stub model files and openapi.yaml
+const TempFolder = "/dev/shm" // TODO: make configurable via cmdline arg?
 
 var ParsedModelRoot ParsedModel
 

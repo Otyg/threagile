@@ -3958,7 +3958,7 @@ func printLogo() {
 
 func printVersion() {
 	fmt.Println("Documentation: https://threagile.io")
-	fmt.Println("Docker Images: https://hub.docker.com/r/threagile/threagile")
+	fmt.Println("Docker Images: https://github.com/Otyg/threagile/pkgs/container/threagile")
 	fmt.Println("Sourcecode: https://github.com/otyg/threagile")
 	fmt.Println("License: Open-Source (MIT License)")
 	fmt.Println("Version: " + model.ThreagileVersion + " (" + buildTimestamp + ")")
