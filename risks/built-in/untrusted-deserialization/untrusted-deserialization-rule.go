@@ -13,7 +13,7 @@ func Category() model.RiskCategory {
 			"<br><br>See <a href=\"https://christian-schneider.net/JavaDeserializationSecurityFAQ.html\">https://christian-schneider.net/JavaDeserializationSecurityFAQ.html</a> " +
 			"for more details.",
 		Impact:     "If this risk is unmitigated, attackers might be able to execute code on target systems by exploiting untrusted deserialization endpoints.",
-		ASVS:       "V5 - Validation, Sanitization and Encoding Verification Requirements",
+		ASVS:       "[v4.0.3-V5 - Validation, Sanitization and Encoding Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x13-V5-Validation-Sanitization-Encoding.md)",
 		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/Deserialization_Cheat_Sheet.html",
 		Action:     "Prevention of Deserialization of Untrusted Data",
 		Mitigation: "Try to avoid the deserialization of untrusted data (even of data within the same trust-boundary as long as " +

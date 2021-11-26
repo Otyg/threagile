@@ -10,10 +10,11 @@ func Category() model.RiskCategory {
 		Title: "SQL/NoSQL-Injection",
 		Description: "When a database is accessed via database access protocols SQL/NoSQL-Injection risks might arise. " +
 			"The risk rating depends on the sensitivity technical asset itself and of the data assets processed or stored.",
-		Impact:     "If this risk is unmitigated, attackers might be able to modify SQL/NoSQL queries to steal and modify data and eventually further escalate towards a deeper system penetration via code executions.",
-		ASVS:       "V5 - Validation, Sanitization and Encoding Verification Requirements",
-		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
-		Action:     "SQL/NoSQL-Injection Prevention",
+		Impact:       "If this risk is unmitigated, attackers might be able to modify SQL/NoSQL queries to steal and modify data and eventually further escalate towards a deeper system penetration via code executions.",
+		ASVS:         "[v4.0.3-V5 - Validation, Sanitization and Encoding Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x13-V5-Validation-Sanitization-Encoding.md)",
+		CheatSheet:   "[SQL Injection Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html)",
+		TestingGuide: "[v4.2-4.7.5 Testing for SQL Injection](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/07-Input_Validation_Testing/05-Testing_for_SQL_Injection)",
+		Action:       "SQL/NoSQL-Injection Prevention",
 		Mitigation: "Try to use parameter binding to be safe from injection vulnerabilities. " +
 			"When a third-party product is used instead of custom developed software, check if the product applies the proper mitigation and ensure a reasonable patch-level.",
 		Check:          "Are recommendations from the linked cheat sheet and referenced ASVS chapter applied?",

@@ -11,8 +11,8 @@ func Category() model.RiskCategory {
 		Description: "When a service registry used for discovery of trusted service endpoints Service Registry Poisoning risks might arise.",
 		Impact: "If this risk remains unmitigated, attackers might be able to poison the service registry with malicious service endpoints or " +
 			"malicious lookup and config data leading to breach of sensitive data.",
-		ASVS:           "V10 - Malicious Code Verification Requirements",
-		CheatSheet:     "https://cheatsheetseries.owasp.org/cheatsheets/Access_Control_Cheat_Sheet.html",
+		ASVS:           "[v4.0.3-V10 - Malicious Code Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x18-V10-Malicious.md)",
+		CheatSheet:     "[Access Control Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Access_Control_Cheat_Sheet.html)",
 		Action:         "Service Registry Integrity Check",
 		Mitigation:     "Try to strengthen the access control of the service registry and apply cross-checks to detect maliciously poisoned lookup data.",
 		Check:          "Are recommendations from the linked cheat sheet and referenced ASVS chapter applied?",
