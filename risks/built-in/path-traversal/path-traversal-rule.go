@@ -12,9 +12,10 @@ func Category() model.RiskCategory {
 			"The risk rating depends on the sensitivity of the technical asset itself and of the data assets processed or stored.",
 		Impact: "If this risk is unmitigated, attackers might be able to read sensitive files (configuration data, key/credential files, deployment files, " +
 			"business data files, etc.) from the filesystem of affected components.",
-		ASVS:       "[v4.0.3-V12 - File and Resources Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x20-V12-Files-Resources.md)",
-		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html",
-		Action:     "Path-Traversal Prevention",
+		ASVS:         "[v4.0.3-V12 - File and Resources Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x20-V12-Files-Resources.md)",
+		CheatSheet:   "[Input Validation Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html)",
+		TestingGuide: "[v4.2-4.5.1 - Testing Directory Traversal File Include](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/05-Authorization_Testing/01-Testing_Directory_Traversal_File_Include)",
+		Action:       "Path-Traversal Prevention",
 		Mitigation: "Before accessing the file cross-check that it resides in the expected folder and is of the expected " +
 			"type and filename/suffix. Try to use a mapping if possible instead of directly accessing by a filename which is " +
 			"(partly or fully) provided by the caller. " +

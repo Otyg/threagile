@@ -13,7 +13,7 @@ func Category() model.RiskCategory {
 			"system by delaying some attacks and having easier attack alerting through it.",
 		Impact:     "If this risk is unmitigated, attackers might be able to apply standard attack pattern tests at great speed without any filtering.",
 		ASVS:       "[v4.0.3-V1 - Architecture, Design and Threat Modeling Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x10-V1-Architecture.md)",
-		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/Virtual_Patching_Cheat_Sheet.html",
+		CheatSheet: "[Virtual Patching Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Virtual_Patching_Cheat_Sheet.html)",
 		Action:     "Web Application Firewall (WAF)",
 		Mitigation: "Consider placing a Web Application Firewall (WAF) in front of the web-services and/or web-applications. For cloud environments many cloud providers offer " +
 			"pre-configured WAFs. Even reverse proxies can be enhances by a WAF component via ModSecurity plugins.",
