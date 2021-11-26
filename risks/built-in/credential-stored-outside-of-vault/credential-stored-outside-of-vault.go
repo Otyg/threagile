@@ -10,7 +10,7 @@ func Category() model.RiskCategory {
 		Title:                      "Credential Stored Outside Of Vault",
 		Description:                "Secret data, such as credentials and encryption keys, must be protected and managed in a secure way to minimize the risk of exposure. The recommended solution is to keep secret data in a dedicated system (vault) and only store access credentials to this system on other technical assets.",
 		Impact:                     "If a hardcoded secret is exposed considerable work must be done to rotate it",
-		ASVS:                       "[v4.0.2-V6.4 - Secret Management](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x14-V6-Cryptography.md#v64-secret-management)",
+		ASVS:                       "[v4.0.3-V6.4 - Secret Management](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x14-V6-Cryptography.md#v64-secret-management)",
 		CheatSheet:                 "[Key Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Key_Management_Cheat_Sheet.html)",
 		TestingGuide:               "[v4.2-4.9: Testing for Weak Cryptography](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/09-Testing_for_Weak_Cryptography)",
 		Action:                     "Secret management",

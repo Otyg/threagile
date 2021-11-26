@@ -12,7 +12,7 @@ func Category() model.RiskCategory {
 			"checked-in or packaged-in passwords, API tokens, certificates, crypto keys, etc.",
 		Impact: "If this risk is unmitigated, attackers which have access to affected sourcecode repositories or artifact registries might " +
 			"find secrets accidentally checked-in.",
-		ASVS:       "[V14 - Configuration Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x22-V14-Config.md)",
+		ASVS:       "[v4.0.3-V14 - Configuration Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x22-V14-Config.md)",
 		CheatSheet: "[Attack Surface Analysis Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Attack_Surface_Analysis_Cheat_Sheet.html)",
 		Action:     "Build Pipeline Hardening",
 		Mitigation: "Establish measures preventing accidental check-in or package-in of secrets into sourcecode repositories " +
