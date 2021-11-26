@@ -12,9 +12,10 @@ func Category() model.RiskCategory {
 		Impact: "If this risk is unmitigated, attackers might be able to read sensitive files (configuration data, key/credential files, deployment files, " +
 			"business data files, etc.) form the filesystem of affected components and/or access sensitive services or files " +
 			"of other components.",
-		ASVS:       "V14 - Configuration Verification Requirements",
-		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html",
-		Action:     "XML Parser Hardening",
+		ASVS:         "[v.4.0.3-V14 - Configuration Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x22-V14-Config.md)",
+		CheatSheet:   "[XML External Entity Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html)",
+		TestingGuide: "[v4.2-4.7.7 - Testing for XML Injection](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/07-Input_Validation_Testing/07-Testing_for_XML_Injection)",
+		Action:       "XML Parser Hardening",
 		Mitigation: "Apply hardening of all XML parser instances in order to stay safe from XML External Entity (XXE) vulnerabilities. " +
 			"When a third-party product is used instead of custom developed software, check if the product applies the proper mitigation and ensure a reasonable patch-level.",
 		Check:          "Are recommendations from the linked cheat sheet and referenced ASVS chapter applied?",

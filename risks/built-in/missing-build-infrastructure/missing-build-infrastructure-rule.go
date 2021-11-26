@@ -14,8 +14,8 @@ func Category() model.RiskCategory {
 			"and built needs to be part of the model.",
 		Impact: "If this risk is unmitigated, attackers might be able to exploit risks unseen in this threat model due to " +
 			"critical build infrastructure components missing in the model.",
-		ASVS:       "V1 - Architecture, Design and Threat Modeling Requirements",
-		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/Attack_Surface_Analysis_Cheat_Sheet.html",
+		ASVS:       "[v4.0.3-V1 - Architecture, Design and Threat Modeling Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x10-V1-Architecture.md)",
+		CheatSheet: "[Attack Surface Analysis Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Attack_Surface_Analysis_Cheat_Sheet.html)",
 		Action:     "Build Pipeline Hardening",
 		Mitigation: "Include the build infrastructure in the model.",
 		Check:      "Are recommendations from the linked cheat sheet and referenced ASVS chapter applied?",

@@ -11,8 +11,8 @@ func Category() model.RiskCategory {
 		Description: "When the threat model contains unknown technologies or transfers data over unknown protocols, this is " +
 			"an indicator for an incomplete model.",
 		Impact:                     "If this risk is unmitigated, other risks might not be noticed as the model is incomplete.",
-		ASVS:                       "V1 - Architecture, Design and Threat Modeling Requirements",
-		CheatSheet:                 "https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html",
+		ASVS:                       "[v4.0.3-V1 - Architecture, Design and Threat Modeling Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x10-V1-Architecture.md)",
+		CheatSheet:                 "[Threat Modeling Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html)",
 		Action:                     "Threat Modeling Completeness",
 		Mitigation:                 "Try to find out what technology or protocol is used instead of specifying that it is unknown.",
 		Check:                      "Are recommendations from the linked cheat sheet and referenced ASVS chapter applied?",

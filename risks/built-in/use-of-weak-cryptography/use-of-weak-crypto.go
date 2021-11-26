@@ -10,7 +10,7 @@ func Category() model.RiskCategory {
 		Title:                      "Use Of Weak Cryptography At Rest",
 		Description:                "To avoid weak cryptography ensure to use algoritms, modes and libraries that has been vetted and proven by industry and/or governments.",
 		Impact:                     "Weak cryptography can result in information disclosure and a false sense of security.",
-		ASVS:                       "[v4.0.3-6.2 - Stored cryptography: Algorithms](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x14-V6-Cryptography.md#v62-algorithms)",
+		ASVS:                       "[v4.0.3-V6.2 - Stored cryptography: Algorithms](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x14-V6-Cryptography.md#v62-algorithms)",
 		CheatSheet:                 "[Cryptographic Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html)",
 		TestingGuide:               "[v4.2-4.9.4: Testing for Weak Encryption](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/09-Testing_for_Weak_Cryptography/04-Testing_for_Weak_Encryption)",
 		Action:                     "Cryptography",

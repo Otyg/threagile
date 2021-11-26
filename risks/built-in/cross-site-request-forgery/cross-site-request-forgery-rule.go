@@ -11,9 +11,10 @@ func Category() model.RiskCategory {
 		Description: "When a web application is accessed via web protocols Cross-Site Request Forgery (CSRF) risks might arise.",
 		Impact: "If this risk remains unmitigated, attackers might be able to trick logged-in victim users into unwanted actions within the web application " +
 			"by visiting an attacker controlled web site.",
-		ASVS:       "V4 - Access Control Verification Requirements",
-		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html",
-		Action:     "CSRF Prevention",
+		ASVS:         "[v4.0.3-V4.2 - Access Control Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x12-V4-Access-Control.md#v42-operation-level-access-control)",
+		CheatSheet:   "[Cross-Site Request Forgery Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)",
+		TestingGuide: "[v4.2-4.6.5 - Testing for Cross Site Request Forgery](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/06-Session_Management_Testing/05-Testing_for_Cross_Site_Request_Forgery)",
+		Action:       "CSRF Prevention",
 		Mitigation: "Try to use anti-CSRF tokens ot the double-submit patterns (at least for logged-in requests). " +
 			"When your authentication scheme depends on cookies (like session or token cookies), consider marking them with " +
 			"the same-site flag. " +

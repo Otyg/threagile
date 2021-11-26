@@ -14,8 +14,8 @@ func Category() model.RiskCategory {
 			"for more details (here related to Solr, but in general showcasing the topic of search query injections).",
 		Impact: "If this risk remains unmitigated, attackers might be able to read more data from the search index and " +
 			"eventually further escalate towards a deeper system penetration via code executions.",
-		ASVS:       "V5 - Validation, Sanitization and Encoding Verification Requirements",
-		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/Injection_Prevention_Cheat_Sheet.html",
+		ASVS:       "[v4.0.3-V5 - Validation, Sanitization and Encoding Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x13-V5-Validation-Sanitization-Encoding.md)",
+		CheatSheet: "[Injection Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Injection_Prevention_Cheat_Sheet.html)",
 		Action:     "Search-Query Injection Prevention",
 		Mitigation: "Try to use libraries that properly encode search query meta characters in searches and don't expose the " +
 			"query unfiltered to the caller. " +

@@ -6,13 +6,14 @@ import (
 
 func Category() model.RiskCategory {
 	return model.RiskCategory{
-		Id:          "missing-authentication",
-		Title:       "Missing Authentication",
-		Description: "Technical assets (especially multi-tenant systems) should authenticate incoming requests when the asset processes or stores sensitive data. ",
-		Impact:      "If this risk is unmitigated, attackers might be able to access or modify sensitive data in an unauthenticated way.",
-		ASVS:        "V2 - Authentication Verification Requirements",
-		CheatSheet:  "https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html",
-		Action:      "Authentication of Incoming Requests",
+		Id:           "missing-authentication",
+		Title:        "Missing Authentication",
+		Description:  "Technical assets (especially multi-tenant systems) should authenticate incoming requests when the asset processes or stores sensitive data. ",
+		Impact:       "If this risk is unmitigated, attackers might be able to access or modify sensitive data in an unauthenticated way.",
+		ASVS:         "[v4.0.3-V2 - Authentication Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x11-V2-Authentication.md)",
+		CheatSheet:   "[Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html)",
+		TestingGuide: "[v4.2-4.4 - Authentication Testing](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/04-Authentication_Testing)",
+		Action:       "Authentication of Incoming Requests",
 		Mitigation: "Apply an authentication method to the technical asset. To protect highly sensitive data consider " +
 			"the use of two-factor authentication for human users.",
 		Check:    "Are recommendations from the linked cheat sheet and referenced ASVS chapter applied?",

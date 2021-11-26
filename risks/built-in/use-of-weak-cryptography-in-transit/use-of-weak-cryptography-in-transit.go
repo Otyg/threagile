@@ -10,7 +10,7 @@ func Category() model.RiskCategory {
 		Title:                      "Use Of Weak Cryptography in transit",
 		Description:                "To ensure confidentiality during transit strong encryption must be used; weak, broken or soon to be deprecated algorithms must be avoided and recommended key lengths must be applied.",
 		Impact:                     "Weak cryptography can result in information disclosure and a false sense of security.",
-		ASVS:                       "[v4.0.3-9 - Communications](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x17-V9-Communications.md)",
+		ASVS:                       "[v4.0.3-V9 - Communications](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x17-V9-Communications.md)",
 		CheatSheet:                 "[Transport Layer Protection Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html)",
 		TestingGuide:               "[v4.2-4.9.1: Testing for Weak Transport Layer Security](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/09-Testing_for_Weak_Cryptography/01-Testing_for_Weak_Transport_Layer_Security)",
 		Action:                     "Cryptography",

@@ -14,8 +14,8 @@ func Category() model.RiskCategory {
 			"There are several open-source and commercial tools existing in the categories DAST, SAST, and IAST.",
 		Impact: "If this risk remains unmitigated, vulnerabilities in custom-developed software or their dependencies " +
 			"might not be identified during continuous deployment cycles.",
-		ASVS:       "V14 - Configuration Verification Requirements",
-		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/Vulnerable_Dependency_Management_Cheat_Sheet.html",
+		ASVS:       "[v.4.0.3-V14 - Configuration Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x22-V14-Config.md)",
+		CheatSheet: "[Vulnerable Dependency Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Vulnerable_Dependency_Management_Cheat_Sheet.html)",
 		Action:     "Build Pipeline Hardening",
 		Mitigation: "Apply DevSecOps best-practices and use scanning tools to identify vulnerabilities in source- or byte-code," +
 			"dependencies, container layers, and optionally also via dynamic scans against running test systems.",

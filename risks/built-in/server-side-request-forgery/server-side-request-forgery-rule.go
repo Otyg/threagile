@@ -11,7 +11,7 @@ func Category() model.RiskCategory {
 		Description: "When a server system (i.e. not a client) is accessing other server systems via typical web protocols " +
 			"Server-Side Request Forgery (SSRF) or Local-File-Inclusion (LFI) or Remote-File-Inclusion (RFI) risks might arise. ",
 		Impact:     "If this risk is unmitigated, attackers might be able to access sensitive services or files of network-reachable components by modifying outgoing calls of affected components.",
-		ASVS:       "V12 - File and Resources Verification Requirements",
+		ASVS:       "[v4.0.3-V12 - File and Resources Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x20-V12-Files-Resources.md)",
 		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html",
 		Action:     "SSRF Prevention",
 		Mitigation: "Try to avoid constructing the outgoing target URL with caller controllable values. Alternatively use a mapping (whitelist) when accessing outgoing URLs instead of creating them including caller " +

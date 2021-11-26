@@ -13,9 +13,10 @@ func Category() model.RiskCategory {
 			"For DevOps usages at least a technical-user authorization is required.",
 		Impact: "If this risk is unmitigated, attackers might be able to access or modify foreign data after a successful compromise of a component within " +
 			"the system due to missing resource-based authorization checks.",
-		ASVS:       "V4 - Access Control Verification Requirements",
-		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/Access_Control_Cheat_Sheet.html",
-		Action:     "Identity Propagation and Resource-based Authorization",
+		ASVS:         "[v4.0.3-V4 - Access Control Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x12-V4-Access-Control.md)",
+		CheatSheet:   "[Access Control Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Access_Control_Cheat_Sheet.html)",
+		TestingGuide: "[v4.2-4.5 - Authorization Testing](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/05-Authorization_Testing)",
+		Action:       "Identity Propagation and Resource-based Authorization",
 		Mitigation: "When processing requests for endusers if possible authorize in the backend against the propagated " +
 			"identity of the enduser. This can be achieved in passing JWTs or similar tokens and checking them in the backend " +
 			"services. For DevOps usages apply at least a technical-user authorization.",

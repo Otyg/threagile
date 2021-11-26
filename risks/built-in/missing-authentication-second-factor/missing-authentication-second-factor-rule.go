@@ -11,10 +11,11 @@ func Category() model.RiskCategory {
 		Title: "Missing Two-Factor Authentication (2FA)",
 		Description: "Technical assets (especially multi-tenant systems) should authenticate incoming requests with " +
 			"two-factor (2FA) authentication when the asset processes or stores highly sensitive data (in terms of confidentiality, integrity, and availability) and is accessed by humans.",
-		Impact:     "If this risk is unmitigated, attackers might be able to access or modify highly sensitive data without strong authentication.",
-		ASVS:       "V2 - Authentication Verification Requirements",
-		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/Multifactor_Authentication_Cheat_Sheet.html",
-		Action:     "Authentication with Second Factor (2FA)",
+		Impact:       "If this risk is unmitigated, attackers might be able to access or modify highly sensitive data without strong authentication.",
+		ASVS:         "[v4.0.3-V2 - Authentication Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x11-V2-Authentication.md)",
+		CheatSheet:   "[Multifactor Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Multifactor_Authentication_Cheat_Sheet.html)",
+		TestingGuide: "[v4.2-4.4 - Authentication Testing](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/04-Authentication_Testing)",
+		Action:       "Authentication with Second Factor (2FA)",
 		Mitigation: "Apply an authentication method to the technical asset protecting highly sensitive data via " +
 			"two-factor authentication for human users.",
 		Check:    "Are recommendations from the linked cheat sheet and referenced ASVS chapter applied?",

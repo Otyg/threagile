@@ -6,13 +6,14 @@ import (
 
 func Category() model.RiskCategory {
 	return model.RiskCategory{
-		Id:          "missing-file-validation",
-		Title:       "Missing File Validation",
-		Description: "When a technical asset accepts files, these input files should be strictly validated about filename and type.",
-		Impact:      "If this risk is unmitigated, attackers might be able to provide malicious files to the application.",
-		ASVS:        "V12 - File and Resources Verification Requirements",
-		CheatSheet:  "https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html",
-		Action:      "File Validation",
+		Id:           "missing-file-validation",
+		Title:        "Missing File Validation",
+		Description:  "When a technical asset accepts files, these input files should be strictly validated about filename and type.",
+		Impact:       "If this risk is unmitigated, attackers might be able to provide malicious files to the application.",
+		ASVS:         "[v4.0.3-V12 - File and Resources Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x20-V12-Files-Resources.md)",
+		CheatSheet:   "[File Upload Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html)",
+		TestingGuide: "[v4.2-4.10.8 - Test Upload of Unexpected File Types, v4.2-4.10.9 - Test Upload of Malicious Files](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/10-Business_Logic_Testing)",
+		Action:       "File Validation",
 		Mitigation: "Filter by file extension and discard (if feasible) the name provided. Whitelist the accepted file types " +
 			"and determine the mime-type on the server-side (for example via \"Apache Tika\" or similar checks). If the file is retrievable by " +
 			"endusers and/or backoffice employees, consider performing scans for popular malware (if the files can be retrieved much later than they " +

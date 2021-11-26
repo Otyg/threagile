@@ -15,10 +15,11 @@ func Category() model.RiskCategory {
 		Title: "Missing Hardening",
 		Description: "Technical assets with a Relative Attacker Attractiveness (RAA) value of " + strconv.Itoa(raaLimit) + " % or higher should be " +
 			"explicitly hardened taking best practices and vendor hardening guides into account.",
-		Impact:     "If this risk remains unmitigated, attackers might be able to easier attack high-value targets.",
-		ASVS:       "V14 - Configuration Verification Requirements",
-		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/Attack_Surface_Analysis_Cheat_Sheet.html",
-		Action:     "System Hardening",
+		Impact:       "If this risk remains unmitigated, attackers might be able to easier attack high-value targets.",
+		ASVS:         "[v.4.0.3-V14 - Configuration Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x22-V14-Config.md)",
+		CheatSheet:   "[Attack Surface Analysis Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Attack_Surface_Analysis_Cheat_Sheet.html)",
+		TestingGuide: "[v4.2-4.2 - Configuration and Deployment Management Testing](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing)",
+		Action:       "System Hardening",
 		Mitigation: "Try to apply all hardening best practices (like CIS benchmarks, OWASP recommendations, vendor " +
 			"recommendations, DevSec Hardening Framework, DBSAT for Oracle databases, and others).",
 		Check:    "Are recommendations from the linked cheat sheet and referenced ASVS chapter applied?",
