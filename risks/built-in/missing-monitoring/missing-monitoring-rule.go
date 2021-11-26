@@ -10,7 +10,7 @@ func Category() model.RiskCategory {
 		Title:                      "Missing Monitoring",
 		Description:                "The model is missing a monitoring target for collecting, analysis and alerting on logdata and events.",
 		Impact:                     "Without an external platform for monitoring an attacker might go undetected and might be able to tamper with logfiles etc.",
-		ASVS:                       "v4.0.2-7 - Error Handling and Logging Verification Requirements",
+		ASVS:                       "[v4.0.3-7 - Error Handling and Logging Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x15-V7-Error-Logging.md)",
 		CheatSheet:                 "",
 		Action:                     "Logging and monitoring",
 		Mitigation:                 "Send logdata and other events to an external platform for storage and analysis.",

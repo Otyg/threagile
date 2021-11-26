@@ -14,8 +14,9 @@ func Category() model.RiskCategory {
 			"This component is usually some kind of Vault.",
 		Impact: "If this risk is unmitigated, attackers might be able to easier steal config secrets (like credentials, private keys, client certificates, etc.) once " +
 			"a vulnerability to access files is present and exploited.",
-		ASVS:           "V6 - Stored Cryptography Verification Requirements",
-		CheatSheet:     "https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html",
+		ASVS:           "[v4.0.3-V6.4 - Stored Cryptography Verification Requirements: Secret management](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x14-V6-Cryptography.md#v64-secret-management)",
+		CheatSheet:     "[Cryptographic Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html)",
+		TestingGuide:   "[v4.2-4.9 - Testing for weak cryptography](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/09-Testing_for_Weak_Cryptography)",
 		Action:         "Vault (Secret Storage)",
 		Mitigation:     "Consider using a Vault (Secret Storage) to securely store and access config secrets (like credentials, private keys, client certificates, etc.).",
 		Check:          "Is a Vault (Secret Storage) in place?",
