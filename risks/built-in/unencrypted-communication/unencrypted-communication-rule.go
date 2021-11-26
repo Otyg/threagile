@@ -10,14 +10,15 @@ func Category() model.RiskCategory {
 		Title: "Unencrypted Communication",
 		Description: "Due to the confidentiality and/or integrity rating of the data assets transferred over the " +
 			"communication link this connection must be encrypted.",
-		Impact:     "If this risk is unmitigated, network attackers might be able to to eavesdrop on unencrypted sensitive data sent between components.",
-		ASVS:       "V9 - Communication Verification Requirements",
-		CheatSheet: "https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html",
-		Action:     "Encryption of Communication Links",
-		Mitigation: "Apply transport layer encryption to the communication link.",
-		Check:      "Are recommendations from the linked cheat sheet and referenced ASVS chapter applied?",
-		Function:   model.Operations,
-		STRIDE:     model.InformationDisclosure,
+		Impact:       "If this risk is unmitigated, network attackers might be able to to eavesdrop on unencrypted sensitive data sent between components.",
+		ASVS:         "[v4.0.3-V9 - Communication Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x17-V9-Communications.md)",
+		CheatSheet:   "[Transport Layer Protection Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html)",
+		TestingGuide: "[v4.2-4.9.1 Testing for Weak Transport Layer Security](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/09-Testing_for_Weak_Cryptography/01-Testing_for_Weak_Transport_Layer_Security)",
+		Action:       "Encryption of Communication Links",
+		Mitigation:   "Apply transport layer encryption to the communication link.",
+		Check:        "Are recommendations from the linked cheat sheet and referenced ASVS chapter applied?",
+		Function:     model.Operations,
+		STRIDE:       model.InformationDisclosure,
 		DetectionLogic: "Unencrypted technical communication links of in-scope technical assets (excluding " + model.Monitoring.String() + " traffic as well as " + model.LocalFileAccess.String() + " and " + model.InProcessLibraryCall.String() + ") " +
 			"transferring sensitive data.", // TODO more detailed text required here
 		RiskAssessment: "Depending on the confidentiality rating of the transferred data-assets either medium or high risk.",
