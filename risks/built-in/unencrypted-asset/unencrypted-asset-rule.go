@@ -10,14 +10,15 @@ func Category() model.RiskCategory {
 		Title: "Unencrypted Technical Assets",
 		Description: "Due to the confidentiality rating of the technical asset itself and/or the processed data assets " +
 			"this technical asset must be encrypted. The risk rating depends on the sensitivity technical asset itself and of the data assets stored.",
-		Impact:     "If this risk is unmitigated, attackers might be able to access unencrypted data when successfully compromising sensitive components.",
-		ASVS:       "[v4.0.3-V6 - Stored Cryptography Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x14-V6-Cryptography.md)",
-		CheatSheet: "[Cryptographic Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html)",
-		Action:     "Encryption of Technical Asset",
-		Mitigation: "Apply encryption to the technical asset.",
-		Check:      "Are recommendations from the linked cheat sheet and referenced ASVS chapter applied?",
-		Function:   model.Operations,
-		STRIDE:     model.InformationDisclosure,
+		Impact:       "If this risk is unmitigated, attackers might be able to access unencrypted data when successfully compromising sensitive components.",
+		ASVS:         "[v4.0.3-V6 - Stored Cryptography Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x14-V6-Cryptography.md)",
+		CheatSheet:   "[Cryptographic Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html)",
+		TestingGuide: "[v4.2-4.9.4 - Testing for Weak Encryption](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/09-Testing_for_Weak_Cryptography/04-Testing_for_Weak_Encryption)",
+		Action:       "Encryption of Technical Asset",
+		Mitigation:   "Apply encryption to the technical asset.",
+		Check:        "Are recommendations from the linked cheat sheet and referenced ASVS chapter applied?",
+		Function:     model.Operations,
+		STRIDE:       model.InformationDisclosure,
 		DetectionLogic: "In-scope unencrypted technical assets (excluding " + model.ReverseProxy.String() +
 			", " + model.LoadBalancer.String() + ", " + model.WAF.String() + ", " + model.IDS.String() +
 			", " + model.IPS.String() + " and embedded components like " + model.Library.String() + ") " +
