@@ -1,5 +1,7 @@
 FROM golang as build
 ENV GO111MODULE=on
+ARG THREAGILE_VERSION=${THREAGILE_VERSION:-"test"}
+ENV THREAGILE_VERSION=${THREAGILE_VERSION}
 # https://stackoverflow.com/questions/36279253/go-compiled-binary-wont-run-in-an-alpine-docker-container-on-ubuntu-host
 #ENV CGO_ENABLED=0 # cannot be set as otherwise plugins don't run
 WORKDIR /app
