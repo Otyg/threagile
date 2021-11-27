@@ -6,7 +6,7 @@ ENV THREAGILE_VERSION=${THREAGILE_VERSION}
 #ENV CGO_ENABLED=0 # cannot be set as otherwise plugins don't run
 WORKDIR /app
 COPY . /app
-RUN chmod +x build-threagile.sh && ./build-threagile.sh
+RUN make
 FROM alpine
 
 LABEL type="threagile"
