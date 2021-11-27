@@ -1,10 +1,14 @@
-package missing_monitoring
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type missingMonitoring string
+
+var RiskRule missingMonitoring
+
+func (r missingMonitoring) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:                         "missing-monitoring",
 		Title:                      "Missing Monitoring",
@@ -25,11 +29,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r missingMonitoring) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r missingMonitoring) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	hasMonitoring := false
 	var mostRelevantAsset model.TechnicalAsset
@@ -108,7 +112,7 @@ func GenerateRisks() []model.Risk {
 func createRisk(technicalAsset model.TechnicalAsset, impact model.RiskExploitationImpact, probability model.RiskExploitationLikelihood) model.Risk {
 	title := "<b>Missing Monitoring (Logging platform)</b> in the threat model (referencing asset <b>" + technicalAsset.Title + "</b> as an example)"
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(probability, impact),
 		ExploitationLikelihood:       probability,
 		ExploitationImpact:           impact,

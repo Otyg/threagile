@@ -115,6 +115,7 @@ var modelFilename, templateFilename /*, diagramFilename, reportFilename, graphvi
 var createExampleModel, createStubModel, createEditingSupport, verbose, ignoreOrphanedRiskTracking, generateDataFlowDiagram, generateDataAssetDiagram, generateRisksJSON, generateTechnicalAssetsJSON, generateStatsJSON, generateRisksExcel, generateTagsExcel, generateReportPDF *bool
 var outputDir, raaPlugin, skipRiskRules, riskRulesPlugins, executeModelMacro *string
 var customRiskRules map[string]model.CustomRiskRule
+var builtinRiskRulesPlugins map[string]model.RiskRule
 var diagramDPI, serverPort *int
 
 var deferredRiskTrackingDueToWildcardMatching = make(map[string]model.RiskTracking)
@@ -652,7 +653,18 @@ func applyRiskGeneration() {
 			model.GeneratedRisksByCategory[wrong_trust_boundary_content.Category()] = risks
 		}
 	}
-
+	for id, riskPlugin := range builtinRiskRulesPlugins {
+		if _, ok := skippedRules[riskPlugin.Category().Id]; ok {
+			fmt.Println("Skipping risk rule:", id)
+			delete(skippedRules, id)
+		} else {
+			model.AddToListOfSupportedTags(riskPlugin.SupportedTags())
+			risks := riskPlugin.GenerateRisks()
+			if len(risks) > 0 {
+				model.GeneratedRisksByCategory[riskPlugin.Category()] = risks
+			}
+		}
+	}
 	// NOW THE CUSTOM RISK RULES (if any)
 	for id, customRule := range customRiskRules {
 		if _, ok := skippedRules[customRule.Category().Id]; ok {
@@ -1291,13 +1303,12 @@ func applyRAA() string {
 	return raaCalcFunc()
 }
 func loadRiskRulePlugins() {
-	var riskRulesPlugins = make(map[string]model.RiskRule)
+	builtinRiskRulesPlugins = make(map[string]model.RiskRule)
 	pluginFiles, err := filepath.Glob("risk-plugins/*.so")
 	if err != nil {
 		panic(errors.New(err.Error()))
 	}
 	for _, pluginFile := range pluginFiles {
-		fmt.Println(pluginFile)
 		_, err := os.Stat(pluginFile)
 		if os.IsNotExist(err) {
 			log.Fatal("Risk rule implementation file not found: ", pluginFile)
@@ -1307,7 +1318,6 @@ func loadRiskRulePlugins() {
 		// look up a symbol (an exported function or variable): in this case variable CustomRiskRule
 		symRiskRule, err := plug.Lookup("RiskRule")
 		checkErr(err)
-		fmt.Printf("symRiskRule: %v\n", symRiskRule)
 		// register the risk rule plugin for later use: in this case interface type model.RiskRule (defined above)
 		symRiskRuleVar, ok := symRiskRule.(model.RiskRule)
 		if !ok {
@@ -1315,9 +1325,9 @@ func loadRiskRulePlugins() {
 		}
 		// simply add to a map (just convenience) where key is the category id and value the rule's execution function
 		ruleID := symRiskRuleVar.Category().Id
-		riskRulesPlugins[ruleID] = symRiskRuleVar
+		builtinRiskRulesPlugins[ruleID] = symRiskRuleVar
 		if *verbose {
-			fmt.Println("Custom risk rule loaded:", ruleID)
+			fmt.Println("Risk rule loaded:", ruleID)
 		}
 	}
 }
@@ -1837,6 +1847,11 @@ func addSupportedTags(input []byte) []byte {
 	}
 	for _, tag := range xml_external_entity.SupportedTags() {
 		supportedTags[strings.ToLower(tag)] = true
+	}
+	for _, riskRule := range builtinRiskRulesPlugins {
+		for _, tag := range riskRule.SupportedTags() {
+			supportedTags[strings.ToLower(tag)] = true
+		}
 	}
 	tags := make([]string, 0, len(supportedTags))
 	for t := range supportedTags {
@@ -3888,6 +3903,10 @@ func parseCommandlineArgs() {
 		fmt.Println(running_as_privileged_user.Category().Id, "-->", running_as_privileged_user.Category().Title, "--> with tags:", running_as_privileged_user.SupportedTags())
 		fmt.Println(use_of_weak_cryptography.Category().Id, "-->", use_of_weak_cryptography.Category().Title, "--> with tags:", use_of_weak_cryptography.SupportedTags())
 		fmt.Println(use_of_weak_cryptography_in_transit.Category().Id, "-->", use_of_weak_cryptography_in_transit.Category().Title, "--> with tags:", use_of_weak_cryptography_in_transit.SupportedTags())
+		loadRiskRulePlugins()
+		for _, riskRule := range builtinRiskRulesPlugins {
+			fmt.Println(riskRule.Category().Id, "-->", riskRule.Category().Title, "--> with tags:", riskRule.SupportedTags())
+		}
 		fmt.Println()
 		os.Exit(0)
 	}
