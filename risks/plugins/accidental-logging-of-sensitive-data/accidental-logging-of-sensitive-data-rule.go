@@ -1,8 +1,12 @@
-package accidental_logging_of_sensitive_data
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
+
+type accidentalLoggingOfSensitiveData string
+
+var RiskRule accidentalLoggingOfSensitiveData
 
 func Category() model.RiskCategory {
 	return model.RiskCategory{

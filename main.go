@@ -43,7 +43,6 @@ import (
 	"github.com/otyg/threagile/model"
 	"github.com/otyg/threagile/report"
 
-	accidental_logging_of_sensitive_data "github.com/otyg/threagile/risks/built-in/accidental-logging-of-sensitive-data"
 	accidental_secret_leak "github.com/otyg/threagile/risks/built-in/accidental-secret-leak"
 	code_backdooring "github.com/otyg/threagile/risks/built-in/code-backdooring"
 	container_baseimage_backdooring "github.com/otyg/threagile/risks/built-in/container-baseimage-backdooring"
@@ -533,16 +532,7 @@ func applyRiskGeneration() {
 			model.GeneratedRisksByCategory[accidental_secret_leak.Category()] = risks
 		}
 	}
-	if _, ok := skippedRules[accidental_logging_of_sensitive_data.Category().Id]; ok {
-		fmt.Println("Skipping risk rule:", accidental_logging_of_sensitive_data.Category().Id)
-		delete(skippedRules, accidental_logging_of_sensitive_data.Category().Id)
-	} else {
-		model.AddToListOfSupportedTags(accidental_logging_of_sensitive_data.SupportedTags())
-		risks := accidental_logging_of_sensitive_data.GenerateRisks()
-		if len(risks) > 0 {
-			model.GeneratedRisksByCategory[accidental_logging_of_sensitive_data.Category()] = risks
-		}
-	}
+
 	if _, ok := skippedRules[code_backdooring.Category().Id]; ok {
 		fmt.Println("Skipping risk rule:", code_backdooring.Category().Id)
 		delete(skippedRules, code_backdooring.Category().Id)
@@ -1687,9 +1677,7 @@ func addSupportedTags(input []byte) []byte {
 	for _, tag := range missing_monitoring.SupportedTags() {
 		supportedTags[strings.ToLower(tag)] = true
 	}
-	for _, tag := range accidental_logging_of_sensitive_data.SupportedTags() {
-		supportedTags[strings.ToLower(tag)] = true
-	}
+
 	for _, tag := range credential_stored_outside_of_vault.SupportedTags() {
 		supportedTags[strings.ToLower(tag)] = true
 	}
@@ -3878,7 +3866,6 @@ func parseCommandlineArgs() {
 		fmt.Println("--------------------")
 		fmt.Println("Built-in contributed risk rules:")
 		fmt.Println("--------------------")
-		fmt.Println(accidental_logging_of_sensitive_data.Category().Id, "-->", accidental_logging_of_sensitive_data.Category().Title, "--> with tags:", accidental_logging_of_sensitive_data.SupportedTags())
 		fmt.Println(credential_stored_outside_of_vault.Category().Id, "-->", credential_stored_outside_of_vault.Category().Title, "--> with tags:", credential_stored_outside_of_vault.SupportedTags())
 		fmt.Println(insecure_handling_of_sensitive_data.Category().Id, "-->", insecure_handling_of_sensitive_data.Category().Title, "--> with tags:", insecure_handling_of_sensitive_data.SupportedTags())
 		fmt.Println(missing_audit_of_sensitive_asset.Category().Id, "-->", missing_audit_of_sensitive_asset.Category().Title, "--> with tags:", missing_audit_of_sensitive_asset.SupportedTags())
