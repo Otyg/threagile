@@ -4,11 +4,11 @@ import (
 	"github.com/otyg/threagile/model"
 )
 
-type accidentalLoggingOfSensitiveData string
+type accidentalLoggingOfSensitiveDataRule string
 
-var RiskRule accidentalLoggingOfSensitiveData
+var RiskRule accidentalLoggingOfSensitiveDataRule
 
-func Category() model.RiskCategory {
+func (r accidentalLoggingOfSensitiveDataRule) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:                         "accidental-logging-of-sensitive-data",
 		Title:                      "Logging of Sensitive Data",
@@ -29,11 +29,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r accidentalLoggingOfSensitiveDataRule) SupportedTags() []string {
 	return []string{"PII", "credential"}
 }
 
-func GenerateRisks() []model.Risk {
+func (r accidentalLoggingOfSensitiveDataRule) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -45,7 +45,7 @@ func GenerateRisks() []model.Risk {
 		impact := model.MediumImpact
 		datas := append(technicalAsset.DataAssetsProcessedSorted(), technicalAsset.DataAssetsStoredSorted()...)
 		for _, data := range datas {
-			if data.Confidentiality >= model.Restricted || data.IsTaggedWithAny(SupportedTags()...) {
+			if data.Confidentiality >= model.Restricted || data.IsTaggedWithAny(r.SupportedTags()...) {
 				hasSensitiveData = true
 				if data.Confidentiality == model.Confidential && impact == model.MediumImpact {
 					impact = model.HighImpact
@@ -72,7 +72,7 @@ func GenerateRisks() []model.Risk {
 func createRisk(technicalAsset model.TechnicalAsset, impact model.RiskExploitationImpact, dataIds []string) model.Risk {
 	title := "<b>Logging of Sensitive Data</b> risk at <b>" + technicalAsset.Title + "</b>"
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(model.Likely, impact),
 		ExploitationLikelihood:       model.Likely,
 		ExploitationImpact:           impact,
