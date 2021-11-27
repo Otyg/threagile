@@ -64,7 +64,6 @@ import (
 	missing_identity_propagation "github.com/otyg/threagile/risks/built-in/missing-identity-propagation"
 	missing_identity_provider_isolation "github.com/otyg/threagile/risks/built-in/missing-identity-provider-isolation"
 	missing_identity_store "github.com/otyg/threagile/risks/built-in/missing-identity-store"
-	missing_monitoring "github.com/otyg/threagile/risks/built-in/missing-monitoring"
 	missing_network_segmentation "github.com/otyg/threagile/risks/built-in/missing-network-segmentation"
 	missing_vault "github.com/otyg/threagile/risks/built-in/missing-vault"
 	missing_vault_isolation "github.com/otyg/threagile/risks/built-in/missing-vault-isolation"
@@ -189,17 +188,6 @@ func applyRiskGeneration() {
 		risks := credential_stored_outside_of_vault.GenerateRisks()
 		if len(risks) > 0 {
 			model.GeneratedRisksByCategory[credential_stored_outside_of_vault.Category()] = risks
-		}
-	}
-
-	if _, ok := skippedRules[missing_monitoring.Category().Id]; ok {
-		fmt.Println("Skipping risk rule:", missing_monitoring.Category().Id)
-		delete(skippedRules, missing_monitoring.Category().Id)
-	} else {
-		model.AddToListOfSupportedTags(missing_monitoring.SupportedTags())
-		risks := missing_monitoring.GenerateRisks()
-		if len(risks) > 0 {
-			model.GeneratedRisksByCategory[missing_monitoring.Category()] = risks
 		}
 	}
 
@@ -881,6 +869,7 @@ func doIt(inputFilename string, outputDirectory string) {
 	parseModel(inputFilename)
 	introTextRAA := applyRAA()
 	loadCustomRiskRules()
+	loadRiskRulePlugins()
 	applyRiskGeneration()
 	applyWildcardRiskTrackingEvaluation()
 	checkRiskTracking()
@@ -1301,7 +1290,37 @@ func applyRAA() string {
 	// call it
 	return raaCalcFunc()
 }
-
+func loadRiskRulePlugins() {
+	var riskRulesPlugins = make(map[string]model.RiskRule)
+	pluginFiles, err := filepath.Glob("risk-plugins/*.so")
+	if err != nil {
+		panic(errors.New(err.Error()))
+	}
+	for _, pluginFile := range pluginFiles {
+		fmt.Println(pluginFile)
+		_, err := os.Stat(pluginFile)
+		if os.IsNotExist(err) {
+			log.Fatal("Risk rule implementation file not found: ", pluginFile)
+		}
+		plug, err := plugin.Open(pluginFile)
+		checkErr(err)
+		// look up a symbol (an exported function or variable): in this case variable CustomRiskRule
+		symRiskRule, err := plug.Lookup("RiskRule")
+		checkErr(err)
+		fmt.Printf("symRiskRule: %v\n", symRiskRule)
+		// register the risk rule plugin for later use: in this case interface type model.RiskRule (defined above)
+		symRiskRuleVar, ok := symRiskRule.(model.RiskRule)
+		if !ok {
+			panic(errors.New("Risk rule plugin has no 'RiskRule' variable" + symRiskRuleVar.Category().Id))
+		}
+		// simply add to a map (just convenience) where key is the category id and value the rule's execution function
+		ruleID := symRiskRuleVar.Category().Id
+		riskRulesPlugins[ruleID] = symRiskRuleVar
+		if *verbose {
+			fmt.Println("Custom risk rule loaded:", ruleID)
+		}
+	}
+}
 func loadCustomRiskRules() {
 	customRiskRules = make(map[string]model.CustomRiskRule, 0)
 	if len(*riskRulesPlugins) > 0 {
@@ -1673,9 +1692,6 @@ func addSupportedTags(input []byte) []byte {
 		for _, tag := range customRule.SupportedTags() {
 			supportedTags[strings.ToLower(tag)] = true
 		}
-	}
-	for _, tag := range missing_monitoring.SupportedTags() {
-		supportedTags[strings.ToLower(tag)] = true
 	}
 
 	for _, tag := range credential_stored_outside_of_vault.SupportedTags() {
@@ -3869,7 +3885,6 @@ func parseCommandlineArgs() {
 		fmt.Println(credential_stored_outside_of_vault.Category().Id, "-->", credential_stored_outside_of_vault.Category().Title, "--> with tags:", credential_stored_outside_of_vault.SupportedTags())
 		fmt.Println(insecure_handling_of_sensitive_data.Category().Id, "-->", insecure_handling_of_sensitive_data.Category().Title, "--> with tags:", insecure_handling_of_sensitive_data.SupportedTags())
 		fmt.Println(missing_audit_of_sensitive_asset.Category().Id, "-->", missing_audit_of_sensitive_asset.Category().Title, "--> with tags:", missing_audit_of_sensitive_asset.SupportedTags())
-		fmt.Println(missing_monitoring.Category().Id, "-->", missing_monitoring.Category().Title, "--> with tags:", missing_monitoring.SupportedTags())
 		fmt.Println(running_as_privileged_user.Category().Id, "-->", running_as_privileged_user.Category().Title, "--> with tags:", running_as_privileged_user.SupportedTags())
 		fmt.Println(use_of_weak_cryptography.Category().Id, "-->", use_of_weak_cryptography.Category().Title, "--> with tags:", use_of_weak_cryptography.SupportedTags())
 		fmt.Println(use_of_weak_cryptography_in_transit.Category().Id, "-->", use_of_weak_cryptography_in_transit.Category().Title, "--> with tags:", use_of_weak_cryptography_in_transit.SupportedTags())

@@ -28,6 +28,7 @@ RUN rm -rf /var/cache/apk/*
 WORKDIR /app
 COPY --from=build /app/threagile /app/threagile
 COPY --from=build /app/*.so /app/
+COPY --from=build /app/risk-plugins /app/risk-plugins
 COPY --from=build /app/LICENSE.txt /app/LICENSE.txt
 COPY --from=build /app/report/template/background.pdf /app/background.pdf
 COPY --from=build /app/support/* /app/
