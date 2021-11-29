@@ -4022,10 +4022,10 @@ func createRiskRulesChecked(modelFilename string, skipRiskRules string, buildTim
 		pdfColorBlack()
 		pdf.MultiCell(160, 6, indivRiskCat.RiskAssessment, "0", "0", false)
 	}
-	for id, pluginRule := range pluginRiskRules {
+	for _, pluginRule := range pluginRiskRules {
 		pdf.Ln(-1)
 		pdf.SetFont("Helvetica", "B", fontSizeBody)
-		if model.Contains(skippedRules, id) {
+		if model.Contains(skippedRules, pluginRule.Category().Id) {
 			skipped = "SKIPPED - "
 		} else {
 			skipped = ""
@@ -4033,10 +4033,7 @@ func createRiskRulesChecked(modelFilename string, skipRiskRules string, buildTim
 		pdf.CellFormat(190, 3, skipped+pluginRule.Category().Title, "0", 0, "", false, 0, "")
 		pdf.Ln(-1)
 		pdf.SetFont("Helvetica", "", fontSizeSmall)
-		pdf.CellFormat(190, 6, id, "0", 0, "", false, 0, "")
-		pdf.Ln(-1)
-		pdf.SetFont("Helvetica", "I", fontSizeBody)
-		pdf.CellFormat(190, 6, "Custom Risk Rule", "0", 0, "", false, 0, "")
+		pdf.CellFormat(190, 6, pluginRule.Category().Id, "0", 0, "", false, 0, "")
 		pdf.Ln(-1)
 		pdf.SetFont("Helvetica", "", fontSizeBody)
 		pdfColorGray()
