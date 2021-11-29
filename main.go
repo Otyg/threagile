@@ -82,7 +82,6 @@ import (
 	unnecessary_data_transfer "github.com/otyg/threagile/risks/built-in/unnecessary-data-transfer"
 	unnecessary_technical_asset "github.com/otyg/threagile/risks/built-in/unnecessary-technical-asset"
 	untrusted_deserialization "github.com/otyg/threagile/risks/built-in/untrusted-deserialization"
-	use_of_weak_cryptography_in_transit "github.com/otyg/threagile/risks/built-in/use-of-weak-cryptography-in-transit"
 	wrong_communication_link_content "github.com/otyg/threagile/risks/built-in/wrong-communication-link-content"
 	wrong_trust_boundary_content "github.com/otyg/threagile/risks/built-in/wrong-trust-boundary-content"
 	xml_external_entity "github.com/otyg/threagile/risks/built-in/xml-external-entity"
@@ -123,17 +122,6 @@ func applyRiskGeneration() {
 	if len(*skipRiskRules) > 0 {
 		for _, id := range strings.Split(*skipRiskRules, ",") {
 			skippedRules[id] = true
-		}
-	}
-
-	if _, ok := skippedRules[use_of_weak_cryptography_in_transit.Category().Id]; ok {
-		fmt.Println("Skipping risk rule:", use_of_weak_cryptography_in_transit.Category().Id)
-		delete(skippedRules, use_of_weak_cryptography_in_transit.Category().Id)
-	} else {
-		model.AddToListOfSupportedTags(use_of_weak_cryptography_in_transit.SupportedTags())
-		risks := use_of_weak_cryptography_in_transit.GenerateRisks()
-		if len(risks) > 0 {
-			model.GeneratedRisksByCategory[use_of_weak_cryptography_in_transit.Category()] = risks
 		}
 	}
 
@@ -3825,7 +3813,6 @@ func parseCommandlineArgs() {
 		fmt.Println("--------------------")
 		fmt.Println("Built-in contributed risk rules:")
 		fmt.Println("--------------------")
-		fmt.Println(use_of_weak_cryptography_in_transit.Category().Id, "-->", use_of_weak_cryptography_in_transit.Category().Title, "--> with tags:", use_of_weak_cryptography_in_transit.SupportedTags())
 		loadRiskRulePlugins()
 		for _, riskRule := range builtinRiskRulesPlugins {
 			fmt.Println(riskRule.Category().Id, "-->", riskRule.Category().Title, "--> with tags:", riskRule.SupportedTags())
