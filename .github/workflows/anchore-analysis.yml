@@ -8,10 +8,9 @@
 
 name: Anchore Container Scan
 
-on: 
-  push:
-    branches: [ develop ]
-
+on:
+  release:
+    types: [published]
 
 jobs:
   Anchore-Build-Scan:
