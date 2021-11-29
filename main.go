@@ -82,7 +82,6 @@ import (
 	unnecessary_data_transfer "github.com/otyg/threagile/risks/built-in/unnecessary-data-transfer"
 	unnecessary_technical_asset "github.com/otyg/threagile/risks/built-in/unnecessary-technical-asset"
 	untrusted_deserialization "github.com/otyg/threagile/risks/built-in/untrusted-deserialization"
-	use_of_weak_cryptography "github.com/otyg/threagile/risks/built-in/use-of-weak-cryptography"
 	use_of_weak_cryptography_in_transit "github.com/otyg/threagile/risks/built-in/use-of-weak-cryptography-in-transit"
 	wrong_communication_link_content "github.com/otyg/threagile/risks/built-in/wrong-communication-link-content"
 	wrong_trust_boundary_content "github.com/otyg/threagile/risks/built-in/wrong-trust-boundary-content"
@@ -127,16 +126,6 @@ func applyRiskGeneration() {
 		}
 	}
 
-	if _, ok := skippedRules[use_of_weak_cryptography.Category().Id]; ok {
-		fmt.Println("Skipping risk rule:", use_of_weak_cryptography.Category().Id)
-		delete(skippedRules, use_of_weak_cryptography.Category().Id)
-	} else {
-		model.AddToListOfSupportedTags(use_of_weak_cryptography.SupportedTags())
-		risks := use_of_weak_cryptography.GenerateRisks()
-		if len(risks) > 0 {
-			model.GeneratedRisksByCategory[use_of_weak_cryptography.Category()] = risks
-		}
-	}
 	if _, ok := skippedRules[use_of_weak_cryptography_in_transit.Category().Id]; ok {
 		fmt.Println("Skipping risk rule:", use_of_weak_cryptography_in_transit.Category().Id)
 		delete(skippedRules, use_of_weak_cryptography_in_transit.Category().Id)
@@ -1661,12 +1650,6 @@ func addSupportedTags(input []byte) []byte {
 		}
 	}
 
-	for _, tag := range use_of_weak_cryptography.SupportedTags() {
-		supportedTags[strings.ToLower(tag)] = true
-	}
-	for _, tag := range use_of_weak_cryptography.SupportedTags() {
-		supportedTags[strings.ToLower(tag)] = true
-	}
 	for _, tag := range accidental_secret_leak.SupportedTags() {
 		supportedTags[strings.ToLower(tag)] = true
 	}
@@ -3842,7 +3825,6 @@ func parseCommandlineArgs() {
 		fmt.Println("--------------------")
 		fmt.Println("Built-in contributed risk rules:")
 		fmt.Println("--------------------")
-		fmt.Println(use_of_weak_cryptography.Category().Id, "-->", use_of_weak_cryptography.Category().Title, "--> with tags:", use_of_weak_cryptography.SupportedTags())
 		fmt.Println(use_of_weak_cryptography_in_transit.Category().Id, "-->", use_of_weak_cryptography_in_transit.Category().Title, "--> with tags:", use_of_weak_cryptography_in_transit.SupportedTags())
 		loadRiskRulePlugins()
 		for _, riskRule := range builtinRiskRulesPlugins {
