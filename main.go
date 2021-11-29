@@ -51,9 +51,7 @@ import (
 	cross_site_scripting "github.com/otyg/threagile/risks/built-in/cross-site-scripting"
 	dos_risky_access_across_trust_boundary "github.com/otyg/threagile/risks/built-in/dos-risky-access-across-trust-boundary"
 	incomplete_model "github.com/otyg/threagile/risks/built-in/incomplete-model"
-	insecure_handling_of_sensitive_data "github.com/otyg/threagile/risks/built-in/insecure-handling-of-sensitive-data"
 	ldap_injection "github.com/otyg/threagile/risks/built-in/ldap-injection"
-	missing_audit_of_sensitive_asset "github.com/otyg/threagile/risks/built-in/missing-audit-of-sensitive-asset"
 	missing_authentication "github.com/otyg/threagile/risks/built-in/missing-authentication"
 	missing_authentication_second_factor "github.com/otyg/threagile/risks/built-in/missing-authentication-second-factor"
 	missing_build_infrastructure "github.com/otyg/threagile/risks/built-in/missing-build-infrastructure"
@@ -129,27 +127,7 @@ func applyRiskGeneration() {
 			skippedRules[id] = true
 		}
 	}
-	//FIXME: Find a more general way to do this to avoid repetition of block
-	if _, ok := skippedRules[insecure_handling_of_sensitive_data.Category().Id]; ok {
-		fmt.Println("Skipping risk rule:", insecure_handling_of_sensitive_data.Category().Id)
-		delete(skippedRules, insecure_handling_of_sensitive_data.Category().Id)
-	} else {
-		model.AddToListOfSupportedTags(insecure_handling_of_sensitive_data.SupportedTags())
-		risks := insecure_handling_of_sensitive_data.GenerateRisks()
-		if len(risks) > 0 {
-			model.GeneratedRisksByCategory[insecure_handling_of_sensitive_data.Category()] = risks
-		}
-	}
-	if _, ok := skippedRules[missing_audit_of_sensitive_asset.Category().Id]; ok {
-		fmt.Println("Skipping risk rule:", missing_audit_of_sensitive_asset.Category().Id)
-		delete(skippedRules, missing_audit_of_sensitive_asset.Category().Id)
-	} else {
-		model.AddToListOfSupportedTags(missing_audit_of_sensitive_asset.SupportedTags())
-		risks := missing_audit_of_sensitive_asset.GenerateRisks()
-		if len(risks) > 0 {
-			model.GeneratedRisksByCategory[missing_audit_of_sensitive_asset.Category()] = risks
-		}
-	}
+
 	if _, ok := skippedRules[running_as_privileged_user.Category().Id]; ok {
 		fmt.Println("Skipping risk rule:", running_as_privileged_user.Category().Id)
 		delete(skippedRules, running_as_privileged_user.Category().Id)
@@ -1694,12 +1672,6 @@ func addSupportedTags(input []byte) []byte {
 		}
 	}
 
-	for _, tag := range insecure_handling_of_sensitive_data.SupportedTags() {
-		supportedTags[strings.ToLower(tag)] = true
-	}
-	for _, tag := range missing_audit_of_sensitive_asset.SupportedTags() {
-		supportedTags[strings.ToLower(tag)] = true
-	}
 	for _, tag := range running_as_privileged_user.SupportedTags() {
 		supportedTags[strings.ToLower(tag)] = true
 	}
@@ -3884,8 +3856,6 @@ func parseCommandlineArgs() {
 		fmt.Println("--------------------")
 		fmt.Println("Built-in contributed risk rules:")
 		fmt.Println("--------------------")
-		fmt.Println(insecure_handling_of_sensitive_data.Category().Id, "-->", insecure_handling_of_sensitive_data.Category().Title, "--> with tags:", insecure_handling_of_sensitive_data.SupportedTags())
-		fmt.Println(missing_audit_of_sensitive_asset.Category().Id, "-->", missing_audit_of_sensitive_asset.Category().Title, "--> with tags:", missing_audit_of_sensitive_asset.SupportedTags())
 		fmt.Println(running_as_privileged_user.Category().Id, "-->", running_as_privileged_user.Category().Title, "--> with tags:", running_as_privileged_user.SupportedTags())
 		fmt.Println(use_of_weak_cryptography.Category().Id, "-->", use_of_weak_cryptography.Category().Title, "--> with tags:", use_of_weak_cryptography.SupportedTags())
 		fmt.Println(use_of_weak_cryptography_in_transit.Category().Id, "-->", use_of_weak_cryptography_in_transit.Category().Title, "--> with tags:", use_of_weak_cryptography_in_transit.SupportedTags())
