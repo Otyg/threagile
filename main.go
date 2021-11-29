@@ -68,7 +68,6 @@ import (
 	mixed_targets_on_shared_runtime "github.com/otyg/threagile/risks/built-in/mixed-targets-on-shared-runtime"
 	path_traversal "github.com/otyg/threagile/risks/built-in/path-traversal"
 	push_instead_of_pull_deployment "github.com/otyg/threagile/risks/built-in/push-instead-of-pull-deployment"
-	running_as_privileged_user "github.com/otyg/threagile/risks/built-in/running-as-privileged-user"
 	search_query_injection "github.com/otyg/threagile/risks/built-in/search-query-injection"
 	server_side_request_forgery "github.com/otyg/threagile/risks/built-in/server-side-request-forgery"
 	service_registry_poisoning "github.com/otyg/threagile/risks/built-in/service-registry-poisoning"
@@ -128,16 +127,6 @@ func applyRiskGeneration() {
 		}
 	}
 
-	if _, ok := skippedRules[running_as_privileged_user.Category().Id]; ok {
-		fmt.Println("Skipping risk rule:", running_as_privileged_user.Category().Id)
-		delete(skippedRules, running_as_privileged_user.Category().Id)
-	} else {
-		model.AddToListOfSupportedTags(running_as_privileged_user.SupportedTags())
-		risks := running_as_privileged_user.GenerateRisks()
-		if len(risks) > 0 {
-			model.GeneratedRisksByCategory[running_as_privileged_user.Category()] = risks
-		}
-	}
 	if _, ok := skippedRules[use_of_weak_cryptography.Category().Id]; ok {
 		fmt.Println("Skipping risk rule:", use_of_weak_cryptography.Category().Id)
 		delete(skippedRules, use_of_weak_cryptography.Category().Id)
@@ -1672,9 +1661,6 @@ func addSupportedTags(input []byte) []byte {
 		}
 	}
 
-	for _, tag := range running_as_privileged_user.SupportedTags() {
-		supportedTags[strings.ToLower(tag)] = true
-	}
 	for _, tag := range use_of_weak_cryptography.SupportedTags() {
 		supportedTags[strings.ToLower(tag)] = true
 	}
@@ -3856,7 +3842,6 @@ func parseCommandlineArgs() {
 		fmt.Println("--------------------")
 		fmt.Println("Built-in contributed risk rules:")
 		fmt.Println("--------------------")
-		fmt.Println(running_as_privileged_user.Category().Id, "-->", running_as_privileged_user.Category().Title, "--> with tags:", running_as_privileged_user.SupportedTags())
 		fmt.Println(use_of_weak_cryptography.Category().Id, "-->", use_of_weak_cryptography.Category().Title, "--> with tags:", use_of_weak_cryptography.SupportedTags())
 		fmt.Println(use_of_weak_cryptography_in_transit.Category().Id, "-->", use_of_weak_cryptography_in_transit.Category().Title, "--> with tags:", use_of_weak_cryptography_in_transit.SupportedTags())
 		loadRiskRulePlugins()
