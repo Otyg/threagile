@@ -1268,7 +1268,8 @@ func doIt(inputFilename string, outputDirectory string) {
 			buildTimestamp,
 			modelHash,
 			introTextRAA,
-			customRiskRules)
+			customRiskRules,
+			builtinRiskRulesPlugins)
 	}
 }
 
