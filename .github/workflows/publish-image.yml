@@ -56,8 +56,7 @@ jobs:
 
       - name: Sign image with a key
         run: |
-          echo ${{secrets.COSIGN_KEY}} | base64 -d > /tmp/my_cosign.key && \
-          cat /tmp/my_cosign.key && \
+          echo ${{secrets.COSIGN_KEY}} > /tmp/my_cosign.key && \
           cosign sign --key /tmp/my_cosign.key ${TAGS}
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
