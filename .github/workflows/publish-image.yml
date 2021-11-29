@@ -59,3 +59,14 @@ jobs:
           artifact-name: sbom.xml
           format: cyclonedx
 
+      - name: Anchore scan
+        uses: anchore/scan-action@v3
+        id: scan
+        with:
+          image: ghcr.io/otyg/threagile:${{ steps.get_version.outputs.VERSION }}
+          acs-report-enable: true
+          fail-build: false
+      - name: Upload Anchore Scan Report
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}
