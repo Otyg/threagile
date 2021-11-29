@@ -1,10 +1,14 @@
-package credential_stored_outside_of_vault
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type credentialStoredOutsideOfVault string
+
+var RiskRule credentialStoredOutsideOfVault
+
+func (r credentialStoredOutsideOfVault) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:                         "credential-stored-outside-of-vault",
 		Title:                      "Credential Stored Outside Of Vault",
@@ -26,13 +30,13 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r credentialStoredOutsideOfVault) SupportedTags() []string {
 	return []string{"credential", "credential-lifetime:unknown/hardcoded", "credential-lifetime:unlimited", "credential-lifetime:long", "credential-lifetime:short", "credential-lifetime:auto-rotation", "credential-lifetime:manual-rotation"}
 }
 
-func GenerateRisks() []model.Risk {
+func (r credentialStoredOutsideOfVault) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
-	for _, data := range model.DataAssetsTaggedWithAny(SupportedTags()...) {
+	for _, data := range model.DataAssetsTaggedWithAny(r.SupportedTags()...) {
 		// credential-lifetime:unlimited set as default
 		exploitationImpact := model.MediumImpact
 		exploitationProbability := model.Frequent
@@ -70,7 +74,7 @@ func GenerateRisks() []model.Risk {
 func createRisk(technicalAsset model.TechnicalAsset, impact model.RiskExploitationImpact, probability model.RiskExploitationLikelihood, mostCriticalDataId string, dataProbability model.DataBreachProbability) model.Risk {
 	title := "<b>Credential stored outside of vault</b> risk at <b>" + technicalAsset.Title + "</b>"
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(probability, impact),
 		ExploitationLikelihood:       probability,
 		ExploitationImpact:           impact,

@@ -1,10 +1,14 @@
-package insecure_handling_of_sensitive_data
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type missingAuditOfSensitiveAsset string
+
+var RiskRule missingAuditOfSensitiveAsset
+
+func (r missingAuditOfSensitiveAsset) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:                         "missing-audit-log-of-sensitive-asset",
 		Title:                      "Missing Audit Log Of Sensitive Asset",
@@ -25,11 +29,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r missingAuditOfSensitiveAsset) SupportedTags() []string {
 	return []string{"PII"}
 }
 
-func GenerateRisks() []model.Risk {
+func (r missingAuditOfSensitiveAsset) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -38,7 +42,7 @@ func GenerateRisks() []model.Risk {
 		}
 		impact := model.MediumImpact
 		isSensitiveAsset := false
-		if technicalAsset.Confidentiality >= model.Restricted || technicalAsset.Integrity >= model.Important || technicalAsset.IsTaggedWithAny(SupportedTags()...) {
+		if technicalAsset.Confidentiality >= model.Restricted || technicalAsset.Integrity >= model.Important || technicalAsset.IsTaggedWithAny(r.SupportedTags()...) {
 			isSensitiveAsset = true
 			if technicalAsset.Confidentiality == model.Confidential || technicalAsset.Integrity == model.Critical {
 				impact = model.HighImpact
@@ -49,7 +53,7 @@ func GenerateRisks() []model.Risk {
 		if !isSensitiveAsset {
 			datas := append(technicalAsset.DataAssetsProcessedSorted(), technicalAsset.DataAssetsStoredSorted()...)
 			for _, data := range datas {
-				if data.Confidentiality >= model.Restricted || data.Integrity >= model.Important || data.IsTaggedWithAny(SupportedTags()...) {
+				if data.Confidentiality >= model.Restricted || data.Integrity >= model.Important || data.IsTaggedWithAny(r.SupportedTags()...) {
 					isSensitiveAsset = true
 					if (data.Confidentiality == model.Confidential || data.Integrity == model.Critical) && impact < model.HighImpact {
 						impact = model.HighImpact
@@ -80,7 +84,7 @@ func GenerateRisks() []model.Risk {
 func createRisk(technicalAsset model.TechnicalAsset, impact model.RiskExploitationImpact, probability model.RiskExploitationLikelihood) model.Risk {
 	title := "<b>Missing audit log</b> risk at <b>" + technicalAsset.Title + "</b>"
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(probability, impact),
 		ExploitationLikelihood:       probability,
 		ExploitationImpact:           impact,
