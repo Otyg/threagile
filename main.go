@@ -47,7 +47,6 @@ import (
 	code_backdooring "github.com/otyg/threagile/risks/built-in/code-backdooring"
 	container_baseimage_backdooring "github.com/otyg/threagile/risks/built-in/container-baseimage-backdooring"
 	container_platform_escape "github.com/otyg/threagile/risks/built-in/container-platform-escape"
-	credential_stored_outside_of_vault "github.com/otyg/threagile/risks/built-in/credential-stored-outside-of-vault"
 	cross_site_request_forgery "github.com/otyg/threagile/risks/built-in/cross-site-request-forgery"
 	cross_site_scripting "github.com/otyg/threagile/risks/built-in/cross-site-scripting"
 	dos_risky_access_across_trust_boundary "github.com/otyg/threagile/risks/built-in/dos-risky-access-across-trust-boundary"
@@ -179,16 +178,6 @@ func applyRiskGeneration() {
 		risks := use_of_weak_cryptography_in_transit.GenerateRisks()
 		if len(risks) > 0 {
 			model.GeneratedRisksByCategory[use_of_weak_cryptography_in_transit.Category()] = risks
-		}
-	}
-	if _, ok := skippedRules[credential_stored_outside_of_vault.Category().Id]; ok {
-		fmt.Println("Skipping risk rule:", credential_stored_outside_of_vault.Category().Id)
-		delete(skippedRules, credential_stored_outside_of_vault.Category().Id)
-	} else {
-		model.AddToListOfSupportedTags(credential_stored_outside_of_vault.SupportedTags())
-		risks := credential_stored_outside_of_vault.GenerateRisks()
-		if len(risks) > 0 {
-			model.GeneratedRisksByCategory[credential_stored_outside_of_vault.Category()] = risks
 		}
 	}
 
@@ -1705,9 +1694,6 @@ func addSupportedTags(input []byte) []byte {
 		}
 	}
 
-	for _, tag := range credential_stored_outside_of_vault.SupportedTags() {
-		supportedTags[strings.ToLower(tag)] = true
-	}
 	for _, tag := range insecure_handling_of_sensitive_data.SupportedTags() {
 		supportedTags[strings.ToLower(tag)] = true
 	}
@@ -3898,7 +3884,6 @@ func parseCommandlineArgs() {
 		fmt.Println("--------------------")
 		fmt.Println("Built-in contributed risk rules:")
 		fmt.Println("--------------------")
-		fmt.Println(credential_stored_outside_of_vault.Category().Id, "-->", credential_stored_outside_of_vault.Category().Title, "--> with tags:", credential_stored_outside_of_vault.SupportedTags())
 		fmt.Println(insecure_handling_of_sensitive_data.Category().Id, "-->", insecure_handling_of_sensitive_data.Category().Title, "--> with tags:", insecure_handling_of_sensitive_data.SupportedTags())
 		fmt.Println(missing_audit_of_sensitive_asset.Category().Id, "-->", missing_audit_of_sensitive_asset.Category().Title, "--> with tags:", missing_audit_of_sensitive_asset.SupportedTags())
 		fmt.Println(running_as_privileged_user.Category().Id, "-->", running_as_privileged_user.Category().Title, "--> with tags:", running_as_privileged_user.SupportedTags())
