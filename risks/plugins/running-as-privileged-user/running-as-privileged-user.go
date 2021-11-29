@@ -1,10 +1,14 @@
-package running_as_privileged_user
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type runningAsPrivilegedUser string
+
+var RiskRule runningAsPrivilegedUser
+
+func (r runningAsPrivilegedUser) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:                         "running-as-privileged-user",
 		Title:                      "Execution as Privileged User",
@@ -25,18 +29,18 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r runningAsPrivilegedUser) SupportedTags() []string {
 	return []string{"non-root", "unprivileged", "isNotAdmin"}
 }
 
-func GenerateRisks() []model.Risk {
+func (r runningAsPrivilegedUser) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		techAsset := model.ParsedModelRoot.TechnicalAssets[id]
 		if techAsset.OutOfScope || techAsset.Technology.IsClient() {
 			continue
 		}
-		if !techAsset.IsTaggedWithAny(SupportedTags()...) {
+		if !techAsset.IsTaggedWithAny(r.SupportedTags()...) {
 			var impact = model.MediumImpact
 			var likelihood = model.Likely
 			if techAsset.RAA < 0.2 {
@@ -55,7 +59,7 @@ func GenerateRisks() []model.Risk {
 func createRisk(technicalAsset model.TechnicalAsset, impact model.RiskExploitationImpact, likelihood model.RiskExploitationLikelihood) model.Risk {
 	title := "<b>Running as privileged user</b> risk at <b>" + technicalAsset.Title + "</b>"
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(likelihood, impact),
 		ExploitationLikelihood:       likelihood,
 		ExploitationImpact:           impact,

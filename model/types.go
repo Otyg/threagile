@@ -3070,7 +3070,8 @@ func (what RiskStatus) IsStillAtRisk() bool {
 
 type RiskRule interface {
 	Category() RiskCategory
-	GenerateRisks(parsedModel ParsedModel) []Risk
+	GenerateRisks() []Risk
+	SupportedTags() []string
 }
 
 // as in Go ranging over map is random order, range over them in sorted (hence reproducible) way:

@@ -43,19 +43,15 @@ import (
 	"github.com/otyg/threagile/model"
 	"github.com/otyg/threagile/report"
 
-	accidental_logging_of_sensitive_data "github.com/otyg/threagile/risks/built-in/accidental-logging-of-sensitive-data"
 	accidental_secret_leak "github.com/otyg/threagile/risks/built-in/accidental-secret-leak"
 	code_backdooring "github.com/otyg/threagile/risks/built-in/code-backdooring"
 	container_baseimage_backdooring "github.com/otyg/threagile/risks/built-in/container-baseimage-backdooring"
 	container_platform_escape "github.com/otyg/threagile/risks/built-in/container-platform-escape"
-	credential_stored_outside_of_vault "github.com/otyg/threagile/risks/built-in/credential-stored-outside-of-vault"
 	cross_site_request_forgery "github.com/otyg/threagile/risks/built-in/cross-site-request-forgery"
 	cross_site_scripting "github.com/otyg/threagile/risks/built-in/cross-site-scripting"
 	dos_risky_access_across_trust_boundary "github.com/otyg/threagile/risks/built-in/dos-risky-access-across-trust-boundary"
 	incomplete_model "github.com/otyg/threagile/risks/built-in/incomplete-model"
-	insecure_handling_of_sensitive_data "github.com/otyg/threagile/risks/built-in/insecure-handling-of-sensitive-data"
 	ldap_injection "github.com/otyg/threagile/risks/built-in/ldap-injection"
-	missing_audit_of_sensitive_asset "github.com/otyg/threagile/risks/built-in/missing-audit-of-sensitive-asset"
 	missing_authentication "github.com/otyg/threagile/risks/built-in/missing-authentication"
 	missing_authentication_second_factor "github.com/otyg/threagile/risks/built-in/missing-authentication-second-factor"
 	missing_build_infrastructure "github.com/otyg/threagile/risks/built-in/missing-build-infrastructure"
@@ -65,7 +61,6 @@ import (
 	missing_identity_propagation "github.com/otyg/threagile/risks/built-in/missing-identity-propagation"
 	missing_identity_provider_isolation "github.com/otyg/threagile/risks/built-in/missing-identity-provider-isolation"
 	missing_identity_store "github.com/otyg/threagile/risks/built-in/missing-identity-store"
-	missing_monitoring "github.com/otyg/threagile/risks/built-in/missing-monitoring"
 	missing_network_segmentation "github.com/otyg/threagile/risks/built-in/missing-network-segmentation"
 	missing_vault "github.com/otyg/threagile/risks/built-in/missing-vault"
 	missing_vault_isolation "github.com/otyg/threagile/risks/built-in/missing-vault-isolation"
@@ -73,7 +68,6 @@ import (
 	mixed_targets_on_shared_runtime "github.com/otyg/threagile/risks/built-in/mixed-targets-on-shared-runtime"
 	path_traversal "github.com/otyg/threagile/risks/built-in/path-traversal"
 	push_instead_of_pull_deployment "github.com/otyg/threagile/risks/built-in/push-instead-of-pull-deployment"
-	running_as_privileged_user "github.com/otyg/threagile/risks/built-in/running-as-privileged-user"
 	search_query_injection "github.com/otyg/threagile/risks/built-in/search-query-injection"
 	server_side_request_forgery "github.com/otyg/threagile/risks/built-in/server-side-request-forgery"
 	service_registry_poisoning "github.com/otyg/threagile/risks/built-in/service-registry-poisoning"
@@ -88,8 +82,6 @@ import (
 	unnecessary_data_transfer "github.com/otyg/threagile/risks/built-in/unnecessary-data-transfer"
 	unnecessary_technical_asset "github.com/otyg/threagile/risks/built-in/unnecessary-technical-asset"
 	untrusted_deserialization "github.com/otyg/threagile/risks/built-in/untrusted-deserialization"
-	use_of_weak_cryptography "github.com/otyg/threagile/risks/built-in/use-of-weak-cryptography"
-	use_of_weak_cryptography_in_transit "github.com/otyg/threagile/risks/built-in/use-of-weak-cryptography-in-transit"
 	wrong_communication_link_content "github.com/otyg/threagile/risks/built-in/wrong-communication-link-content"
 	wrong_trust_boundary_content "github.com/otyg/threagile/risks/built-in/wrong-trust-boundary-content"
 	xml_external_entity "github.com/otyg/threagile/risks/built-in/xml-external-entity"
@@ -117,6 +109,7 @@ var modelFilename, templateFilename /*, diagramFilename, reportFilename, graphvi
 var createExampleModel, createStubModel, createEditingSupport, verbose, ignoreOrphanedRiskTracking, generateDataFlowDiagram, generateDataAssetDiagram, generateRisksJSON, generateTechnicalAssetsJSON, generateStatsJSON, generateRisksExcel, generateTagsExcel, generateReportPDF *bool
 var outputDir, raaPlugin, skipRiskRules, riskRulesPlugins, executeModelMacro *string
 var customRiskRules map[string]model.CustomRiskRule
+var builtinRiskRulesPlugins map[string]model.RiskRule
 var diagramDPI, serverPort *int
 
 var deferredRiskTrackingDueToWildcardMatching = make(map[string]model.RiskTracking)
@@ -129,78 +122,6 @@ func applyRiskGeneration() {
 	if len(*skipRiskRules) > 0 {
 		for _, id := range strings.Split(*skipRiskRules, ",") {
 			skippedRules[id] = true
-		}
-	}
-	//FIXME: Find a more general way to do this to avoid repetition of block
-	if _, ok := skippedRules[insecure_handling_of_sensitive_data.Category().Id]; ok {
-		fmt.Println("Skipping risk rule:", insecure_handling_of_sensitive_data.Category().Id)
-		delete(skippedRules, insecure_handling_of_sensitive_data.Category().Id)
-	} else {
-		model.AddToListOfSupportedTags(insecure_handling_of_sensitive_data.SupportedTags())
-		risks := insecure_handling_of_sensitive_data.GenerateRisks()
-		if len(risks) > 0 {
-			model.GeneratedRisksByCategory[insecure_handling_of_sensitive_data.Category()] = risks
-		}
-	}
-	if _, ok := skippedRules[missing_audit_of_sensitive_asset.Category().Id]; ok {
-		fmt.Println("Skipping risk rule:", missing_audit_of_sensitive_asset.Category().Id)
-		delete(skippedRules, missing_audit_of_sensitive_asset.Category().Id)
-	} else {
-		model.AddToListOfSupportedTags(missing_audit_of_sensitive_asset.SupportedTags())
-		risks := missing_audit_of_sensitive_asset.GenerateRisks()
-		if len(risks) > 0 {
-			model.GeneratedRisksByCategory[missing_audit_of_sensitive_asset.Category()] = risks
-		}
-	}
-	if _, ok := skippedRules[running_as_privileged_user.Category().Id]; ok {
-		fmt.Println("Skipping risk rule:", running_as_privileged_user.Category().Id)
-		delete(skippedRules, running_as_privileged_user.Category().Id)
-	} else {
-		model.AddToListOfSupportedTags(running_as_privileged_user.SupportedTags())
-		risks := running_as_privileged_user.GenerateRisks()
-		if len(risks) > 0 {
-			model.GeneratedRisksByCategory[running_as_privileged_user.Category()] = risks
-		}
-	}
-	if _, ok := skippedRules[use_of_weak_cryptography.Category().Id]; ok {
-		fmt.Println("Skipping risk rule:", use_of_weak_cryptography.Category().Id)
-		delete(skippedRules, use_of_weak_cryptography.Category().Id)
-	} else {
-		model.AddToListOfSupportedTags(use_of_weak_cryptography.SupportedTags())
-		risks := use_of_weak_cryptography.GenerateRisks()
-		if len(risks) > 0 {
-			model.GeneratedRisksByCategory[use_of_weak_cryptography.Category()] = risks
-		}
-	}
-	if _, ok := skippedRules[use_of_weak_cryptography_in_transit.Category().Id]; ok {
-		fmt.Println("Skipping risk rule:", use_of_weak_cryptography_in_transit.Category().Id)
-		delete(skippedRules, use_of_weak_cryptography_in_transit.Category().Id)
-	} else {
-		model.AddToListOfSupportedTags(use_of_weak_cryptography_in_transit.SupportedTags())
-		risks := use_of_weak_cryptography_in_transit.GenerateRisks()
-		if len(risks) > 0 {
-			model.GeneratedRisksByCategory[use_of_weak_cryptography_in_transit.Category()] = risks
-		}
-	}
-	if _, ok := skippedRules[credential_stored_outside_of_vault.Category().Id]; ok {
-		fmt.Println("Skipping risk rule:", credential_stored_outside_of_vault.Category().Id)
-		delete(skippedRules, credential_stored_outside_of_vault.Category().Id)
-	} else {
-		model.AddToListOfSupportedTags(credential_stored_outside_of_vault.SupportedTags())
-		risks := credential_stored_outside_of_vault.GenerateRisks()
-		if len(risks) > 0 {
-			model.GeneratedRisksByCategory[credential_stored_outside_of_vault.Category()] = risks
-		}
-	}
-
-	if _, ok := skippedRules[missing_monitoring.Category().Id]; ok {
-		fmt.Println("Skipping risk rule:", missing_monitoring.Category().Id)
-		delete(skippedRules, missing_monitoring.Category().Id)
-	} else {
-		model.AddToListOfSupportedTags(missing_monitoring.SupportedTags())
-		risks := missing_monitoring.GenerateRisks()
-		if len(risks) > 0 {
-			model.GeneratedRisksByCategory[missing_monitoring.Category()] = risks
 		}
 	}
 
@@ -533,16 +454,7 @@ func applyRiskGeneration() {
 			model.GeneratedRisksByCategory[accidental_secret_leak.Category()] = risks
 		}
 	}
-	if _, ok := skippedRules[accidental_logging_of_sensitive_data.Category().Id]; ok {
-		fmt.Println("Skipping risk rule:", accidental_logging_of_sensitive_data.Category().Id)
-		delete(skippedRules, accidental_logging_of_sensitive_data.Category().Id)
-	} else {
-		model.AddToListOfSupportedTags(accidental_logging_of_sensitive_data.SupportedTags())
-		risks := accidental_logging_of_sensitive_data.GenerateRisks()
-		if len(risks) > 0 {
-			model.GeneratedRisksByCategory[accidental_logging_of_sensitive_data.Category()] = risks
-		}
-	}
+
 	if _, ok := skippedRules[code_backdooring.Category().Id]; ok {
 		fmt.Println("Skipping risk rule:", code_backdooring.Category().Id)
 		delete(skippedRules, code_backdooring.Category().Id)
@@ -674,7 +586,18 @@ func applyRiskGeneration() {
 			model.GeneratedRisksByCategory[wrong_trust_boundary_content.Category()] = risks
 		}
 	}
-
+	for id, riskPlugin := range builtinRiskRulesPlugins {
+		if _, ok := skippedRules[riskPlugin.Category().Id]; ok {
+			fmt.Println("Skipping risk rule:", id)
+			delete(skippedRules, id)
+		} else {
+			model.AddToListOfSupportedTags(riskPlugin.SupportedTags())
+			risks := riskPlugin.GenerateRisks()
+			if len(risks) > 0 {
+				model.GeneratedRisksByCategory[riskPlugin.Category()] = risks
+			}
+		}
+	}
 	// NOW THE CUSTOM RISK RULES (if any)
 	for id, customRule := range customRiskRules {
 		if _, ok := skippedRules[customRule.Category().Id]; ok {
@@ -891,6 +814,7 @@ func doIt(inputFilename string, outputDirectory string) {
 	parseModel(inputFilename)
 	introTextRAA := applyRAA()
 	loadCustomRiskRules()
+	loadRiskRulePlugins()
 	applyRiskGeneration()
 	applyWildcardRiskTrackingEvaluation()
 	checkRiskTracking()
@@ -1277,7 +1201,8 @@ func doIt(inputFilename string, outputDirectory string) {
 			buildTimestamp,
 			modelHash,
 			introTextRAA,
-			customRiskRules)
+			customRiskRules,
+			builtinRiskRulesPlugins)
 	}
 }
 
@@ -1311,7 +1236,35 @@ func applyRAA() string {
 	// call it
 	return raaCalcFunc()
 }
-
+func loadRiskRulePlugins() {
+	builtinRiskRulesPlugins = make(map[string]model.RiskRule)
+	pluginFiles, err := filepath.Glob("risk-plugins/*.so")
+	if err != nil {
+		panic(errors.New(err.Error()))
+	}
+	for _, pluginFile := range pluginFiles {
+		_, err := os.Stat(pluginFile)
+		if os.IsNotExist(err) {
+			log.Fatal("Risk rule implementation file not found: ", pluginFile)
+		}
+		plug, err := plugin.Open(pluginFile)
+		checkErr(err)
+		// look up a symbol (an exported function or variable): in this case variable CustomRiskRule
+		symRiskRule, err := plug.Lookup("RiskRule")
+		checkErr(err)
+		// register the risk rule plugin for later use: in this case interface type model.RiskRule (defined above)
+		symRiskRuleVar, ok := symRiskRule.(model.RiskRule)
+		if !ok {
+			panic(errors.New("Risk rule plugin has no 'RiskRule' variable" + symRiskRuleVar.Category().Id))
+		}
+		// simply add to a map (just convenience) where key is the category id and value the rule's execution function
+		ruleID := symRiskRuleVar.Category().Id
+		builtinRiskRulesPlugins[ruleID] = symRiskRuleVar
+		if *verbose {
+			fmt.Println("Risk rule loaded:", ruleID)
+		}
+	}
+}
 func loadCustomRiskRules() {
 	customRiskRules = make(map[string]model.CustomRiskRule, 0)
 	if len(*riskRulesPlugins) > 0 {
@@ -1684,30 +1637,7 @@ func addSupportedTags(input []byte) []byte {
 			supportedTags[strings.ToLower(tag)] = true
 		}
 	}
-	for _, tag := range missing_monitoring.SupportedTags() {
-		supportedTags[strings.ToLower(tag)] = true
-	}
-	for _, tag := range accidental_logging_of_sensitive_data.SupportedTags() {
-		supportedTags[strings.ToLower(tag)] = true
-	}
-	for _, tag := range credential_stored_outside_of_vault.SupportedTags() {
-		supportedTags[strings.ToLower(tag)] = true
-	}
-	for _, tag := range insecure_handling_of_sensitive_data.SupportedTags() {
-		supportedTags[strings.ToLower(tag)] = true
-	}
-	for _, tag := range missing_audit_of_sensitive_asset.SupportedTags() {
-		supportedTags[strings.ToLower(tag)] = true
-	}
-	for _, tag := range running_as_privileged_user.SupportedTags() {
-		supportedTags[strings.ToLower(tag)] = true
-	}
-	for _, tag := range use_of_weak_cryptography.SupportedTags() {
-		supportedTags[strings.ToLower(tag)] = true
-	}
-	for _, tag := range use_of_weak_cryptography.SupportedTags() {
-		supportedTags[strings.ToLower(tag)] = true
-	}
+
 	for _, tag := range accidental_secret_leak.SupportedTags() {
 		supportedTags[strings.ToLower(tag)] = true
 	}
@@ -1833,6 +1763,11 @@ func addSupportedTags(input []byte) []byte {
 	}
 	for _, tag := range xml_external_entity.SupportedTags() {
 		supportedTags[strings.ToLower(tag)] = true
+	}
+	for _, riskRule := range builtinRiskRulesPlugins {
+		for _, tag := range riskRule.SupportedTags() {
+			supportedTags[strings.ToLower(tag)] = true
+		}
 	}
 	tags := make([]string, 0, len(supportedTags))
 	for t := range supportedTags {
@@ -3878,14 +3813,10 @@ func parseCommandlineArgs() {
 		fmt.Println("--------------------")
 		fmt.Println("Built-in contributed risk rules:")
 		fmt.Println("--------------------")
-		fmt.Println(accidental_logging_of_sensitive_data.Category().Id, "-->", accidental_logging_of_sensitive_data.Category().Title, "--> with tags:", accidental_logging_of_sensitive_data.SupportedTags())
-		fmt.Println(credential_stored_outside_of_vault.Category().Id, "-->", credential_stored_outside_of_vault.Category().Title, "--> with tags:", credential_stored_outside_of_vault.SupportedTags())
-		fmt.Println(insecure_handling_of_sensitive_data.Category().Id, "-->", insecure_handling_of_sensitive_data.Category().Title, "--> with tags:", insecure_handling_of_sensitive_data.SupportedTags())
-		fmt.Println(missing_audit_of_sensitive_asset.Category().Id, "-->", missing_audit_of_sensitive_asset.Category().Title, "--> with tags:", missing_audit_of_sensitive_asset.SupportedTags())
-		fmt.Println(missing_monitoring.Category().Id, "-->", missing_monitoring.Category().Title, "--> with tags:", missing_monitoring.SupportedTags())
-		fmt.Println(running_as_privileged_user.Category().Id, "-->", running_as_privileged_user.Category().Title, "--> with tags:", running_as_privileged_user.SupportedTags())
-		fmt.Println(use_of_weak_cryptography.Category().Id, "-->", use_of_weak_cryptography.Category().Title, "--> with tags:", use_of_weak_cryptography.SupportedTags())
-		fmt.Println(use_of_weak_cryptography_in_transit.Category().Id, "-->", use_of_weak_cryptography_in_transit.Category().Title, "--> with tags:", use_of_weak_cryptography_in_transit.SupportedTags())
+		loadRiskRulePlugins()
+		for _, riskRule := range builtinRiskRulesPlugins {
+			fmt.Println(riskRule.Category().Id, "-->", riskRule.Category().Title, "--> with tags:", riskRule.SupportedTags())
+		}
 		fmt.Println()
 		os.Exit(0)
 	}

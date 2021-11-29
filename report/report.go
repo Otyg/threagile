@@ -100,7 +100,9 @@ func WriteReportPDF(reportFilename string,
 	skipRiskRules string,
 	buildTimestamp string,
 	modelHash string,
-	introTextRAA string, customRiskRules map[string]model.CustomRiskRule) {
+	introTextRAA string,
+	customRiskRules map[string]model.CustomRiskRule,
+	pluginRiskRules map[string]model.RiskRule) {
 	initReport()
 	createPdfAndInitMetadata()
 	parseBackgroundTemplate(templateFilename)
@@ -128,7 +130,7 @@ func WriteReportPDF(reportFilename string,
 	createDataAssets()
 	createTrustBoundaries()
 	createSharedRuntimes()
-	createRiskRulesChecked(modelFilename, skipRiskRules, buildTimestamp, modelHash, customRiskRules)
+	createRiskRulesChecked(modelFilename, skipRiskRules, buildTimestamp, modelHash, customRiskRules, pluginRiskRules)
 	createDisclaimer()
 	writeReportToFile(reportFilename)
 }
@@ -3914,7 +3916,7 @@ func createSharedRuntimes() {
 	}
 }
 
-func createRiskRulesChecked(modelFilename string, skipRiskRules string, buildTimestamp string, modelHash string, customRiskRules map[string]model.CustomRiskRule) {
+func createRiskRulesChecked(modelFilename string, skipRiskRules string, buildTimestamp string, modelHash string, customRiskRules map[string]model.CustomRiskRule, pluginRiskRules map[string]model.RiskRule) {
 	pdf.SetTextColor(0, 0, 0)
 	title := "Risk Rules Checked by Threagile"
 	addHeadline(title, false)
@@ -4020,7 +4022,41 @@ func createRiskRulesChecked(modelFilename string, skipRiskRules string, buildTim
 		pdfColorBlack()
 		pdf.MultiCell(160, 6, indivRiskCat.RiskAssessment, "0", "0", false)
 	}
-
+	for _, pluginRule := range pluginRiskRules {
+		pdf.Ln(-1)
+		pdf.SetFont("Helvetica", "B", fontSizeBody)
+		if model.Contains(skippedRules, pluginRule.Category().Id) {
+			skipped = "SKIPPED - "
+		} else {
+			skipped = ""
+		}
+		pdf.CellFormat(190, 3, skipped+pluginRule.Category().Title, "0", 0, "", false, 0, "")
+		pdf.Ln(-1)
+		pdf.SetFont("Helvetica", "", fontSizeSmall)
+		pdf.CellFormat(190, 6, pluginRule.Category().Id, "0", 0, "", false, 0, "")
+		pdf.Ln(-1)
+		pdf.SetFont("Helvetica", "", fontSizeBody)
+		pdfColorGray()
+		pdf.CellFormat(5, 6, "", "0", 0, "", false, 0, "")
+		pdf.CellFormat(25, 6, "STRIDE:", "0", 0, "", false, 0, "")
+		pdfColorBlack()
+		pdf.MultiCell(160, 6, pluginRule.Category().STRIDE.Title(), "0", "0", false)
+		pdfColorGray()
+		pdf.CellFormat(5, 6, "", "0", 0, "", false, 0, "")
+		pdf.CellFormat(25, 6, "Description:", "0", 0, "", false, 0, "")
+		pdfColorBlack()
+		pdf.MultiCell(160, 6, firstParagraph(pluginRule.Category().Description), "0", "0", false)
+		pdfColorGray()
+		pdf.CellFormat(5, 6, "", "0", 0, "", false, 0, "")
+		pdf.CellFormat(25, 6, "Detection:", "0", 0, "", false, 0, "")
+		pdfColorBlack()
+		pdf.MultiCell(160, 6, pluginRule.Category().DetectionLogic, "0", "0", false)
+		pdfColorGray()
+		pdf.CellFormat(5, 6, "", "0", 0, "", false, 0, "")
+		pdf.CellFormat(25, 6, "Rating:", "0", 0, "", false, 0, "")
+		pdfColorBlack()
+		pdf.MultiCell(160, 6, pluginRule.Category().RiskAssessment, "0", "0", false)
+	}
 	pdf.Ln(-1)
 	pdf.SetFont("Helvetica", "B", fontSizeBody)
 	if model.Contains(skippedRules, accidental_secret_leak.Category().Id) {
