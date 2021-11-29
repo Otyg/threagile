@@ -1,10 +1,14 @@
-package use_of_weak_cryptography_in_transit
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type useOfWeakCryptoInTransit string
+
+var RiskRule useOfWeakCryptoInTransit
+
+func (r useOfWeakCryptoInTransit) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:                         "use-of-weak-cryptography-in-transit",
 		Title:                      "Use Of Weak Cryptography in transit",
@@ -25,10 +29,10 @@ func Category() model.RiskCategory {
 		CWE:                        327,
 	}
 }
-func SupportedTags() []string {
+func (r useOfWeakCryptoInTransit) SupportedTags() []string {
 	return []string{}
 }
-func GenerateRisks() []model.Risk {
+func (r useOfWeakCryptoInTransit) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, technicalAsset := range model.ParsedModelRoot.TechnicalAssets {
 		var mostCriticalCommlink model.CommunicationLink
@@ -70,7 +74,7 @@ func GenerateRisks() []model.Risk {
 func createRisk(technicalAsset model.TechnicalAsset, commLink model.CommunicationLink, dataAsset model.DataAsset, exploitationImpact model.RiskExploitationImpact) model.Risk {
 	title := "<b>Use of weak cryptography in transit</b> risk at <b>" + technicalAsset.Title + "</b>"
 	risk := model.Risk{
-		Category:                        Category(),
+		Category:                        RiskRule.Category(),
 		Severity:                        model.CalculateSeverity(model.Unlikely, exploitationImpact),
 		ExploitationLikelihood:          model.Unlikely,
 		ExploitationImpact:              exploitationImpact,
