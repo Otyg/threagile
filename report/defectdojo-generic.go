@@ -41,6 +41,13 @@ type Finding struct {
 	UniqId                string `json:"unique_id_from_tool"`
 	VulnId                string `json:"vuln_id_from_tool"`
 	Component             string `json:"component_name"`
+	Active                bool   `json:"active"`
+	Verified              bool   `json:"verified"`
+	FalsePositive         bool   `json:"false_p"`
+	Mitigated             bool   `json:"is_mitigated"`
+	RiskAccepted          bool   `json:"risk_accepted"`
+	UnderDefectReview     bool   `json:"under_defect_review"`
+	UnderReview           bool   `json:"under_review"`
 }
 
 func WriteDefectdojoGeneric(filename string) {
@@ -49,6 +56,7 @@ func WriteDefectdojoGeneric(filename string) {
 	for _, category := range model.SortedRiskCategories() {
 		risks := model.SortedRisksOfCategory(category)
 		for _, risk := range risks {
+			status := risk.GetRiskTrackingStatusDefaultingUnchecked().String()
 			var finding Finding
 			switch risk.Severity.String() {
 			case "low":
@@ -64,6 +72,33 @@ func WriteDefectdojoGeneric(filename string) {
 			}
 			finding.StaticFinding = true
 			finding.DynamicFinding = false
+			finding.FalsePositive = false
+			finding.Active = true
+			finding.Mitigated = false
+			finding.RiskAccepted = false
+			finding.UnderDefectReview = false
+			finding.UnderReview = false
+			if status == "false-positive" {
+				finding.FalsePositive = true
+				finding.Active = false
+			}
+
+			if status == "mitigated" {
+				finding.Mitigated = true
+				finding.Active = false
+				finding.Verified = true
+			}
+
+			if status == "accepted" {
+				finding.RiskAccepted = true
+				finding.Verified = true
+			}
+
+			if status == "in-discussion" {
+				finding.UnderDefectReview = true
+				finding.UnderReview = true
+			}
+
 			finding.CWE = risk.Category.CWE
 			finding.Title = strings.Title(risk.Category.Function.String()) + ": " + strings.Title(strings.ReplaceAll(strings.ReplaceAll(strings.ToLower(risk.Title), "<b>", ""), "</b>", ""))
 			finding.Mitigation = risk.Category.Mitigation +
