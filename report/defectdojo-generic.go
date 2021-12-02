@@ -9,24 +9,6 @@ import (
 	"github.com/otyg/threagile/support"
 )
 
-/*type Risk struct {
-	Category                        RiskCategory               `json:"-"`           // just for navigational convenience... not JSON marshalled
-	CategoryId                      string                     `json:"category"`    // used for better JSON marshalling, is assigned in risk evaluation phase automatically
-	RiskStatus                      RiskStatus                 `json:"risk_status"` // used for better JSON marshalling, is assigned in risk evaluation phase automatically
-	Severity                        RiskSeverity               `json:"severity"`
-	ExploitationLikelihood          RiskExploitationLikelihood `json:"exploitation_likelihood"`
-	ExploitationImpact              RiskExploitationImpact     `json:"exploitation_impact"`
-	Title                           string                     `json:"title"`
-	SyntheticId                     string                     `json:"synthetic_id"`
-	MostRelevantDataAssetId         string                     `json:"most_relevant_data_asset"`
-	MostRelevantTechnicalAssetId    string                     `json:"most_relevant_technical_asset"`
-	MostRelevantTrustBoundaryId     string                     `json:"most_relevant_trust_boundary"`
-	MostRelevantSharedRuntimeId     string                     `json:"most_relevant_shared_runtime"`
-	MostRelevantCommunicationLinkId string                     `json:"most_relevant_communication_link"`
-	DataBreachProbability           DataBreachProbability      `json:"data_breach_probability"`
-	DataBreachTechnicalAssetIDs     []string                   `json:"data_breach_technical_assets"`
-	// TODO: refactor all "Id" here to "ID"?
-}*/
 type Finding struct {
 	Title                 string `json:"title"`
 	Description           string `json:"description"`

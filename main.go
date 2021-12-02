@@ -106,7 +106,7 @@ var drawSpaceLinesForLayoutUnfortunatelyFurtherSeparatesAllRanks = true
 var buildTimestamp = ""
 
 var modelFilename, templateFilename /*, diagramFilename, reportFilename, graphvizConversion*/ *string
-var createExampleModel, createStubModel, createEditingSupport, verbose, ignoreOrphanedRiskTracking, generateDataFlowDiagram, generateDataAssetDiagram, generateRisksJSON, generateTechnicalAssetsJSON, generateStatsJSON, generateRisksExcel, generateTagsExcel, generateReportPDF *bool
+var createExampleModel, createStubModel, createEditingSupport, verbose, ignoreOrphanedRiskTracking, generateDataFlowDiagram, generateDataAssetDiagram, generateRisksJSON, generateTechnicalAssetsJSON, generateStatsJSON, generateRisksExcel, generateTagsExcel, generateReportPDF, generateDefectdojoGeneric *bool
 var outputDir, raaPlugin, skipRiskRules, riskRulesPlugins, executeModelMacro *string
 var customRiskRules map[string]model.CustomRiskRule
 var builtinRiskRulesPlugins map[string]model.RiskRule
@@ -1107,7 +1107,7 @@ func doIt(inputFilename string, outputDirectory string) {
 		return
 	}
 
-	renderDataFlowDiagram, renderDataAssetDiagram, renderRisksJSON, renderTechnicalAssetsJSON, renderStatsJSON, renderRisksExcel, renderTagsExcel, renderPDF := *generateDataFlowDiagram, *generateDataAssetDiagram, *generateRisksJSON, *generateTechnicalAssetsJSON, *generateStatsJSON, *generateRisksExcel, *generateTagsExcel, *generateReportPDF
+	renderDataFlowDiagram, renderDataAssetDiagram, renderRisksJSON, renderTechnicalAssetsJSON, renderStatsJSON, renderRisksExcel, renderTagsExcel, renderPDF, renderDefectDojo := *generateDataFlowDiagram, *generateDataAssetDiagram, *generateRisksJSON, *generateTechnicalAssetsJSON, *generateStatsJSON, *generateRisksExcel, *generateTagsExcel, *generateReportPDF, *generateDefectdojoGeneric
 	if renderPDF { // as the PDF report includes both diagrams
 		renderDataFlowDiagram, renderDataAssetDiagram = true, true
 	}
@@ -1136,14 +1136,18 @@ func doIt(inputFilename string, outputDirectory string) {
 		dotFile := writeDataAssetDiagramGraphvizDOT(gvFile, *diagramDPI)
 		renderDataAssetDiagramGraphvizImage(dotFile, outputDirectory)
 	}
-
+	if renderDefectDojo {
+		if *verbose {
+			fmt.Println("Writing risks defectdojo generic json")
+		}
+		report.WriteDefectdojoGeneric(outputDirectory + "/defectdojo.json")
+	}
 	// risks as risks json
 	if renderRisksJSON {
 		if *verbose {
 			fmt.Println("Writing risks json")
 		}
 		report.WriteRisksJSON(outputDirectory + "/" + jsonRisksFilename)
-		report.WriteDefectdojoGeneric(outputDirectory + "/defectdojo.json")
 	}
 
 	// technical assets json
@@ -1395,9 +1399,9 @@ func execute(context *gin.Context, dryRun bool) (yamlContent []byte, ok bool) {
 	defer os.Remove(tmpResultFile.Name())
 
 	if dryRun {
-		doItViaRuntimeCall(yamlFile, tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, false, true, true, true, 40)
+		doItViaRuntimeCall(yamlFile, tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, false, true, true, true, true, 40)
 	} else {
-		doItViaRuntimeCall(yamlFile, tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, true, true, true, true, true, true, true, true, dpi)
+		doItViaRuntimeCall(yamlFile, tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, true, true, true, true, true, true, true, true, true, dpi)
 	}
 	checkErr(err)
 
@@ -1435,7 +1439,7 @@ func execute(context *gin.Context, dryRun bool) (yamlContent []byte, ok bool) {
 
 // ultimately to avoid any in-process memory and/or data leaks by the used third party libs like PDF generation: exec and quit
 func doItViaRuntimeCall(modelFile string, outputDir string, executeModelMacro string, raaPlugin string, customRiskRulesPlugins string, skipRiskRules string, ignoreOrphanedRiskTracking bool,
-	generateDataFlowDiagram, generateDataAssetDiagram, generateReportPdf, generateRisksExcel, generateTagsExcel, generateRisksJSON, generateTechnicalAssetsJSON, generateStatsJSON bool,
+	generateDataFlowDiagram, generateDataAssetDiagram, generateReportPdf, generateRisksExcel, generateTagsExcel, generateRisksJSON, generateTechnicalAssetsJSON, generateDefectdojo, generateStatsJSON bool,
 	dpi int) {
 	// Remember to also add the same args to the exec based sub-process calls!
 	var cmd *exec.Cmd
@@ -1454,6 +1458,9 @@ func doItViaRuntimeCall(modelFile string, outputDir string, executeModelMacro st
 	}
 	if generateReportPdf {
 		args = append(args, "-generate-report-pdf")
+	}
+	if generateDefectdojo {
+		args = append(args, "-generate-defectdojo-json")
 	}
 	if generateRisksExcel {
 		args = append(args, "-generate-risks-excel")
@@ -1959,7 +1966,7 @@ func analyzeModelOnServerDirectly(context *gin.Context) {
 
 	err = ioutil.WriteFile(tmpModelFile.Name(), []byte(yamlText), 0400)
 
-	doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, true, true, true, true, true, true, true, true, dpi)
+	doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, true, true, true, true, true, true, true, true, true, dpi)
 	if err != nil {
 		handleErrorInServiceCall(err, context)
 		return
@@ -2074,42 +2081,42 @@ func streamResponse(context *gin.Context, responseType responseType) {
 	defer os.RemoveAll(tmpOutputDir)
 	err = ioutil.WriteFile(tmpModelFile.Name(), []byte(yamlText), 0400)
 	if responseType == dataFlowDiagram {
-		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, true, false, false, false, false, false, false, false, dpi)
+		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, true, false, false, false, false, false, false, false, false, dpi)
 		if err != nil {
 			handleErrorInServiceCall(err, context)
 			return
 		}
 		context.File(tmpOutputDir + "/" + dataFlowDiagramFilenamePNG)
 	} else if responseType == dataAssetDiagram {
-		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, true, false, false, false, false, false, false, dpi)
+		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, true, false, false, false, false, false, false, false, dpi)
 		if err != nil {
 			handleErrorInServiceCall(err, context)
 			return
 		}
 		context.File(tmpOutputDir + "/" + dataAssetDiagramFilenamePNG)
 	} else if responseType == reportPDF {
-		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, true, false, false, false, false, false, dpi)
+		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, true, false, false, false, false, false, false, dpi)
 		if err != nil {
 			handleErrorInServiceCall(err, context)
 			return
 		}
 		context.FileAttachment(tmpOutputDir+"/"+reportFilename, reportFilename)
 	} else if responseType == risksExcel {
-		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, true, false, false, false, false, dpi)
+		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, true, false, false, false, false, false, dpi)
 		if err != nil {
 			handleErrorInServiceCall(err, context)
 			return
 		}
 		context.FileAttachment(tmpOutputDir+"/"+excelRisksFilename, excelRisksFilename)
 	} else if responseType == tagsExcel {
-		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, true, false, false, false, dpi)
+		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, true, false, false, false, false, dpi)
 		if err != nil {
 			handleErrorInServiceCall(err, context)
 			return
 		}
 		context.FileAttachment(tmpOutputDir+"/"+excelTagsFilename, excelTagsFilename)
 	} else if responseType == risksJSON {
-		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, false, true, false, false, dpi)
+		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, false, true, false, false, false, dpi)
 		if err != nil {
 			handleErrorInServiceCall(err, context)
 			return
@@ -2121,7 +2128,7 @@ func streamResponse(context *gin.Context, responseType responseType) {
 		}
 		context.Data(http.StatusOK, "application/json", json) // stream directly with JSON content-type in response instead of file download
 	} else if responseType == technicalAssetsJSON {
-		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, false, true, true, false, dpi)
+		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, false, true, true, false, false, dpi)
 		if err != nil {
 			handleErrorInServiceCall(err, context)
 			return
@@ -2133,7 +2140,7 @@ func streamResponse(context *gin.Context, responseType responseType) {
 		}
 		context.Data(http.StatusOK, "application/json", json) // stream directly with JSON content-type in response instead of file download
 	} else if responseType == statsJSON {
-		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, false, false, false, true, dpi)
+		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, false, false, false, true, false, dpi)
 		if err != nil {
 			handleErrorInServiceCall(err, context)
 			return
@@ -3631,6 +3638,7 @@ func parseCommandlineArgs() {
 	generateRisksExcel = flag.Bool("generate-risks-excel", true, "generate risks excel")
 	generateTagsExcel = flag.Bool("generate-tags-excel", true, "generate tags excel")
 	generateReportPDF = flag.Bool("generate-report-pdf", true, "generate report pdf, including diagrams")
+	generateDefectdojoGeneric = flag.Bool("generate-defectdojo-json", true, "generate defectdojo generic json")
 	diagramDPI = flag.Int("diagram-dpi", defaultGraphvizDPI, "DPI used to render: maximum is "+strconv.Itoa(maxGraphvizDPI)+"")
 	skipRiskRules = flag.String("skip-risk-rules", "", "comma-separated list of risk rules (by their ID) to skip")
 	riskRulesPlugins = flag.String("custom-risk-rules-plugins", "", "comma-separated list of plugins (.so shared object) file names with custom risk rules to load")
