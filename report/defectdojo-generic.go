@@ -86,9 +86,9 @@ func WriteDefectdojoGeneric(filename string) {
 				finding.Title = strings.Title(risk.Category.Function.String()) + ": " + strings.Title(strings.ReplaceAll(strings.ReplaceAll(strings.ToLower(risk.Title), "<b>", ""), "</b>", ""))
 				finding.Mitigation = risk.Category.Mitigation +
 					"\nCheck: " + risk.Category.Check +
-					"\nASVS: " + support.GetLinkText(risk.Category.ASVS) +
-					"\nCheatSheet: " + support.GetLinkText(risk.Category.CheatSheet) +
-					"\nTestingGuide: " + support.GetLinkText(risk.Category.TestingGuide)
+					"\nASVS: " + risk.Category.ASVS +
+					"\nCheatSheet: " + risk.Category.CheatSheet +
+					"\nTestingGuide: " + risk.Category.TestingGuide
 				finding.Impact = risk.Category.Impact
 				finding.SeverityJustification = risk.Category.RiskAssessment
 				finding.Description = "STRIDE: " + strings.Title(risk.Category.STRIDE.String()) +

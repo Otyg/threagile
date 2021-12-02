@@ -1141,6 +1141,7 @@ func doIt(inputFilename string, outputDirectory string) {
 			fmt.Println("Writing risks defectdojo generic json")
 		}
 		report.WriteDefectdojoGeneric(outputDirectory + "/defectdojo.json")
+		report.WriteOpenSarif(outputDirectory + "/risks.sarif")
 	}
 	// risks as risks json
 	if renderRisksJSON {
