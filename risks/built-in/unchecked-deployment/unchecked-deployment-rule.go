@@ -38,7 +38,7 @@ func SupportedTags() []string {
 func GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, technicalAsset := range model.ParsedModelRoot.TechnicalAssets {
-		if technicalAsset.Technology.IsDevelopmentRelevant() {
+		if !technicalAsset.OutOfScope && technicalAsset.Technology.IsDevelopmentRelevant() {
 			risks = append(risks, createRisk(technicalAsset))
 		}
 	}

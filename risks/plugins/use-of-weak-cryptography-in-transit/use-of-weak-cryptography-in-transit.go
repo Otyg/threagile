@@ -35,6 +35,9 @@ func (r useOfWeakCryptoInTransit) SupportedTags() []string {
 func (r useOfWeakCryptoInTransit) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, technicalAsset := range model.ParsedModelRoot.TechnicalAssets {
+		if technicalAsset.OutOfScope {
+			continue
+		}
 		var mostCriticalCommlink model.CommunicationLink
 		var hasEncryptedComLinks = false
 		for _, comm := range technicalAsset.CommunicationLinksSorted() {
