@@ -39,70 +39,68 @@ func WriteDefectdojoGeneric(filename string) {
 		risks := model.SortedRisksOfCategory(category)
 		for _, risk := range risks {
 			status := risk.GetRiskTrackingStatusDefaultingUnchecked().String()
-			if !model.ParsedModelRoot.TechnicalAssets[risk.MostRelevantTechnicalAssetId].OutOfScope {
-				var finding Finding
-				switch risk.Severity.String() {
-				case "low":
-					finding.Severity = "Info"
-				case "medium":
-					finding.Severity = "Low"
-				case "elevated":
-					finding.Severity = "Medium"
-				case "high":
-					finding.Severity = "High"
-				case "critical":
-					finding.Severity = "Critical"
-				}
-				finding.StaticFinding = true
-				finding.DynamicFinding = false
-				finding.FalsePositive = false
-				finding.Active = true
-				finding.Mitigated = false
-				finding.RiskAccepted = false
-				finding.UnderDefectReview = false
-				finding.UnderReview = false
-				if status == "false-positive" {
-					finding.FalsePositive = true
-					finding.Active = false
-				}
-
-				if status == "mitigated" {
-					finding.Mitigated = true
-					finding.Active = false
-					finding.Verified = true
-				}
-
-				if status == "accepted" {
-					finding.RiskAccepted = true
-					finding.Verified = true
-				}
-
-				if status == "in-discussion" {
-					finding.UnderDefectReview = true
-					finding.UnderReview = true
-				}
-
-				finding.CWE = risk.Category.CWE
-				finding.Title = strings.Title(risk.Category.Function.String()) + ": " + strings.Title(strings.ReplaceAll(strings.ReplaceAll(strings.ToLower(risk.Title), "<b>", ""), "</b>", ""))
-				finding.Mitigation = risk.Category.Mitigation +
-					"\nCheck: " + risk.Category.Check +
-					"\nASVS: " + risk.Category.ASVS +
-					"\nCheatSheet: " + risk.Category.CheatSheet +
-					"\nTestingGuide: " + risk.Category.TestingGuide
-				finding.Impact = risk.Category.Impact
-				finding.SeverityJustification = risk.Category.RiskAssessment
-				finding.Description = "STRIDE: " + strings.Title(risk.Category.STRIDE.String()) +
-					"\n" + risk.Category.Description +
-					"\nDetection logic: " + risk.Category.DetectionLogic +
-					"\nFalse positives: " + risk.Category.FalsePositives
-				finding.References = support.GetLinkUrl(risk.Category.ASVS) +
-					"\n" + support.GetLinkUrl(risk.Category.CheatSheet) +
-					"\n" + support.GetLinkUrl(risk.Category.TestingGuide)
-				finding.UniqId = risk.SyntheticId
-				finding.VulnId = risk.CategoryId
-				finding.Component = strings.Title(risk.Category.Function.String())
-				findings = append(findings, finding)
+			var finding Finding
+			switch risk.Severity.String() {
+			case "low":
+				finding.Severity = "Info"
+			case "medium":
+				finding.Severity = "Low"
+			case "elevated":
+				finding.Severity = "Medium"
+			case "high":
+				finding.Severity = "High"
+			case "critical":
+				finding.Severity = "Critical"
 			}
+			finding.StaticFinding = true
+			finding.DynamicFinding = false
+			finding.FalsePositive = false
+			finding.Active = true
+			finding.Mitigated = false
+			finding.RiskAccepted = false
+			finding.UnderDefectReview = false
+			finding.UnderReview = false
+			if status == "false-positive" {
+				finding.FalsePositive = true
+				finding.Active = false
+			}
+
+			if status == "mitigated" {
+				finding.Mitigated = true
+				finding.Active = false
+				finding.Verified = true
+			}
+
+			if status == "accepted" {
+				finding.RiskAccepted = true
+				finding.Verified = true
+			}
+
+			if status == "in-discussion" {
+				finding.UnderDefectReview = true
+				finding.UnderReview = true
+			}
+
+			finding.CWE = risk.Category.CWE
+			finding.Title = strings.Title(risk.Category.Function.String()) + ": " + strings.Title(strings.ReplaceAll(strings.ReplaceAll(strings.ToLower(risk.Title), "<b>", ""), "</b>", ""))
+			finding.Mitigation = risk.Category.Mitigation +
+				"\nCheck: " + risk.Category.Check +
+				"\nASVS: " + risk.Category.ASVS +
+				"\nCheatSheet: " + risk.Category.CheatSheet +
+				"\nTestingGuide: " + risk.Category.TestingGuide
+			finding.Impact = risk.Category.Impact
+			finding.SeverityJustification = risk.Category.RiskAssessment
+			finding.Description = "STRIDE: " + strings.Title(risk.Category.STRIDE.String()) +
+				"\n" + risk.Category.Description +
+				"\nDetection logic: " + risk.Category.DetectionLogic +
+				"\nFalse positives: " + risk.Category.FalsePositives
+			finding.References = support.GetLinkUrl(risk.Category.ASVS) +
+				"\n" + support.GetLinkUrl(risk.Category.CheatSheet) +
+				"\n" + support.GetLinkUrl(risk.Category.TestingGuide)
+			finding.UniqId = risk.SyntheticId
+			finding.VulnId = risk.CategoryId
+			finding.Component = strings.Title(risk.Category.Function.String())
+			findings = append(findings, finding)
 		}
 	}
 	meh := make(map[string][]Finding)
