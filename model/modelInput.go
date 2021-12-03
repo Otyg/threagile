@@ -41,35 +41,6 @@ type InputDataAsset struct {
 	Justification_cia_rating string   `json:"justification_cia_rating"`
 }
 
-type InputTechnicalAsset struct {
-	ID                         string                            `json:"id"`
-	Description                string                            `json:"description"`
-	Type                       string                            `json:"type"`
-	Usage                      string                            `json:"usage"`
-	Used_as_client_by_human    bool                              `json:"used_as_client_by_human"`
-	Out_of_scope               bool                              `json:"out_of_scope"`
-	Justification_out_of_scope string                            `json:"justification_out_of_scope"`
-	Size                       string                            `json:"size"`
-	Technology                 string                            `json:"technology"`
-	Tags                       []string                          `json:"tags"`
-	Internet                   bool                              `json:"internet"`
-	Machine                    string                            `json:"machine"`
-	Encryption                 string                            `json:"encryption"`
-	Owner                      string                            `json:"owner"`
-	Confidentiality            string                            `json:"confidentiality"`
-	Integrity                  string                            `json:"integrity"`
-	Availability               string                            `json:"availability"`
-	Justification_cia_rating   string                            `json:"justification_cia_rating"`
-	Multi_tenant               bool                              `json:"multi_tenant"`
-	Redundant                  bool                              `json:"redundant"`
-	Custom_developed_parts     bool                              `json:"custom_developed_parts"`
-	Data_assets_processed      []string                          `json:"data_assets_processed"`
-	Data_assets_stored         []string                          `json:"data_assets_stored"`
-	Data_formats_accepted      []string                          `json:"data_formats_accepted"`
-	Diagram_tweak_order        int                               `json:"diagram_tweak_order"`
-	Communication_links        map[string]InputCommunicationLink `json:"communication_links"`
-}
-
 type InputCommunicationLink struct {
 	Target                   string   `json:"target"`
 	Description              string   `json:"description"`
