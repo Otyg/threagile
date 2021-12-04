@@ -27,13 +27,6 @@ type ModelInput struct { // TODO: Eventually remove this and directly use Parsed
 	Diagram_tweak_same_rank_assets                     []string
 }
 
-type InputSharedRuntime struct {
-	ID                       string   `json:"id"`
-	Description              string   `json:"description"`
-	Tags                     []string `json:"tags"`
-	Technical_assets_running []string `json:"technical_assets_running"`
-}
-
 type InputIndividualRiskCategory struct {
 	ID                            string                         `json:"id"`
 	Description                   string                         `json:"description"`
