@@ -8,6 +8,78 @@ type InputTrustBoundary struct {
 	Technical_assets_inside []string `json:"technical_assets_inside"`
 	Trust_boundaries_nested []string `json:"trust_boundaries_nested"`
 }
+
+type TrustBoundary struct {
+	Id, Title, Description string
+	Type                   TrustBoundaryType
+	Tags                   []string
+	TechnicalAssetsInside  []string
+	TrustBoundariesNested  []string
+}
+
+func (what TrustBoundary) IsTaggedWithAny(tags ...string) bool {
+	return ContainsCaseInsensitiveAny(what.Tags, tags...)
+}
+
+func (what TrustBoundary) IsTaggedWithBaseTag(basetag string) bool {
+	return IsTaggedWithBaseTag(what.Tags, basetag)
+}
+
+func (what TrustBoundary) IsTaggedWithAnyTraversingUp(tags ...string) bool {
+	if what.IsTaggedWithAny(tags...) {
+		return true
+	}
+	parentID := what.ParentTrustBoundaryID()
+	if len(parentID) > 0 && ParsedModelRoot.TrustBoundaries[parentID].IsTaggedWithAnyTraversingUp(tags...) {
+		return true
+	}
+	return false
+}
+
+func (what TrustBoundary) ParentTrustBoundaryID() string {
+	var result string
+	for _, candidate := range ParsedModelRoot.TrustBoundaries {
+		if Contains(candidate.TrustBoundariesNested, what.Id) {
+			result = candidate.Id
+			return result
+		}
+	}
+	return result
+}
+
+func (what TrustBoundary) HighestConfidentiality() Confidentiality {
+	highest := Public
+	for _, id := range what.RecursivelyAllTechnicalAssetIDsInside() {
+		techAsset := ParsedModelRoot.TechnicalAssets[id]
+		if techAsset.HighestConfidentiality() > highest {
+			highest = techAsset.HighestConfidentiality()
+		}
+	}
+	return highest
+}
+
+func (what TrustBoundary) HighestIntegrity() Criticality {
+	highest := Archive
+	for _, id := range what.RecursivelyAllTechnicalAssetIDsInside() {
+		techAsset := ParsedModelRoot.TechnicalAssets[id]
+		if techAsset.HighestIntegrity() > highest {
+			highest = techAsset.HighestIntegrity()
+		}
+	}
+	return highest
+}
+
+func (what TrustBoundary) HighestAvailability() Criticality {
+	highest := Archive
+	for _, id := range what.RecursivelyAllTechnicalAssetIDsInside() {
+		techAsset := ParsedModelRoot.TechnicalAssets[id]
+		if techAsset.HighestAvailability() > highest {
+			highest = techAsset.HighestAvailability()
+		}
+	}
+	return highest
+}
+
 type TrustBoundaryType int
 
 const (
