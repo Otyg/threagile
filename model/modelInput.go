@@ -65,15 +65,6 @@ type InputSharedRuntime struct {
 	Technical_assets_running []string `json:"technical_assets_running"`
 }
 
-type InputTrustBoundary struct {
-	ID                      string   `json:"id"`
-	Description             string   `json:"description"`
-	Type                    string   `json:"type"`
-	Tags                    []string `json:"tags"`
-	Technical_assets_inside []string `json:"technical_assets_inside"`
-	Trust_boundaries_nested []string `json:"trust_boundaries_nested"`
-}
-
 type InputIndividualRiskCategory struct {
 	ID                            string                         `json:"id"`
 	Description                   string                         `json:"description"`
