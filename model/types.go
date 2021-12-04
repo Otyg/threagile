@@ -234,27 +234,6 @@ func (what ByDataFormatAcceptedSort) Less(i, j int) bool {
 	return what[i].String() < what[j].String()
 }
 
-type CommunicationLink struct {
-	Id, SourceId, TargetId, Title, Description string
-	Protocol                                   Protocol
-	Tags                                       []string
-	VPN, IpFiltered, Readonly                  bool
-	Authentication                             Authentication
-	Authorization                              Authorization
-	Usage                                      Usage
-	DataAssetsSent, DataAssetsReceived         []string
-	DiagramTweakWeight                         int
-	DiagramTweakConstraint                     bool
-}
-
-func (what CommunicationLink) IsTaggedWithAny(tags ...string) bool {
-	return ContainsCaseInsensitiveAny(what.Tags, tags...)
-}
-
-func (what CommunicationLink) IsTaggedWithBaseTag(basetag string) bool {
-	return IsTaggedWithBaseTag(what.Tags, basetag)
-}
-
 type ByTechnicalCommunicationLinkIdSort []CommunicationLink
 
 func (what ByTechnicalCommunicationLinkIdSort) Len() int      { return len(what) }

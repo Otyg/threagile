@@ -27,23 +27,6 @@ type ModelInput struct { // TODO: Eventually remove this and directly use Parsed
 	Diagram_tweak_same_rank_assets                     []string
 }
 
-type InputCommunicationLink struct {
-	Target                   string   `json:"target"`
-	Description              string   `json:"description"`
-	Protocol                 string   `json:"protocol"`
-	Authentication           string   `json:"authentication"`
-	Authorization            string   `json:"authorization"`
-	Tags                     []string `json:"tags"`
-	VPN                      bool     `json:"vpn"`
-	IP_filtered              bool     `json:"ip_filtered"`
-	Readonly                 bool     `json:"readonly"`
-	Usage                    string   `json:"usage"`
-	Data_assets_sent         []string `json:"data_assets_sent"`
-	Data_assets_received     []string `json:"data_assets_received"`
-	Diagram_tweak_weight     int      `json:"diagram_tweak_weight"`
-	Diagram_tweak_constraint bool     `json:"diagram_tweak_constraint"`
-}
-
 type InputSharedRuntime struct {
 	ID                       string   `json:"id"`
 	Description              string   `json:"description"`
