@@ -27,20 +27,6 @@ type ModelInput struct { // TODO: Eventually remove this and directly use Parsed
 	Diagram_tweak_same_rank_assets                     []string
 }
 
-type InputDataAsset struct {
-	ID                       string   `json:"id"`
-	Description              string   `json:"description"`
-	Usage                    string   `json:"usage"`
-	Tags                     []string `json:"tags"`
-	Origin                   string   `json:"origin"`
-	Owner                    string   `json:"owner"`
-	Quantity                 string   `json:"quantity"`
-	Confidentiality          string   `json:"confidentiality"`
-	Integrity                string   `json:"integrity"`
-	Availability             string   `json:"availability"`
-	Justification_cia_rating string   `json:"justification_cia_rating"`
-}
-
 type InputCommunicationLink struct {
 	Target                   string   `json:"target"`
 	Description              string   `json:"description"`
