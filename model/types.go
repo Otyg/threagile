@@ -250,42 +250,6 @@ func (what ByTechnicalCommunicationLinkTitleSort) Less(i, j int) bool {
 	return what[i].Title > what[j].Title
 }
 
-type Author struct {
-	Name     string `json:"name"`
-	Homepage string `json:"homepage"`
-}
-
-type Overview struct {
-	Description string              `json:"description"`
-	Images      []map[string]string `json:"images"` // yes, array of map here, as array keeps the order of the image keys
-}
-
-type ParsedModel struct {
-	Author                                        Author
-	Title                                         string
-	Date                                          time.Time
-	ManagementSummaryComment                      string
-	BusinessOverview                              Overview
-	TechnicalOverview                             Overview
-	BusinessCriticality                           Criticality
-	SecurityRequirements                          map[string]string
-	Questions                                     map[string]string
-	AbuseCases                                    map[string]string
-	TagsAvailable                                 []string
-	DataAssets                                    map[string]DataAsset
-	TechnicalAssets                               map[string]TechnicalAsset
-	TrustBoundaries                               map[string]TrustBoundary
-	SharedRuntimes                                map[string]SharedRuntime
-	IndividualRiskCategories                      map[string]RiskCategory
-	RiskTracking                                  map[string]RiskTracking
-	DiagramTweakNodesep, DiagramTweakRanksep      int
-	DiagramTweakEdgeLayout                        string
-	DiagramTweakSuppressEdgeLabels                bool
-	DiagramTweakLayoutLeftToRight                 bool
-	DiagramTweakInvisibleConnectionsBetweenAssets []string
-	DiagramTweakSameRankAssets                    []string
-}
-
 func SortedTechnicalAssetIDs() []string {
 	res := make([]string, 0)
 	for id, _ := range ParsedModelRoot.TechnicalAssets {
