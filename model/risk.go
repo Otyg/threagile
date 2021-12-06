@@ -19,6 +19,19 @@ type Risk struct {
 	// TODO: refactor all "Id" here to "ID"?
 }
 
+type InputRiskIdentified struct {
+	Severity                         string   `json:"severity"`
+	Exploitation_likelihood          string   `json:"exploitation_likelihood"`
+	Exploitation_impact              string   `json:"exploitation_impact"`
+	Data_breach_probability          string   `json:"data_breach_probability"`
+	Data_breach_technical_assets     []string `json:"data_breach_technical_assets"`
+	Most_relevant_data_asset         string   `json:"most_relevant_data_asset"`
+	Most_relevant_technical_asset    string   `json:"most_relevant_technical_asset"`
+	Most_relevant_communication_link string   `json:"most_relevant_communication_link"`
+	Most_relevant_trust_boundary     string   `json:"most_relevant_trust_boundary"`
+	Most_relevant_shared_runtime     string   `json:"most_relevant_shared_runtime"`
+}
+
 func (what Risk) GetRiskTracking() RiskTracking { // TODO: Unify function naming reagrding Get etc.
 	var result RiskTracking
 	if riskTracking, ok := ParsedModelRoot.RiskTracking[what.SyntheticId]; ok {
