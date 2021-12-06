@@ -154,18 +154,14 @@ func (what TechnicalAsset) DataAssetsStoredSorted() []DataAsset {
 
 func (what TechnicalAsset) DataFormatsAcceptedSorted() []DataFormat {
 	result := make([]DataFormat, 0)
-	for _, format := range what.DataFormatsAccepted {
-		result = append(result, format)
-	}
+	result = append(result, what.DataFormatsAccepted...)
 	sort.Sort(ByDataFormatAcceptedSort(result))
 	return result
 }
 
 func (what TechnicalAsset) CommunicationLinksSorted() []CommunicationLink {
 	result := make([]CommunicationLink, 0)
-	for _, format := range what.CommunicationLinks {
-		result = append(result, format)
-	}
+	result = append(result, what.CommunicationLinks...)
 	sort.Sort(ByTechnicalCommunicationLinkTitleSort(result))
 	return result
 }
@@ -454,7 +450,7 @@ func InScopeTechnicalAssets() []TechnicalAsset {
 
 func SortedTechnicalAssetIDs() []string {
 	res := make([]string, 0)
-	for id, _ := range ParsedModelRoot.TechnicalAssets {
+	for id := range ParsedModelRoot.TechnicalAssets {
 		res = append(res, id)
 	}
 	sort.Strings(res)
@@ -463,7 +459,7 @@ func SortedTechnicalAssetIDs() []string {
 
 func SortedKeysOfTechnicalAssets() []string {
 	keys := make([]string, 0)
-	for k, _ := range ParsedModelRoot.TechnicalAssets {
+	for k := range ParsedModelRoot.TechnicalAssets {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
