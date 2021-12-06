@@ -913,41 +913,6 @@ func (what TechnicalAsset) DetermineShapeFillColor() string {
 
 // === Risk stuff ========================================
 
-type RiskExploitationImpact int
-
-const (
-	LowImpact RiskExploitationImpact = iota
-	MediumImpact
-	HighImpact
-	VeryHighImpact
-)
-
-func RiskExploitationImpactValues() []TypeEnum {
-	return []TypeEnum{
-		LowImpact,
-		MediumImpact,
-		HighImpact,
-		VeryHighImpact,
-	}
-}
-
-func (what RiskExploitationImpact) String() string {
-	// NOTE: maintain list also in schema.json for validation in IDEs
-	return [...]string{"low", "medium", "high", "very-high"}[what]
-}
-
-func (what RiskExploitationImpact) Title() string {
-	return [...]string{"Low", "Medium", "High", "Very High"}[what]
-}
-
-func (what RiskExploitationImpact) Weight() int {
-	return [...]int{1, 2, 3, 4}[what]
-}
-
-func (what RiskExploitationImpact) MarshalJSON() ([]byte, error) {
-	return json.Marshal(what.String())
-}
-
 type RiskFunction int
 
 const (
