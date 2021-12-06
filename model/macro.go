@@ -37,7 +37,7 @@ func (what MacroQuestion) IsValueConstrained() bool {
 func (what MacroQuestion) IsMatchingValueConstraint(answer string) bool {
 	if what.IsValueConstrained() {
 		for _, val := range what.PossibleAnswers {
-			if strings.ToLower(val) == strings.ToLower(answer) {
+			if strings.EqualFold(val, answer) {
 				return true
 			}
 		}
