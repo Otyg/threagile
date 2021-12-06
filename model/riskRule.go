@@ -5,3 +5,9 @@ type RiskRule interface {
 	GenerateRisks() []Risk
 	SupportedTags() []string
 }
+
+type CustomRiskRule interface {
+	Category() RiskCategory
+	SupportedTags() []string
+	GenerateRisks() []Risk
+}

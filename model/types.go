@@ -40,12 +40,6 @@ func AddToListOfSupportedTags(tags []string) {
 	}
 }
 
-type CustomRiskRule interface {
-	Category() RiskCategory
-	SupportedTags() []string
-	GenerateRisks() []Risk
-}
-
 // === To be used by model macros etc. =======================
 
 func AddTagToModelInput(modelInput *ModelInput, tag string, dryRun bool, changes *[]string) {
