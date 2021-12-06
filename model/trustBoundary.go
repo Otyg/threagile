@@ -1,5 +1,7 @@
 package model
 
+import "sort"
+
 type InputTrustBoundary struct {
 	ID                      string   `json:"id"`
 	Description             string   `json:"description"`
@@ -171,4 +173,40 @@ func IsSharingSameParentTrustBoundary(left, right TechnicalAsset) bool {
 		}
 	}
 	return false
+}
+
+func TrustBoundariesTaggedWithAny(tags ...string) []TrustBoundary {
+	result := make([]TrustBoundary, 0)
+	for _, candidate := range ParsedModelRoot.TrustBoundaries {
+		if candidate.IsTaggedWithAny(tags...) {
+			result = append(result, candidate)
+		}
+	}
+	return result
+}
+
+func SortedKeysOfTrustBoundaries() []string {
+	keys := make([]string, 0)
+	for k, _ := range ParsedModelRoot.TrustBoundaries {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
+}
+
+func SortedTrustBoundariesByTitle() []TrustBoundary {
+	boundaries := make([]TrustBoundary, 0)
+	for _, boundary := range ParsedModelRoot.TrustBoundaries {
+		boundaries = append(boundaries, boundary)
+	}
+	sort.Sort(ByTrustBoundaryTitleSort(boundaries))
+	return boundaries
+}
+
+type ByTrustBoundaryTitleSort []TrustBoundary
+
+func (what ByTrustBoundaryTitleSort) Len() int      { return len(what) }
+func (what ByTrustBoundaryTitleSort) Swap(i, j int) { what[i], what[j] = what[j], what[i] }
+func (what ByTrustBoundaryTitleSort) Less(i, j int) bool {
+	return what[i].Title < what[j].Title
 }

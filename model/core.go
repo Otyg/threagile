@@ -73,22 +73,6 @@ func IsTaggedWithBaseTag(tags []string, basetag string) bool { // basetags are b
 	return false
 }
 
-type ByTrustBoundaryTitleSort []TrustBoundary
-
-func (what ByTrustBoundaryTitleSort) Len() int      { return len(what) }
-func (what ByTrustBoundaryTitleSort) Swap(i, j int) { what[i], what[j] = what[j], what[i] }
-func (what ByTrustBoundaryTitleSort) Less(i, j int) bool {
-	return what[i].Title < what[j].Title
-}
-
-type BySharedRuntimeTitleSort []SharedRuntime
-
-func (what BySharedRuntimeTitleSort) Len() int      { return len(what) }
-func (what BySharedRuntimeTitleSort) Swap(i, j int) { what[i], what[j] = what[j], what[i] }
-func (what BySharedRuntimeTitleSort) Less(i, j int) bool {
-	return what[i].Title < what[j].Title
-}
-
 type ByDataFormatAcceptedSort []DataFormat
 
 func (what ByDataFormatAcceptedSort) Len() int      { return len(what) }
@@ -157,25 +141,7 @@ func SortedKeysOfQuestions() []string {
 
 // as in Go ranging over map is random order, range over them in sorted (hence reproducible) way:
 
-func TrustBoundariesTaggedWithAny(tags ...string) []TrustBoundary {
-	result := make([]TrustBoundary, 0)
-	for _, candidate := range ParsedModelRoot.TrustBoundaries {
-		if candidate.IsTaggedWithAny(tags...) {
-			result = append(result, candidate)
-		}
-	}
-	return result
-}
-
-func SharedRuntimesTaggedWithAny(tags ...string) []SharedRuntime {
-	result := make([]SharedRuntime, 0)
-	for _, candidate := range ParsedModelRoot.SharedRuntimes {
-		if candidate.IsTaggedWithAny(tags...) {
-			result = append(result, candidate)
-		}
-	}
-	return result
-}
+// as in Go ranging over map is random order, range over them in sorted (hence reproducible) way:
 
 // as in Go ranging over map is random order, range over them in sorted (hence reproducible) way:
 
@@ -184,42 +150,6 @@ func SharedRuntimesTaggedWithAny(tags ...string) []SharedRuntime {
 // as in Go ranging over map is random order, range over them in sorted (hence reproducible) way:
 
 // as in Go ranging over map is random order, range over them in sorted (hence reproducible) way:
-func SortedKeysOfTrustBoundaries() []string {
-	keys := make([]string, 0)
-	for k, _ := range ParsedModelRoot.TrustBoundaries {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-	return keys
-}
-
-func SortedTrustBoundariesByTitle() []TrustBoundary {
-	boundaries := make([]TrustBoundary, 0)
-	for _, boundary := range ParsedModelRoot.TrustBoundaries {
-		boundaries = append(boundaries, boundary)
-	}
-	sort.Sort(ByTrustBoundaryTitleSort(boundaries))
-	return boundaries
-}
-
-// as in Go ranging over map is random order, range over them in sorted (hence reproducible) way:
-func SortedKeysOfSharedRuntime() []string {
-	keys := make([]string, 0)
-	for k, _ := range ParsedModelRoot.SharedRuntimes {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-	return keys
-}
-
-func SortedSharedRuntimesByTitle() []SharedRuntime {
-	result := make([]SharedRuntime, 0)
-	for _, runtime := range ParsedModelRoot.SharedRuntimes {
-		result = append(result, runtime)
-	}
-	sort.Sort(BySharedRuntimeTitleSort(result))
-	return result
-}
 
 func QuestionsUnanswered() int {
 	result := 0

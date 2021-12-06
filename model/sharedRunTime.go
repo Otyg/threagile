@@ -1,5 +1,7 @@
 package model
 
+import "sort"
+
 type InputSharedRuntime struct {
 	ID                       string   `json:"id"`
 	Description              string   `json:"description"`
@@ -61,5 +63,40 @@ func (what SharedRuntime) TechnicalAssetWithHighestRAA() TechnicalAsset {
 			result = candidate
 		}
 	}
+	return result
+}
+
+type BySharedRuntimeTitleSort []SharedRuntime
+
+func (what BySharedRuntimeTitleSort) Len() int      { return len(what) }
+func (what BySharedRuntimeTitleSort) Swap(i, j int) { what[i], what[j] = what[j], what[i] }
+func (what BySharedRuntimeTitleSort) Less(i, j int) bool {
+	return what[i].Title < what[j].Title
+}
+
+func SharedRuntimesTaggedWithAny(tags ...string) []SharedRuntime {
+	result := make([]SharedRuntime, 0)
+	for _, candidate := range ParsedModelRoot.SharedRuntimes {
+		if candidate.IsTaggedWithAny(tags...) {
+			result = append(result, candidate)
+		}
+	}
+	return result
+}
+func SortedKeysOfSharedRuntime() []string {
+	keys := make([]string, 0)
+	for k, _ := range ParsedModelRoot.SharedRuntimes {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
+}
+
+func SortedSharedRuntimesByTitle() []SharedRuntime {
+	result := make([]SharedRuntime, 0)
+	for _, runtime := range ParsedModelRoot.SharedRuntimes {
+		result = append(result, runtime)
+	}
+	sort.Sort(BySharedRuntimeTitleSort(result))
 	return result
 }
