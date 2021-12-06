@@ -83,7 +83,7 @@ func (what DataAsset) IdentifiedRisksByResponsibleTechnicalAssetId() map[string]
 	}
 
 	result := make(map[string][]Risk)
-	for techAssetId, _ := range uniqueTechAssetIDsResponsibleForThisDataAsset {
+	for techAssetId := range uniqueTechAssetIDsResponsibleForThisDataAsset {
 		result[techAssetId] = append(result[techAssetId], ParsedModelRoot.TechnicalAssets[techAssetId].GeneratedRisks()...)
 	}
 	return result
@@ -283,7 +283,7 @@ func (what ByDataAssetTitleSort) Less(i, j int) bool {
 
 func SortedKeysOfDataAssets() []string {
 	keys := make([]string, 0)
-	for k, _ := range ParsedModelRoot.DataAssets {
+	for k := range ParsedModelRoot.DataAssets {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
