@@ -51,3 +51,22 @@ func CalculateSeverity(likelihood RiskExploitationLikelihood, impact RiskExploit
 	}
 	return CriticalSeverity
 }
+func HighestSeverity(risks []Risk) RiskSeverity {
+	result := LowSeverity
+	for _, risk := range risks {
+		if risk.Severity > result {
+			result = risk.Severity
+		}
+	}
+	return result
+}
+
+func HighestSeverityStillAtRisk(risks []Risk) RiskSeverity {
+	result := LowSeverity
+	for _, risk := range risks {
+		if risk.Severity > result && risk.GetRiskTrackingStatusDefaultingUnchecked().IsStillAtRisk() {
+			result = risk.Severity
+		}
+	}
+	return result
+}
