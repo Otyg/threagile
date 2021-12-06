@@ -997,12 +997,6 @@ func (what ByDataBreachProbabilitySort) Less(i, j int) bool {
 	return what[i].DataBreachProbability > what[j].DataBreachProbability
 }
 
-type RiskRule interface {
-	Category() RiskCategory
-	GenerateRisks() []Risk
-	SupportedTags() []string
-}
-
 // as in Go ranging over map is random order, range over them in sorted (hence reproducible) way:
 func SortedRiskCategories() []RiskCategory {
 	categories := make([]RiskCategory, 0)
