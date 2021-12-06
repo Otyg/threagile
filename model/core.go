@@ -76,44 +76,6 @@ func IsTaggedWithBaseTag(tags []string, basetag string) bool { // basetags are b
 	return false
 }
 
-type ByDataAssetDataBreachProbabilityAndTitleSort []DataAsset
-
-func (what ByDataAssetDataBreachProbabilityAndTitleSort) Len() int { return len(what) }
-func (what ByDataAssetDataBreachProbabilityAndTitleSort) Swap(i, j int) {
-	what[i], what[j] = what[j], what[i]
-}
-func (what ByDataAssetDataBreachProbabilityAndTitleSort) Less(i, j int) bool {
-	highestDataBreachProbabilityLeft := what[i].IdentifiedDataBreachProbability()
-	highestDataBreachProbabilityRight := what[j].IdentifiedDataBreachProbability()
-	if highestDataBreachProbabilityLeft == highestDataBreachProbabilityRight {
-		return what[i].Title < what[j].Title
-	}
-	return highestDataBreachProbabilityLeft > highestDataBreachProbabilityRight
-}
-
-type ByDataAssetDataBreachProbabilityAndTitleSortStillAtRisk []DataAsset
-
-func (what ByDataAssetDataBreachProbabilityAndTitleSortStillAtRisk) Len() int { return len(what) }
-func (what ByDataAssetDataBreachProbabilityAndTitleSortStillAtRisk) Swap(i, j int) {
-	what[i], what[j] = what[j], what[i]
-}
-func (what ByDataAssetDataBreachProbabilityAndTitleSortStillAtRisk) Less(i, j int) bool {
-	risksLeft := what[i].IdentifiedDataBreachProbabilityRisksStillAtRisk()
-	risksRight := what[j].IdentifiedDataBreachProbabilityRisksStillAtRisk()
-	highestDataBreachProbabilityLeft := what[i].IdentifiedDataBreachProbabilityStillAtRisk()
-	highestDataBreachProbabilityRight := what[j].IdentifiedDataBreachProbabilityStillAtRisk()
-	if highestDataBreachProbabilityLeft == highestDataBreachProbabilityRight {
-		if len(risksLeft) == 0 && len(risksRight) > 0 {
-			return false
-		}
-		if len(risksLeft) > 0 && len(risksRight) == 0 {
-			return true
-		}
-		return what[i].Title < what[j].Title
-	}
-	return highestDataBreachProbabilityLeft > highestDataBreachProbabilityRight
-}
-
 type ByTrustBoundaryTitleSort []TrustBoundary
 
 func (what ByTrustBoundaryTitleSort) Len() int      { return len(what) }
@@ -127,14 +89,6 @@ type BySharedRuntimeTitleSort []SharedRuntime
 func (what BySharedRuntimeTitleSort) Len() int      { return len(what) }
 func (what BySharedRuntimeTitleSort) Swap(i, j int) { what[i], what[j] = what[j], what[i] }
 func (what BySharedRuntimeTitleSort) Less(i, j int) bool {
-	return what[i].Title < what[j].Title
-}
-
-type ByDataAssetTitleSort []DataAsset
-
-func (what ByDataAssetTitleSort) Len() int      { return len(what) }
-func (what ByDataAssetTitleSort) Swap(i, j int) { what[i], what[j] = what[j], what[i] }
-func (what ByDataAssetTitleSort) Less(i, j int) bool {
 	return what[i].Title < what[j].Title
 }
 
@@ -219,14 +173,6 @@ func SortedKeysOfQuestions() []string {
 }
 
 // as in Go ranging over map is random order, range over them in sorted (hence reproducible) way:
-func SortedKeysOfDataAssets() []string {
-	keys := make([]string, 0)
-	for k, _ := range ParsedModelRoot.DataAssets {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-	return keys
-}
 
 // as in Go ranging over map is random order, range over them in sorted (hence reproducible) way:
 
@@ -237,16 +183,6 @@ func CommunicationLinksTaggedWithAny(tags ...string) []CommunicationLink {
 			if candidate.IsTaggedWithAny(tags...) {
 				result = append(result, candidate)
 			}
-		}
-	}
-	return result
-}
-
-func DataAssetsTaggedWithAny(tags ...string) []DataAsset {
-	result := make([]DataAsset, 0)
-	for _, candidate := range ParsedModelRoot.DataAssets {
-		if candidate.IsTaggedWithAny(tags...) {
-			result = append(result, candidate)
 		}
 	}
 	return result
@@ -275,34 +211,6 @@ func SharedRuntimesTaggedWithAny(tags ...string) []SharedRuntime {
 // as in Go ranging over map is random order, range over them in sorted (hence reproducible) way:
 
 // as in Go ranging over map is random order, range over them in sorted (hence reproducible) way:
-func SortedDataAssetsByTitle() []DataAsset {
-	assets := make([]DataAsset, 0)
-	for _, asset := range ParsedModelRoot.DataAssets {
-		assets = append(assets, asset)
-	}
-	sort.Sort(ByDataAssetTitleSort(assets))
-	return assets
-}
-
-// as in Go ranging over map is random order, range over them in sorted (hence reproducible) way:
-func SortedDataAssetsByDataBreachProbabilityAndTitleStillAtRisk() []DataAsset {
-	assets := make([]DataAsset, 0)
-	for _, asset := range ParsedModelRoot.DataAssets {
-		assets = append(assets, asset)
-	}
-	sort.Sort(ByDataAssetDataBreachProbabilityAndTitleSortStillAtRisk(assets))
-	return assets
-}
-
-// as in Go ranging over map is random order, range over them in sorted (hence reproducible) way:
-func SortedDataAssetsByDataBreachProbabilityAndTitle() []DataAsset {
-	assets := make([]DataAsset, 0)
-	for _, asset := range ParsedModelRoot.DataAssets {
-		assets = append(assets, asset)
-	}
-	sort.Sort(ByDataAssetDataBreachProbabilityAndTitleSortStillAtRisk(assets))
-	return assets
-}
 
 // as in Go ranging over map is random order, range over them in sorted (hence reproducible) way:
 
