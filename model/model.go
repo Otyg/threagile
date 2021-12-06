@@ -97,11 +97,3 @@ type InputRiskIdentified struct {
 	Most_relevant_trust_boundary     string   `json:"most_relevant_trust_boundary"`
 	Most_relevant_shared_runtime     string   `json:"most_relevant_shared_runtime"`
 }
-
-type InputRiskTracking struct {
-	Status        string `json:"status"`
-	Justification string `json:"justification"`
-	Ticket        string `json:"ticket"`
-	Date          string `json:"date"`
-	Checked_by    string `json:"checked_by"`
-}

@@ -7,3 +7,10 @@ type RiskTracking struct {
 	Status                                            RiskStatus
 	Date                                              time.Time
 }
+type InputRiskTracking struct {
+	Status        string `json:"status"`
+	Justification string `json:"justification"`
+	Ticket        string `json:"ticket"`
+	Date          string `json:"date"`
+	Checked_by    string `json:"checked_by"`
+}
