@@ -85,7 +85,7 @@ func SharedRuntimesTaggedWithAny(tags ...string) []SharedRuntime {
 }
 func SortedKeysOfSharedRuntime() []string {
 	keys := make([]string, 0)
-	for k, _ := range ParsedModelRoot.SharedRuntimes {
+	for k := range ParsedModelRoot.SharedRuntimes {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
