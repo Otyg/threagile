@@ -913,41 +913,6 @@ func (what TechnicalAsset) DetermineShapeFillColor() string {
 
 // === Risk stuff ========================================
 
-type RiskExploitationLikelihood int
-
-const (
-	Unlikely RiskExploitationLikelihood = iota
-	Likely
-	VeryLikely
-	Frequent
-)
-
-func RiskExploitationLikelihoodValues() []TypeEnum {
-	return []TypeEnum{
-		Unlikely,
-		Likely,
-		VeryLikely,
-		Frequent,
-	}
-}
-
-func (what RiskExploitationLikelihood) String() string {
-	// NOTE: maintain list also in schema.json for validation in IDEs
-	return [...]string{"unlikely", "likely", "very-likely", "frequent"}[what]
-}
-
-func (what RiskExploitationLikelihood) Title() string {
-	return [...]string{"Unlikely", "Likely", "Very Likely", "Frequent"}[what]
-}
-
-func (what RiskExploitationLikelihood) Weight() int {
-	return [...]int{1, 2, 3, 4}[what]
-}
-
-func (what RiskExploitationLikelihood) MarshalJSON() ([]byte, error) {
-	return json.Marshal(what.String())
-}
-
 type RiskExploitationImpact int
 
 const (
