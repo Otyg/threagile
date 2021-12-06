@@ -45,7 +45,7 @@ type InputIndividualRiskCategory struct {
 
 func SortedKeysOfIndividualRiskCategories() []string {
 	keys := make([]string, 0)
-	for k, _ := range ParsedModelRoot.IndividualRiskCategories {
+	for k := range ParsedModelRoot.IndividualRiskCategories {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
@@ -86,7 +86,7 @@ func (what ByRiskCategoryHighestContainingRiskSeveritySortStillAtRisk) Less(i, j
 }
 func SortedRiskCategories() []RiskCategory {
 	categories := make([]RiskCategory, 0)
-	for k, _ := range GeneratedRisksByCategory {
+	for k := range GeneratedRisksByCategory {
 		categories = append(categories, k)
 	}
 	sort.Sort(ByRiskCategoryHighestContainingRiskSeveritySortStillAtRisk(categories))
