@@ -187,7 +187,7 @@ func TrustBoundariesTaggedWithAny(tags ...string) []TrustBoundary {
 
 func SortedKeysOfTrustBoundaries() []string {
 	keys := make([]string, 0)
-	for k, _ := range ParsedModelRoot.TrustBoundaries {
+	for k := range ParsedModelRoot.TrustBoundaries {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
