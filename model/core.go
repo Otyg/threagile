@@ -22,13 +22,13 @@ var GeneratedRisksBySyntheticId map[string]Risk
 var AllSupportedTags map[string]bool
 
 func Init() {
-	CommunicationLinks = make(map[string]CommunicationLink, 0)
-	IncomingTechnicalCommunicationLinksMappedByTargetId = make(map[string][]CommunicationLink, 0)
-	DirectContainingTrustBoundaryMappedByTechnicalAssetId = make(map[string]TrustBoundary, 0)
-	DirectContainingSharedRuntimeMappedByTechnicalAssetId = make(map[string]SharedRuntime, 0)
-	GeneratedRisksByCategory = make(map[RiskCategory][]Risk, 0)
-	GeneratedRisksBySyntheticId = make(map[string]Risk, 0)
-	AllSupportedTags = make(map[string]bool, 0)
+	CommunicationLinks = make(map[string]CommunicationLink)
+	IncomingTechnicalCommunicationLinksMappedByTargetId = make(map[string][]CommunicationLink)
+	DirectContainingTrustBoundaryMappedByTechnicalAssetId = make(map[string]TrustBoundary)
+	DirectContainingSharedRuntimeMappedByTechnicalAssetId = make(map[string]SharedRuntime)
+	GeneratedRisksByCategory = make(map[RiskCategory][]Risk)
+	GeneratedRisksBySyntheticId = make(map[string]Risk)
+	AllSupportedTags = make(map[string]bool)
 }
 
 func AddToListOfSupportedTags(tags []string) {
@@ -87,7 +87,7 @@ func TagsActuallyUsed() []string {
 
 func SortedKeysOfSecurityRequirements() []string {
 	keys := make([]string, 0)
-	for k, _ := range ParsedModelRoot.SecurityRequirements {
+	for k := range ParsedModelRoot.SecurityRequirements {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
@@ -96,7 +96,7 @@ func SortedKeysOfSecurityRequirements() []string {
 
 func SortedKeysOfAbuseCases() []string {
 	keys := make([]string, 0)
-	for k, _ := range ParsedModelRoot.AbuseCases {
+	for k := range ParsedModelRoot.AbuseCases {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
@@ -105,7 +105,7 @@ func SortedKeysOfAbuseCases() []string {
 
 func SortedKeysOfQuestions() []string {
 	keys := make([]string, 0)
-	for k, _ := range ParsedModelRoot.Questions {
+	for k := range ParsedModelRoot.Questions {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
