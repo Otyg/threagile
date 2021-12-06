@@ -349,7 +349,7 @@ func FilteredByOnlyLowRisks() []Risk {
 }
 
 func FilterByModelFailures(risksByCat map[RiskCategory][]Risk) map[RiskCategory][]Risk {
-	result := make(map[RiskCategory][]Risk, 0)
+	result := make(map[RiskCategory][]Risk)
 	for riskCat, risks := range risksByCat {
 		if riskCat.ModelFailurePossibleReason {
 			result[riskCat] = risks
@@ -369,9 +369,7 @@ func FlattenRiskSlice(risksByCat map[RiskCategory][]Risk) []Risk {
 func AllRisks() []Risk {
 	result := make([]Risk, 0)
 	for _, risks := range GeneratedRisksByCategory {
-		for _, risk := range risks {
-			result = append(result, risk)
-		}
+		result = append(result, risks...)
 	}
 	return result
 }
