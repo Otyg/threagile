@@ -6,7 +6,6 @@ import (
 	"regexp"
 	"sort"
 	"strings"
-	"time"
 
 	"github.com/otyg/threagile/colors"
 )
@@ -997,12 +996,6 @@ func (what ByDataBreachProbabilitySort) Less(i, j int) bool {
 		}
 	}
 	return what[i].DataBreachProbability > what[j].DataBreachProbability
-}
-
-type RiskTracking struct {
-	SyntheticRiskId, Justification, Ticket, CheckedBy string
-	Status                                            RiskStatus
-	Date                                              time.Time
 }
 
 type RiskStatus int
