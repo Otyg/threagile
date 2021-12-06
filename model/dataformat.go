@@ -33,3 +33,11 @@ func (what DataFormat) Description() string {
 	return [...]string{"JSON marshalled object data", "XML structured data", "Serialization-based object graphs",
 		"File input/uploads", "CSV tabular data"}[what]
 }
+
+type ByDataFormatAcceptedSort []DataFormat
+
+func (what ByDataFormatAcceptedSort) Len() int      { return len(what) }
+func (what ByDataFormatAcceptedSort) Swap(i, j int) { what[i], what[j] = what[j], what[i] }
+func (what ByDataFormatAcceptedSort) Less(i, j int) bool {
+	return what[i].String() < what[j].String()
+}

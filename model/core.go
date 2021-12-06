@@ -73,14 +73,6 @@ func IsTaggedWithBaseTag(tags []string, basetag string) bool { // basetags are b
 	return false
 }
 
-type ByDataFormatAcceptedSort []DataFormat
-
-func (what ByDataFormatAcceptedSort) Len() int      { return len(what) }
-func (what ByDataFormatAcceptedSort) Swap(i, j int) { what[i], what[j] = what[j], what[i] }
-func (what ByDataFormatAcceptedSort) Less(i, j int) bool {
-	return what[i].String() < what[j].String()
-}
-
 func TagsActuallyUsed() []string {
 	result := make([]string, 0)
 	for _, tag := range ParsedModelRoot.TagsAvailable {
