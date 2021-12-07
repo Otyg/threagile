@@ -41,9 +41,6 @@ func (r missingMonitoring) GenerateRisks() []model.Risk {
 	probability := model.Likely
 	for _, id := range model.SortedTechnicalAssetIDs() { // use the sorted one to always get the same tech asset with highest sensitivity as example asset
 		techAsset := model.ParsedModelRoot.TechnicalAssets[id]
-		if techAsset.OutOfScope {
-			continue
-		}
 		if techAsset.Technology == model.Monitoring {
 			hasMonitoring = true
 			break
