@@ -1,5 +1,10 @@
 package model
 
+import (
+	"errors"
+	"strings"
+)
+
 type TechnicalAssetType int
 
 const (
@@ -19,4 +24,14 @@ func TechnicalAssetTypeValues() []TypeEnum {
 func (what TechnicalAssetType) String() string {
 	// NOTE: maintain list also in schema.json for validation in IDEs
 	return [...]string{"external-entity", "process", "datastore"}[what]
+}
+
+func ParseTechnicalAssetType(value string) (technicalAssetType TechnicalAssetType, err error) {
+	value = strings.TrimSpace(value)
+	for _, candidate := range TechnicalAssetTypeValues() {
+		if candidate.String() == value {
+			return candidate.(TechnicalAssetType), err
+		}
+	}
+	return technicalAssetType, errors.New("Unable to parse into type: " + value)
 }

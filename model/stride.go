@@ -1,6 +1,10 @@
 package model
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"errors"
+	"strings"
+)
 
 type STRIDE int
 
@@ -22,6 +26,16 @@ func STRIDEValues() []TypeEnum {
 		DenialOfService,
 		ElevationOfPrivilege,
 	}
+}
+
+func ParseStride(value string) (result STRIDE, err error) {
+	value = strings.TrimSpace(value)
+	for _, candidate := range STRIDEValues() {
+		if candidate.String() == value {
+			return candidate.(STRIDE), err
+		}
+	}
+	return result, errors.New("Unable to parse into type: " + value)
 }
 
 func (what STRIDE) String() string {
