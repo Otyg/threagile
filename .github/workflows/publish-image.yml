@@ -63,12 +63,6 @@ jobs:
           COSIGN_KEY: ${{secrets.COSIGN_PRIVATE_KEY}}
           COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
 
-      - name: Sign the images with GitHub OIDC **not production ready**
-        run: cosign sign --oidc-issuer https://token.actions.githubusercontent.com ${TAGS}
-        env:
-          TAGS: ${{ steps.meta.outputs.tags }}
-          COSIGN_EXPERIMENTAL: 1      
-
       - name: Generate SBOM
         uses: anchore/sbom-action@v0
         with:
@@ -76,3 +70,11 @@ jobs:
           image: ghcr.io/otyg/threagile:${{ steps.get_version.outputs.VERSION }}
           artifact-name: sbom.xml
           format: cyclonedx
+      - name: Sign and attach SBOM 
+        run: cosign attach sbom --sbom sbom.xml --type cyclonedx ${TAGS}
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+          COSIGN_KEY: ${{secrets.COSIGN_PRIVATE_KEY}}
+          COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
+
+
