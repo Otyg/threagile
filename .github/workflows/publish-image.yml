@@ -77,7 +77,7 @@ jobs:
           path: "/tmp/"
           type: ".xml"
       - name: Sign and attach SBOM 
-        run: cosign attach sbom --sbom "${{ $env.ANCHORE_SBOM_ACTION_PRIOR_ARTIFACT }}" --type cyclonedx ${TAGS}
+        run: cosign attach sbom --sbom "${{env.ANCHORE_SBOM_ACTION_PRIOR_ARTIFACT}}" --type cyclonedx ${TAGS}
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
           COSIGN_KEY: ${{secrets.COSIGN_PRIVATE_KEY}}
