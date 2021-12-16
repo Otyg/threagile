@@ -72,11 +72,11 @@ jobs:
           format: cyclonedx
       - name: Sign and attach SBOM 
         run: |
-          cosign attach sbom ${{ env.TAGS }} --sbom ${{env.ANCHORE_SBOM_ACTION_PRIOR_ARTIFACT}} --type cyclonedx
+          cosign attach sbom --sbom ${{env.ANCHORE_SBOM_ACTION_PRIOR_ARTIFACT}} --type cyclonedx ${{ env.TAGS }}
         env:
           REGISTRY: ghcr.io
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          TAGS: ghcr.io/${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}
+          TAGS: ghcr.io/otyg/threagile:${{ steps.get_version.outputs.VERSION }}
           COSIGN_KEY: ${{secrets.COSIGN_PRIVATE_KEY}}
           COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
 
