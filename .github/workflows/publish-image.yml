@@ -71,7 +71,7 @@ jobs:
           artifact-name: sbom.xml
           format: cyclonedx
       - name: Sign and attach SBOM 
-        run: cosign attach sbom --sbom "${{env.ANCHORE_SBOM_ACTION_PRIOR_ARTIFACT}}" --type cyclonedx "${{env.TAGS}}"
+        run: cosign attach sbom --sbom ${{env.ANCHORE_SBOM_ACTION_PRIOR_ARTIFACT}} --type cyclonedx ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }} 
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
           COSIGN_KEY: ${{secrets.COSIGN_PRIVATE_KEY}}
