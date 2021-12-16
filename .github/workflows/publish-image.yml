@@ -70,8 +70,14 @@ jobs:
           image: ghcr.io/otyg/threagile:${{ steps.get_version.outputs.VERSION }}
           artifact-name: sbom.xml
           format: cyclonedx
+      - name: Find sbom
+        id: find
+        uses: Rishabh510/Path-lister-action@master
+        with:
+          path: "/tmp/"
+          type: ".xml"
       - name: Sign and attach SBOM 
-        run: cosign attach sbom --sbom ${env.ANCHORE_SBOM_ACTION_PRIOR_ARTIFACT} --type cyclonedx ${TAGS[0]}
+        run: cosign attach sbom --sbom "${{env.ANCHORE_SBOM_ACTION_PRIOR_ARTIFACT}}" --type cyclonedx ${TAGS}
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
           COSIGN_KEY: ${{secrets.COSIGN_PRIVATE_KEY}}
