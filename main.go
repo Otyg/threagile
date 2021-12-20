@@ -44,7 +44,6 @@ import (
 	"github.com/otyg/threagile/report"
 	"github.com/otyg/threagile/support"
 
-	accidental_secret_leak "github.com/otyg/threagile/risks/built-in/accidental-secret-leak"
 	code_backdooring "github.com/otyg/threagile/risks/built-in/code-backdooring"
 	container_baseimage_backdooring "github.com/otyg/threagile/risks/built-in/container-baseimage-backdooring"
 	container_platform_escape "github.com/otyg/threagile/risks/built-in/container-platform-escape"
@@ -109,7 +108,6 @@ var buildTimestamp = ""
 var modelFilename, templateFilename /*, diagramFilename, reportFilename, graphvizConversion*/ *string
 var createExampleModel, createStubModel, createEditingSupport, verbose, ignoreOrphanedRiskTracking, generateDataFlowDiagram, generateDataAssetDiagram, generateRisksJSON, generateTechnicalAssetsJSON, generateStatsJSON, generateRisksExcel, generateTagsExcel, generateReportPDF, generateDefectdojoGeneric *bool
 var outputDir, raaPlugin, skipRiskRules, riskRulesPlugins, executeModelMacro *string
-var customRiskRules map[string]model.CustomRiskRule
 var builtinRiskRulesPlugins map[string]model.RiskRule
 var diagramDPI, serverPort *int
 
@@ -445,17 +443,6 @@ func applyRiskGeneration() {
 		}
 	}
 
-	if _, ok := skippedRules[accidental_secret_leak.Category().Id]; ok {
-		fmt.Println("Skipping risk rule:", accidental_secret_leak.Category().Id)
-		delete(skippedRules, accidental_secret_leak.Category().Id)
-	} else {
-		model.AddToListOfSupportedTags(accidental_secret_leak.SupportedTags())
-		risks := accidental_secret_leak.GenerateRisks()
-		if len(risks) > 0 {
-			model.GeneratedRisksByCategory[accidental_secret_leak.Category()] = risks
-		}
-	}
-
 	if _, ok := skippedRules[code_backdooring.Category().Id]; ok {
 		fmt.Println("Skipping risk rule:", code_backdooring.Category().Id)
 		delete(skippedRules, code_backdooring.Category().Id)
@@ -596,27 +583,6 @@ func applyRiskGeneration() {
 			risks := riskPlugin.GenerateRisks()
 			if len(risks) > 0 {
 				model.GeneratedRisksByCategory[riskPlugin.Category()] = risks
-			}
-		}
-	}
-	// NOW THE CUSTOM RISK RULES (if any)
-	for id, customRule := range customRiskRules {
-		if _, ok := skippedRules[customRule.Category().Id]; ok {
-			if *verbose {
-				fmt.Println("Skipping custom risk rule:", id)
-			}
-			delete(skippedRules, id)
-		} else {
-			if *verbose {
-				fmt.Println("Executing custom risk rule:", id)
-			}
-			model.AddToListOfSupportedTags(customRule.SupportedTags())
-			risks := customRule.GenerateRisks()
-			if len(risks) > 0 {
-				model.GeneratedRisksByCategory[customRule.Category()] = risks
-			}
-			if *verbose {
-				fmt.Println("Added custom risks:", len(risks))
 			}
 		}
 	}
@@ -814,7 +780,6 @@ func doIt(inputFilename string, outputDirectory string) {
 	model.Init()
 	parseModel(inputFilename)
 	introTextRAA := applyRAA()
-	loadCustomRiskRules()
 	loadRiskRulePlugins()
 	applyRiskGeneration()
 	applyWildcardRiskTrackingEvaluation()
@@ -1207,7 +1172,6 @@ func doIt(inputFilename string, outputDirectory string) {
 			buildTimestamp,
 			modelHash,
 			introTextRAA,
-			customRiskRules,
 			builtinRiskRulesPlugins)
 	}
 }
@@ -1268,43 +1232,6 @@ func loadRiskRulePlugins() {
 		builtinRiskRulesPlugins[ruleID] = symRiskRuleVar
 		if *verbose {
 			fmt.Println("Risk rule loaded:", ruleID)
-		}
-	}
-}
-func loadCustomRiskRules() {
-	customRiskRules = make(map[string]model.CustomRiskRule, 0)
-	if len(*riskRulesPlugins) > 0 {
-		if *verbose {
-			fmt.Println("Loading custom risk rules:", *riskRulesPlugins)
-		}
-		for _, pluginFile := range strings.Split(*riskRulesPlugins, ",") {
-			if len(pluginFile) > 0 {
-				// check that the plugin file to load exists
-				_, err := os.Stat(pluginFile)
-				if os.IsNotExist(err) {
-					log.Fatal("Custom risk rule implementation file not found: ", pluginFile)
-				}
-				// load plugin: open the ".so" file to load the symbols
-				plug, err := plugin.Open(pluginFile)
-				checkErr(err)
-				// look up a symbol (an exported function or variable): in this case variable CustomRiskRule
-				symCustomRiskRule, err := plug.Lookup("CustomRiskRule")
-				checkErr(err)
-				// register the risk rule plugin for later use: in this case interface type model.CustomRiskRule (defined above)
-				symCustomRiskRuleVar, ok := symCustomRiskRule.(model.CustomRiskRule)
-				if !ok {
-					panic(errors.New("custom risk rule plugin has no 'CustomRiskRule' variable"))
-				}
-				// simply add to a map (just convenience) where key is the category id and value the rule's execution function
-				ruleID := symCustomRiskRuleVar.Category().Id
-				customRiskRules[ruleID] = symCustomRiskRuleVar
-				if *verbose {
-					fmt.Println("Custom risk rule loaded:", ruleID)
-				}
-			}
-		}
-		if *verbose {
-			fmt.Println("Loaded custom risk rules:", len(customRiskRules))
 		}
 	}
 }
@@ -1393,9 +1320,9 @@ func execute(context *gin.Context, dryRun bool) (yamlContent []byte, ok bool) {
 	defer os.Remove(tmpResultFile.Name())
 
 	if dryRun {
-		doItViaRuntimeCall(yamlFile, tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, false, true, true, true, true, 40)
+		doItViaRuntimeCall(yamlFile, tmpOutputDir, *executeModelMacro, *raaPlugin, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, false, true, true, true, true, 40)
 	} else {
-		doItViaRuntimeCall(yamlFile, tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, true, true, true, true, true, true, true, true, true, dpi)
+		doItViaRuntimeCall(yamlFile, tmpOutputDir, *executeModelMacro, *raaPlugin, *skipRiskRules, *ignoreOrphanedRiskTracking, true, true, true, true, true, true, true, true, true, dpi)
 	}
 	checkErr(err)
 
@@ -1432,12 +1359,12 @@ func execute(context *gin.Context, dryRun bool) (yamlContent []byte, ok bool) {
 }
 
 // ultimately to avoid any in-process memory and/or data leaks by the used third party libs like PDF generation: exec and quit
-func doItViaRuntimeCall(modelFile string, outputDir string, executeModelMacro string, raaPlugin string, customRiskRulesPlugins string, skipRiskRules string, ignoreOrphanedRiskTracking bool,
+func doItViaRuntimeCall(modelFile string, outputDir string, executeModelMacro string, raaPlugin string, skipRiskRules string, ignoreOrphanedRiskTracking bool,
 	generateDataFlowDiagram, generateDataAssetDiagram, generateReportPdf, generateRisksExcel, generateTagsExcel, generateRisksJSON, generateTechnicalAssetsJSON, generateDefectdojo, generateStatsJSON bool,
 	dpi int) {
 	// Remember to also add the same args to the exec based sub-process calls!
 	var cmd *exec.Cmd
-	args := []string{"-model", modelFile, "-output", outputDir, "-execute-model-macro", executeModelMacro, "-raa-plugin", raaPlugin, "-custom-risk-rules-plugins", customRiskRulesPlugins, "-skip-risk-rules", skipRiskRules, "-diagram-dpi", strconv.Itoa(dpi)}
+	args := []string{"-model", modelFile, "-output", outputDir, "-execute-model-macro", executeModelMacro, "-raa-plugin", raaPlugin, "-skip-risk-rules", skipRiskRules, "-diagram-dpi", strconv.Itoa(dpi)}
 	if *verbose {
 		args = append(args, "-verbose")
 	}
@@ -1633,15 +1560,7 @@ func stubFile(context *gin.Context) {
 func addSupportedTags(input []byte) []byte {
 	// add distinct tags as "tags_available"
 	supportedTags := make(map[string]bool, 0)
-	for _, customRule := range customRiskRules {
-		for _, tag := range customRule.SupportedTags() {
-			supportedTags[strings.ToLower(tag)] = true
-		}
-	}
 
-	for _, tag := range accidental_secret_leak.SupportedTags() {
-		supportedTags[strings.ToLower(tag)] = true
-	}
 	for _, tag := range code_backdooring.SupportedTags() {
 		supportedTags[strings.ToLower(tag)] = true
 	}
@@ -1960,7 +1879,7 @@ func analyzeModelOnServerDirectly(context *gin.Context) {
 
 	err = ioutil.WriteFile(tmpModelFile.Name(), []byte(yamlText), 0400)
 
-	doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, true, true, true, true, true, true, true, true, true, dpi)
+	doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *skipRiskRules, *ignoreOrphanedRiskTracking, true, true, true, true, true, true, true, true, true, dpi)
 	if err != nil {
 		handleErrorInServiceCall(err, context)
 		return
@@ -2075,42 +1994,42 @@ func streamResponse(context *gin.Context, responseType responseType) {
 	defer os.RemoveAll(tmpOutputDir)
 	err = ioutil.WriteFile(tmpModelFile.Name(), []byte(yamlText), 0400)
 	if responseType == dataFlowDiagram {
-		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, true, false, false, false, false, false, false, false, false, dpi)
+		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *skipRiskRules, *ignoreOrphanedRiskTracking, true, false, false, false, false, false, false, false, false, dpi)
 		if err != nil {
 			handleErrorInServiceCall(err, context)
 			return
 		}
 		context.File(tmpOutputDir + "/" + dataFlowDiagramFilenamePNG)
 	} else if responseType == dataAssetDiagram {
-		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, true, false, false, false, false, false, false, false, dpi)
+		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *skipRiskRules, *ignoreOrphanedRiskTracking, false, true, false, false, false, false, false, false, false, dpi)
 		if err != nil {
 			handleErrorInServiceCall(err, context)
 			return
 		}
 		context.File(tmpOutputDir + "/" + dataAssetDiagramFilenamePNG)
 	} else if responseType == reportPDF {
-		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, true, false, false, false, false, false, false, dpi)
+		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, true, false, false, false, false, false, false, dpi)
 		if err != nil {
 			handleErrorInServiceCall(err, context)
 			return
 		}
 		context.FileAttachment(tmpOutputDir+"/"+reportFilename, reportFilename)
 	} else if responseType == risksExcel {
-		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, true, false, false, false, false, false, dpi)
+		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, true, false, false, false, false, false, dpi)
 		if err != nil {
 			handleErrorInServiceCall(err, context)
 			return
 		}
 		context.FileAttachment(tmpOutputDir+"/"+excelRisksFilename, excelRisksFilename)
 	} else if responseType == tagsExcel {
-		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, true, false, false, false, false, dpi)
+		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, true, false, false, false, false, dpi)
 		if err != nil {
 			handleErrorInServiceCall(err, context)
 			return
 		}
 		context.FileAttachment(tmpOutputDir+"/"+excelTagsFilename, excelTagsFilename)
 	} else if responseType == risksJSON {
-		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, false, true, false, false, false, dpi)
+		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, false, true, false, false, false, dpi)
 		if err != nil {
 			handleErrorInServiceCall(err, context)
 			return
@@ -2122,7 +2041,7 @@ func streamResponse(context *gin.Context, responseType responseType) {
 		}
 		context.Data(http.StatusOK, "application/json", json) // stream directly with JSON content-type in response instead of file download
 	} else if responseType == technicalAssetsJSON {
-		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, false, true, true, false, false, dpi)
+		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, false, true, true, false, false, dpi)
 		if err != nil {
 			handleErrorInServiceCall(err, context)
 			return
@@ -2134,7 +2053,7 @@ func streamResponse(context *gin.Context, responseType responseType) {
 		}
 		context.Data(http.StatusOK, "application/json", json) // stream directly with JSON content-type in response instead of file download
 	} else if responseType == statsJSON {
-		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *riskRulesPlugins, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, false, false, false, true, false, dpi)
+		doItViaRuntimeCall(tmpModelFile.Name(), tmpOutputDir, *executeModelMacro, *raaPlugin, *skipRiskRules, *ignoreOrphanedRiskTracking, false, false, false, false, false, false, false, true, false, dpi)
 		if err != nil {
 			handleErrorInServiceCall(err, context)
 			return
@@ -3759,17 +3678,9 @@ func parseCommandlineArgs() {
 		printLogo()
 		fmt.Println("The following risk rules are available (can be extended via custom risk rules):")
 		fmt.Println()
-		fmt.Println("------------------")
-		fmt.Println("Custom risk rules:")
-		fmt.Println("------------------")
-		for id, customRule := range customRiskRules {
-			fmt.Println(id, "-->", customRule.Category().Title, "--> with tags:", customRule.SupportedTags())
-		}
-		fmt.Println()
 		fmt.Println("--------------------")
 		fmt.Println("Built-in risk rules:")
 		fmt.Println("--------------------")
-		fmt.Println(accidental_secret_leak.Category().Id, "-->", accidental_secret_leak.Category().Title, "--> with tags:", accidental_secret_leak.SupportedTags())
 		fmt.Println(code_backdooring.Category().Id, "-->", code_backdooring.Category().Title, "--> with tags:", code_backdooring.SupportedTags())
 		fmt.Println(container_baseimage_backdooring.Category().Id, "-->", container_baseimage_backdooring.Category().Title, "--> with tags:", container_baseimage_backdooring.SupportedTags())
 		fmt.Println(container_platform_escape.Category().Id, "-->", container_platform_escape.Category().Title, "--> with tags:", container_platform_escape.SupportedTags())
@@ -3904,7 +3815,6 @@ func createExampleModelFile() {
 }
 
 func createStubModelFile() {
-	loadCustomRiskRules()
 	stub, err := ioutil.ReadFile("/app/threagile-stub-model.yaml")
 	checkErr(err)
 	err = ioutil.WriteFile(*outputDir+"/threagile-stub-model.yaml", addSupportedTags(stub), 0644)

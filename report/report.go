@@ -101,7 +101,6 @@ func WriteReportPDF(reportFilename string,
 	buildTimestamp string,
 	modelHash string,
 	introTextRAA string,
-	customRiskRules map[string]model.CustomRiskRule,
 	pluginRiskRules map[string]model.RiskRule) {
 	initReport()
 	createPdfAndInitMetadata()
@@ -130,7 +129,7 @@ func WriteReportPDF(reportFilename string,
 	createDataAssets()
 	createTrustBoundaries()
 	createSharedRuntimes()
-	createRiskRulesChecked(modelFilename, skipRiskRules, buildTimestamp, modelHash, customRiskRules, pluginRiskRules)
+	createRiskRulesChecked(modelFilename, skipRiskRules, buildTimestamp, modelHash, pluginRiskRules)
 	createDisclaimer()
 	writeReportToFile(reportFilename)
 }
@@ -3916,7 +3915,7 @@ func createSharedRuntimes() {
 	}
 }
 
-func createRiskRulesChecked(modelFilename string, skipRiskRules string, buildTimestamp string, modelHash string, customRiskRules map[string]model.CustomRiskRule, pluginRiskRules map[string]model.RiskRule) {
+func createRiskRulesChecked(modelFilename string, skipRiskRules string, buildTimestamp string, modelHash string, pluginRiskRules map[string]model.RiskRule) {
 	pdf.SetTextColor(0, 0, 0)
 	title := "Risk Rules Checked by Threagile"
 	addHeadline(title, false)
@@ -3948,45 +3947,6 @@ func createRiskRulesChecked(modelFilename string, skipRiskRules string, buildTim
 	skippedRules := strings.Split(skipRiskRules, ",")
 	skipped := ""
 	pdf.Ln(-1)
-
-	for id, customRule := range customRiskRules {
-		pdf.Ln(-1)
-		pdf.SetFont("Helvetica", "B", fontSizeBody)
-		if model.Contains(skippedRules, id) {
-			skipped = "SKIPPED - "
-		} else {
-			skipped = ""
-		}
-		pdf.CellFormat(190, 3, skipped+customRule.Category().Title, "0", 0, "", false, 0, "")
-		pdf.Ln(-1)
-		pdf.SetFont("Helvetica", "", fontSizeSmall)
-		pdf.CellFormat(190, 6, id, "0", 0, "", false, 0, "")
-		pdf.Ln(-1)
-		pdf.SetFont("Helvetica", "I", fontSizeBody)
-		pdf.CellFormat(190, 6, "Custom Risk Rule", "0", 0, "", false, 0, "")
-		pdf.Ln(-1)
-		pdf.SetFont("Helvetica", "", fontSizeBody)
-		pdfColorGray()
-		pdf.CellFormat(5, 6, "", "0", 0, "", false, 0, "")
-		pdf.CellFormat(25, 6, "STRIDE:", "0", 0, "", false, 0, "")
-		pdfColorBlack()
-		pdf.MultiCell(160, 6, customRule.Category().STRIDE.Title(), "0", "0", false)
-		pdfColorGray()
-		pdf.CellFormat(5, 6, "", "0", 0, "", false, 0, "")
-		pdf.CellFormat(25, 6, "Description:", "0", 0, "", false, 0, "")
-		pdfColorBlack()
-		pdf.MultiCell(160, 6, firstParagraph(customRule.Category().Description), "0", "0", false)
-		pdfColorGray()
-		pdf.CellFormat(5, 6, "", "0", 0, "", false, 0, "")
-		pdf.CellFormat(25, 6, "Detection:", "0", 0, "", false, 0, "")
-		pdfColorBlack()
-		pdf.MultiCell(160, 6, customRule.Category().DetectionLogic, "0", "0", false)
-		pdfColorGray()
-		pdf.CellFormat(5, 6, "", "0", 0, "", false, 0, "")
-		pdf.CellFormat(25, 6, "Rating:", "0", 0, "", false, 0, "")
-		pdfColorBlack()
-		pdf.MultiCell(160, 6, customRule.Category().RiskAssessment, "0", "0", false)
-	}
 
 	for _, key := range model.SortedKeysOfIndividualRiskCategories() {
 		indivRiskCat := model.ParsedModelRoot.IndividualRiskCategories[key]
