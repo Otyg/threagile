@@ -1,10 +1,14 @@
-package path_traversal
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type pathTraversal string
+
+var RiskRule pathTraversal
+
+func (r pathTraversal) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "path-traversal",
 		Title: "Path-Traversal",
@@ -32,7 +36,7 @@ func Category() model.RiskCategory {
 	}
 }
 
-func GenerateRisks() []model.Risk {
+func (r pathTraversal) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -54,7 +58,7 @@ func GenerateRisks() []model.Risk {
 	return risks
 }
 
-func SupportedTags() []string {
+func (r pathTraversal) SupportedTags() []string {
 	return []string{}
 }
 
@@ -67,7 +71,7 @@ func createRisk(technicalAsset model.TechnicalAsset, incomingFlow model.Communic
 		impact = model.HighImpact
 	}
 	risk := model.Risk{
-		Category:                        Category(),
+		Category:                        RiskRule.Category(),
 		Severity:                        model.CalculateSeverity(likelihood, impact),
 		ExploitationLikelihood:          likelihood,
 		ExploitationImpact:              impact,

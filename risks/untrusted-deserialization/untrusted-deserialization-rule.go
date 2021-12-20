@@ -1,10 +1,14 @@
-package untrusted_deserialization
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type untrustedDeserialization string
+
+var RiskRule untrustedDeserialization
+
+func (r untrustedDeserialization) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "untrusted-deserialization",
 		Title: "Untrusted Deserialization",
@@ -32,11 +36,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r untrustedDeserialization) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r untrustedDeserialization) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -85,7 +89,7 @@ func createRisk(technicalAsset model.TechnicalAsset, acrossTrustBoundary bool, c
 		impact = model.VeryHighImpact
 	}
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(likelihood, impact),
 		ExploitationLikelihood:       likelihood,
 		ExploitationImpact:           impact,

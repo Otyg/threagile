@@ -6,7 +6,7 @@ GCFLAGS = -gcflags="all=-trimpath=/src"
 ASMFLAGS = -asmflags="all=-trimpath=/src"
 BUILDMODE = -buildmode=plugin
 
-SUBDIR = risks/plugins
+SUBDIR = risks
 PLUGIN_DIR = risk-plugins/
 
 SRCS = $(foreach fd, $(SUBDIR), $(wildcard $(fd)/**/*.go))

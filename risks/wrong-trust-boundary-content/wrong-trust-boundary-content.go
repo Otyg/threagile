@@ -1,10 +1,14 @@
-package wrong_trust_boundary_content
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type wrongTrustBoundaryContent string
+
+var RiskRule wrongTrustBoundaryContent
+
+func (r wrongTrustBoundaryContent) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "wrong-trust-boundary-content",
 		Title: "Wrong Trust Boundary Content",
@@ -26,11 +30,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r wrongTrustBoundaryContent) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r wrongTrustBoundaryContent) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, trustBoundary := range model.ParsedModelRoot.TrustBoundaries {
 		if trustBoundary.Type == model.NetworkPolicyNamespaceIsolation {
@@ -48,7 +52,7 @@ func GenerateRisks() []model.Risk {
 func createRisk(technicalAsset model.TechnicalAsset) model.Risk {
 	title := "<b>Wrong Trust Boundary Content</b> (non-container asset inside container trust boundary) at <b>" + technicalAsset.Title + "</b>"
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(model.Unlikely, model.LowImpact),
 		ExploitationLikelihood:       model.Unlikely,
 		ExploitationImpact:           model.LowImpact,

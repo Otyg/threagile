@@ -1,11 +1,14 @@
-package missing_authentication_second_factor
+package main
 
 import (
 	"github.com/otyg/threagile/model"
-	missing_authentication "github.com/otyg/threagile/risks/missing-authentication"
 )
 
-func Category() model.RiskCategory {
+type missingAuthenticationSecondFactor string
+
+var RiskRule missingAuthenticationSecondFactor
+
+func (r missingAuthenticationSecondFactor) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "missing-authentication-second-factor",
 		Title: "Missing Two-Factor Authentication (2FA)",
@@ -31,11 +34,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r missingAuthenticationSecondFactor) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r missingAuthenticationSecondFactor) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -59,7 +62,7 @@ func GenerateRisks() []model.Risk {
 					moreRisky := commLink.HighestConfidentiality() >= model.Confidential ||
 						commLink.HighestIntegrity() >= model.Critical
 					if moreRisky && commLink.Authentication != model.TwoFactor {
-						risks = append(risks, missing_authentication.CreateRisk(technicalAsset, commLink, commLink, "", model.MediumImpact, model.Unlikely, true, Category()))
+						risks = append(risks, createRisk(technicalAsset, commLink, commLink, "", model.MediumImpact, model.Unlikely, true, RiskRule.Category()))
 					}
 				} else if caller.Technology.IsTrafficForwarding() {
 					// Now try to walk a call chain up (1 hop only) to find a caller's caller used by human
@@ -73,7 +76,7 @@ func GenerateRisks() []model.Risk {
 							moreRisky := callersCommLink.HighestConfidentiality() >= model.Confidential ||
 								callersCommLink.HighestIntegrity() >= model.Critical
 							if moreRisky && callersCommLink.Authentication != model.TwoFactor {
-								risks = append(risks, missing_authentication.CreateRisk(technicalAsset, commLink, callersCommLink, caller.Title, model.MediumImpact, model.Unlikely, true, Category()))
+								risks = append(risks, createRisk(technicalAsset, commLink, callersCommLink, caller.Title, model.MediumImpact, model.Unlikely, true, RiskRule.Category()))
 							}
 						}
 					}
@@ -82,4 +85,30 @@ func GenerateRisks() []model.Risk {
 		}
 	}
 	return risks
+}
+
+func createRisk(technicalAsset model.TechnicalAsset, incomingAccess, incomingAccessOrigin model.CommunicationLink, hopBetween string,
+	impact model.RiskExploitationImpact, likelihood model.RiskExploitationLikelihood, twoFactor bool, category model.RiskCategory) model.Risk {
+	factorString := ""
+	if twoFactor {
+		factorString = "Two-Factor "
+	}
+	if len(hopBetween) > 0 {
+		hopBetween = "forwarded via <b>" + hopBetween + "</b> "
+	}
+	risk := model.Risk{
+		Category:               category,
+		Severity:               model.CalculateSeverity(likelihood, impact),
+		ExploitationLikelihood: likelihood,
+		ExploitationImpact:     impact,
+		Title: "<b>Missing " + factorString + "Authentication</b> covering communication link <b>" + incomingAccess.Title + "</b> " +
+			"from <b>" + model.ParsedModelRoot.TechnicalAssets[incomingAccessOrigin.SourceId].Title + "</b> " + hopBetween +
+			"to <b>" + technicalAsset.Title + "</b>",
+		MostRelevantTechnicalAssetId:    technicalAsset.Id,
+		MostRelevantCommunicationLinkId: incomingAccess.Id,
+		DataBreachProbability:           model.Possible,
+		DataBreachTechnicalAssetIDs:     []string{technicalAsset.Id},
+	}
+	risk.SyntheticId = risk.Category.Id + "@" + incomingAccess.Id + "@" + model.ParsedModelRoot.TechnicalAssets[incomingAccess.SourceId].Id + "@" + technicalAsset.Id
+	return risk
 }

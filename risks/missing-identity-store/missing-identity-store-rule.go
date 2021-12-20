@@ -1,10 +1,14 @@
-package missing_identity_store
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type missingIdentityStore string
+
+var RiskRule missingIdentityStore
+
+func (r missingIdentityStore) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "missing-identity-store",
 		Title: "Missing Identity Store",
@@ -29,11 +33,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r missingIdentityStore) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r missingIdentityStore) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, technicalAsset := range model.ParsedModelRoot.TechnicalAssets {
 		if !technicalAsset.OutOfScope &&
@@ -81,7 +85,7 @@ func GenerateRisks() []model.Risk {
 func createRisk(technicalAsset model.TechnicalAsset, impact model.RiskExploitationImpact) model.Risk {
 	title := "<b>Missing Identity Store</b> in the threat model (referencing asset <b>" + technicalAsset.Title + "</b> as an example)"
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(model.Unlikely, impact),
 		ExploitationLikelihood:       model.Unlikely,
 		ExploitationImpact:           impact,

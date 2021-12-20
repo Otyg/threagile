@@ -1,10 +1,14 @@
-package service_registry_poisoning
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type serviceRegistryPoisoning string
+
+var RiskRule serviceRegistryPoisoning
+
+func (r serviceRegistryPoisoning) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:          "service-registry-poisoning",
 		Title:       "Service Registry Poisoning",
@@ -28,11 +32,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r serviceRegistryPoisoning) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r serviceRegistryPoisoning) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -59,7 +63,7 @@ func createRisk(technicalAsset model.TechnicalAsset, incomingFlows []model.Commu
 	}
 
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(model.Unlikely, impact),
 		ExploitationLikelihood:       model.Unlikely,
 		ExploitationImpact:           impact,

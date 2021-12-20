@@ -1,4 +1,4 @@
-package unguarded_access_from_internet
+package main
 
 import (
 	"sort"
@@ -6,7 +6,11 @@ import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type unguardedAccessFromInternet string
+
+var RiskRule unguardedAccessFromInternet
+
+func (r unguardedAccessFromInternet) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "unguarded-access-from-internet",
 		Title: "Unguarded Access From Internet",
@@ -40,11 +44,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r unguardedAccessFromInternet) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r unguardedAccessFromInternet) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -90,7 +94,7 @@ func createRisk(dataStore model.TechnicalAsset, dataFlow model.CommunicationLink
 		impact = model.MediumImpact
 	}
 	risk := model.Risk{
-		Category:               Category(),
+		Category:               RiskRule.Category(),
 		Severity:               model.CalculateSeverity(model.VeryLikely, impact),
 		ExploitationLikelihood: model.VeryLikely,
 		ExploitationImpact:     impact,

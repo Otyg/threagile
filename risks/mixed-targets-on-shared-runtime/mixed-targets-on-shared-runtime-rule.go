@@ -1,4 +1,4 @@
-package mixed_targets_on_shared_runtime
+package main
 
 import (
 	"sort"
@@ -6,7 +6,11 @@ import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type mixedTargetsOnSharedRuntime string
+
+var RiskRule mixedTargetsOnSharedRuntime
+
+func (r mixedTargetsOnSharedRuntime) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "mixed-targets-on-shared-runtime",
 		Title: "Mixed Targets on Shared Runtime",
@@ -34,11 +38,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r mixedTargetsOnSharedRuntime) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r mixedTargetsOnSharedRuntime) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	// as in Go ranging over map is random order, range over them in sorted (hence reproducible) way:
 	keys := make([]string, 0)
@@ -79,7 +83,7 @@ func createRisk(sharedRuntime model.SharedRuntime) model.Risk {
 		impact = model.MediumImpact
 	}
 	risk := model.Risk{
-		Category:               Category(),
+		Category:               RiskRule.Category(),
 		Severity:               model.CalculateSeverity(model.Unlikely, impact),
 		ExploitationLikelihood: model.Unlikely,
 		ExploitationImpact:     impact,

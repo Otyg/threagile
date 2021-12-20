@@ -1,10 +1,14 @@
-package ldap_injection
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type ldapInjectionRule string
+
+var RiskRule ldapInjectionRule
+
+func (r ldapInjectionRule) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "ldap-injection",
 		Title: "LDAP-Injection",
@@ -30,7 +34,7 @@ func Category() model.RiskCategory {
 	}
 }
 
-func GenerateRisks() []model.Risk {
+func (r ldapInjectionRule) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, technicalAsset := range model.ParsedModelRoot.TechnicalAssets {
 		incomingFlows := model.IncomingTechnicalCommunicationLinksMappedByTargetId[technicalAsset.Id]
@@ -50,7 +54,7 @@ func GenerateRisks() []model.Risk {
 	return risks
 }
 
-func SupportedTags() []string {
+func (r ldapInjectionRule) SupportedTags() []string {
 	return []string{}
 }
 
@@ -63,7 +67,7 @@ func createRisk(technicalAsset model.TechnicalAsset, incomingFlow model.Communic
 		impact = model.HighImpact
 	}
 	risk := model.Risk{
-		Category:                        Category(),
+		Category:                        RiskRule.Category(),
 		Severity:                        model.CalculateSeverity(likelihood, impact),
 		ExploitationLikelihood:          likelihood,
 		ExploitationImpact:              impact,

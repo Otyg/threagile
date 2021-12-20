@@ -1,10 +1,14 @@
-package server_side_request_forgery
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type servierSideRequestForgery string
+
+var RiskRule servierSideRequestForgery
+
+func (r servierSideRequestForgery) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "server-side-request-forgery",
 		Title: "Server-Side Request Forgery (SSRF)",
@@ -31,11 +35,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r servierSideRequestForgery) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r servierSideRequestForgery) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -88,7 +92,7 @@ func createRisk(technicalAsset model.TechnicalAsset, outgoingFlow model.Communic
 		likelihood = model.Unlikely
 	}
 	risk := model.Risk{
-		Category:                        Category(),
+		Category:                        RiskRule.Category(),
 		Severity:                        model.CalculateSeverity(likelihood, impact),
 		ExploitationLikelihood:          likelihood,
 		ExploitationImpact:              impact,

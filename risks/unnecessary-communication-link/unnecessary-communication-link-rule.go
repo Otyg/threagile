@@ -1,10 +1,14 @@
-package unnecessary_communication_link
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type unnecessaryCommunicationLink string
+
+var RiskRule unnecessaryCommunicationLink
+
+func (r unnecessaryCommunicationLink) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "unnecessary-communication-link",
 		Title: "Unnecessary Communication Link",
@@ -26,11 +30,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r unnecessaryCommunicationLink) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r unnecessaryCommunicationLink) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -48,7 +52,7 @@ func GenerateRisks() []model.Risk {
 func createRisk(technicalAsset model.TechnicalAsset, commLink model.CommunicationLink) model.Risk {
 	title := "<b>Unnecessary Communication Link</b> titled <b>" + commLink.Title + "</b> at technical asset <b>" + technicalAsset.Title + "</b>"
 	risk := model.Risk{
-		Category:                        Category(),
+		Category:                        RiskRule.Category(),
 		Severity:                        model.CalculateSeverity(model.Unlikely, model.LowImpact),
 		ExploitationLikelihood:          model.Unlikely,
 		ExploitationImpact:              model.LowImpact,

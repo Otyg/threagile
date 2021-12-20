@@ -1,10 +1,14 @@
-package missing_identity_propagation
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type missingIdentityPropagation string
+
+var RiskRule missingIdentityPropagation
+
+func (r missingIdentityPropagation) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "missing-identity-propagation",
 		Title: "Missing Identity Propagation",
@@ -36,11 +40,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r missingIdentityPropagation) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r missingIdentityPropagation) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -84,7 +88,7 @@ func createRisk(technicalAsset model.TechnicalAsset, incomingAccess model.Commun
 		impact = model.MediumImpact
 	}
 	risk := model.Risk{
-		Category:               Category(),
+		Category:               RiskRule.Category(),
 		Severity:               model.CalculateSeverity(model.Unlikely, impact),
 		ExploitationLikelihood: model.Unlikely,
 		ExploitationImpact:     impact,

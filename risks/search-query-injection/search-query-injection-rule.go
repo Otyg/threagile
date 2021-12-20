@@ -1,10 +1,14 @@
-package search_query_injection
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type searchQueryInjection string
+
+var RiskRule searchQueryInjection
+
+func (r searchQueryInjection) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "search-query-injection",
 		Title: "Search-Query Injection",
@@ -32,7 +36,7 @@ func Category() model.RiskCategory {
 	}
 }
 
-func GenerateRisks() []model.Risk {
+func (r searchQueryInjection) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -56,7 +60,7 @@ func GenerateRisks() []model.Risk {
 	return risks
 }
 
-func SupportedTags() []string {
+func (r searchQueryInjection) SupportedTags() []string {
 	return []string{}
 }
 
@@ -71,7 +75,7 @@ func createRisk(technicalAsset model.TechnicalAsset, incomingFlow model.Communic
 		impact = model.LowImpact
 	}
 	risk := model.Risk{
-		Category:                        Category(),
+		Category:                        RiskRule.Category(),
 		Severity:                        model.CalculateSeverity(likelihood, impact),
 		ExploitationLikelihood:          likelihood,
 		ExploitationImpact:              impact,

@@ -1,10 +1,14 @@
-package container_platform_escape
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type containerPlatformEscapeRule string
+
+var RiskRule containerPlatformEscapeRule
+
+func (r containerPlatformEscapeRule) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "container-platform-escape",
 		Title: "Container Platform Escape",
@@ -36,11 +40,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r containerPlatformEscapeRule) SupportedTags() []string {
 	return []string{"docker", "kubernetes", "openshift"}
 }
 
-func GenerateRisks() []model.Risk {
+func (r containerPlatformEscapeRule) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -68,7 +72,7 @@ func createRisk(technicalAsset model.TechnicalAsset) model.Risk {
 	}
 	// create risk
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(model.Unlikely, impact),
 		ExploitationLikelihood:       model.Unlikely,
 		ExploitationImpact:           impact,

@@ -1,10 +1,14 @@
-package container_baseimage_backdooring
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type containerBackdooringRule string
+
+var RiskRule containerBackdooringRule
+
+func (r containerBackdooringRule) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "container-baseimage-backdooring",
 		Title: "Container Base Image Backdooring",
@@ -31,11 +35,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r containerBackdooringRule) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r containerBackdooringRule) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -55,7 +59,7 @@ func createRisk(technicalAsset model.TechnicalAsset) model.Risk {
 		impact = model.HighImpact
 	}
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(model.Unlikely, impact),
 		ExploitationLikelihood:       model.Unlikely,
 		ExploitationImpact:           impact,

@@ -1,10 +1,14 @@
-package unencrypted_communication
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type unencryptedCommunication string
+
+var RiskRule unencryptedCommunication
+
+func (r unencryptedCommunication) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "unencrypted-communication",
 		Title: "Unencrypted Communication",
@@ -29,12 +33,12 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r unencryptedCommunication) SupportedTags() []string {
 	return []string{}
 }
 
 // check for communication links that should be encrypted due to their confidentiality and/or integrity
-func GenerateRisks() []model.Risk {
+func (r unencryptedCommunication) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, technicalAsset := range model.ParsedModelRoot.TechnicalAssets {
 		for _, dataFlow := range technicalAsset.CommunicationLinks {
@@ -96,7 +100,7 @@ func createRisk(technicalAsset model.TechnicalAsset, dataFlow model.Communicatio
 		likelihood = model.Likely
 	}
 	risk := model.Risk{
-		Category:                        Category(),
+		Category:                        RiskRule.Category(),
 		Severity:                        model.CalculateSeverity(likelihood, impact),
 		ExploitationLikelihood:          likelihood,
 		ExploitationImpact:              impact,

@@ -1,4 +1,4 @@
-package unnecessary_data_transfer
+package main
 
 import (
 	"sort"
@@ -6,7 +6,11 @@ import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type unnecessaryDataTransfer string
+
+var RiskRule unnecessaryDataTransfer
+
+func (r unnecessaryDataTransfer) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "unnecessary-data-transfer",
 		Title: "Unnecessary Data Transfer",
@@ -35,11 +39,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r unnecessaryDataTransfer) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r unnecessaryDataTransfer) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -127,7 +131,7 @@ func createRisk(technicalAsset model.TechnicalAsset, dataAssetTransferred model.
 	title := "<b>Unnecessary Data Transfer</b> of <b>" + dataAssetTransferred.Title + "</b> data at <b>" + technicalAsset.Title + "</b> " +
 		"from/to <b>" + commPartnerAsset.Title + "</b>"
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(model.Unlikely, impact),
 		ExploitationLikelihood:       model.Unlikely,
 		ExploitationImpact:           impact,

@@ -1,10 +1,14 @@
-package missing_vault
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type missingVault string
+
+var RiskRule missingVault
+
+func (r missingVault) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "missing-vault",
 		Title: "Missing Vault (Secret Storage)",
@@ -31,11 +35,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r missingVault) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r missingVault) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	hasVault := false
 	var mostRelevantAsset model.TechnicalAsset
@@ -69,7 +73,7 @@ func GenerateRisks() []model.Risk {
 func createRisk(technicalAsset model.TechnicalAsset, impact model.RiskExploitationImpact) model.Risk {
 	title := "<b>Missing Vault (Secret Storage)</b> in the threat model (referencing asset <b>" + technicalAsset.Title + "</b> as an example)"
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(model.Unlikely, impact),
 		ExploitationLikelihood:       model.Unlikely,
 		ExploitationImpact:           impact,

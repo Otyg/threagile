@@ -1,4 +1,4 @@
-package missing_hardening
+package main
 
 import (
 	"strconv"
@@ -6,10 +6,14 @@ import (
 	"github.com/otyg/threagile/model"
 )
 
+type missingHardening string
+
+var RiskRule missingHardening
+
 const raaLimit = 55
 const raaLimitReduced = 40
 
-func Category() model.RiskCategory {
+func (r missingHardening) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "missing-hardening",
 		Title: "Missing Hardening",
@@ -34,11 +38,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r missingHardening) SupportedTags() []string {
 	return []string{"tomcat"}
 }
 
-func GenerateRisks() []model.Risk {
+func (r missingHardening) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -59,7 +63,7 @@ func createRisk(technicalAsset model.TechnicalAsset) model.Risk {
 		impact = model.MediumImpact
 	}
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(model.Likely, impact),
 		ExploitationLikelihood:       model.Likely,
 		ExploitationImpact:           impact,

@@ -1,4 +1,4 @@
-package missing_cloud_hardening
+package main
 
 import (
 	"sort"
@@ -6,7 +6,11 @@ import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type missingCloudHardening string
+
+var RiskRule missingCloudHardening
+
+func (r missingCloudHardening) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "missing-cloud-hardening",
 		Title: "Missing Cloud Hardening",
@@ -39,7 +43,7 @@ func Category() model.RiskCategory {
 
 var specificSubtagsAWS = []string{"aws:vpc", "aws:ec2", "aws:s3", "aws:ebs", "aws:apigateway", "aws:lambda", "aws:dynamodb", "aws:rds", "aws:sqs", "aws:iam"}
 
-func SupportedTags() []string {
+func (r missingCloudHardening) SupportedTags() []string {
 	res := []string{
 		"aws",   // Amazon AWS
 		"azure", // Microsoft Azure
@@ -50,7 +54,7 @@ func SupportedTags() []string {
 	return res
 }
 
-func GenerateRisks() []model.Risk {
+func (r missingCloudHardening) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 
 	sharedRuntimesWithUnspecificCloudRisks := make(map[string]bool, 0)
@@ -76,14 +80,14 @@ func GenerateRisks() []model.Risk {
 	techAssetIDsWithSubtagSpecificCloudRisks := make(map[string]bool, 0)
 
 	for _, trustBoundary := range model.ParsedModelRoot.TrustBoundaries {
-		taggedOuterTB := trustBoundary.IsTaggedWithAny(SupportedTags()...) // false = generic cloud risks only // true = cloud-individual risks
+		taggedOuterTB := trustBoundary.IsTaggedWithAny(r.SupportedTags()...) // false = generic cloud risks only // true = cloud-individual risks
 		if taggedOuterTB || trustBoundary.Type.IsWithinCloud() {
 			addTrustBoundaryAccordingToBasetag(trustBoundary, trustBoundariesWithUnspecificCloudRisks,
 				trustBoundaryIDsAWS, trustBoundaryIDsAzure, trustBoundaryIDsGCP, trustBoundaryIDsOCP)
 			for _, techAssetID := range trustBoundary.RecursivelyAllTechnicalAssetIDsInside() {
 				added := false
 				tA := model.ParsedModelRoot.TechnicalAssets[techAssetID]
-				if tA.IsTaggedWithAny(SupportedTags()...) {
+				if tA.IsTaggedWithAny(r.SupportedTags()...) {
 					addAccordingToBasetag(tA, tA.Tags,
 						techAssetIDsWithSubtagSpecificCloudRisks,
 						techAssetIDsAWS, techAssetIDsAzure, techAssetIDsGCP, techAssetIDsOCP)
@@ -102,15 +106,15 @@ func GenerateRisks() []model.Risk {
 	}
 
 	// now loop over all technical assets, trust boundaries, and shared runtimes model-wide by tag
-	for _, tA := range model.TechnicalAssetsTaggedWithAny(SupportedTags()...) {
+	for _, tA := range model.TechnicalAssetsTaggedWithAny(r.SupportedTags()...) {
 		addAccordingToBasetag(tA, tA.Tags,
 			techAssetIDsWithSubtagSpecificCloudRisks,
 			techAssetIDsAWS, techAssetIDsAzure, techAssetIDsGCP, techAssetIDsOCP)
 	}
-	for _, tB := range model.TrustBoundariesTaggedWithAny(SupportedTags()...) {
+	for _, tB := range model.TrustBoundariesTaggedWithAny(r.SupportedTags()...) {
 		for _, candidateID := range tB.RecursivelyAllTechnicalAssetIDsInside() {
 			tA := model.ParsedModelRoot.TechnicalAssets[candidateID]
-			if tA.IsTaggedWithAny(SupportedTags()...) {
+			if tA.IsTaggedWithAny(r.SupportedTags()...) {
 				addAccordingToBasetag(tA, tA.Tags,
 					techAssetIDsWithSubtagSpecificCloudRisks,
 					techAssetIDsAWS, techAssetIDsAzure, techAssetIDsGCP, techAssetIDsOCP)
@@ -121,7 +125,7 @@ func GenerateRisks() []model.Risk {
 			}
 		}
 	}
-	for _, sR := range model.SharedRuntimesTaggedWithAny(SupportedTags()...) {
+	for _, sR := range model.SharedRuntimesTaggedWithAny(r.SupportedTags()...) {
 		addSharedRuntimeAccordingToBasetag(sR, sharedRuntimesWithUnspecificCloudRisks,
 			sharedRuntimeIDsAWS, sharedRuntimeIDsAzure, sharedRuntimeIDsGCP, sharedRuntimeIDsOCP)
 		for _, candidateID := range sR.TechnicalAssetsRunning {
@@ -276,7 +280,7 @@ func addTrustBoundaryAccordingToBasetag(trustBoundary model.TrustBoundary,
 	trustBoundaryIDsAzure map[string]bool,
 	trustBoundaryIDsGCP map[string]bool,
 	trustBoundaryIDsOCP map[string]bool) {
-	if trustBoundary.IsTaggedWithAny(SupportedTags()...) {
+	if trustBoundary.IsTaggedWithAny(RiskRule.SupportedTags()...) {
 		if trustBoundary.IsTaggedWithBaseTag("aws") {
 			trustBoundaryIDsAWS[trustBoundary.Id] = true
 		}
@@ -300,7 +304,7 @@ func addSharedRuntimeAccordingToBasetag(sharedRuntime model.SharedRuntime,
 	sharedRuntimeIDsAzure map[string]bool,
 	sharedRuntimeIDsGCP map[string]bool,
 	sharedRuntimeIDsOCP map[string]bool) {
-	if sharedRuntime.IsTaggedWithAny(SupportedTags()...) {
+	if sharedRuntime.IsTaggedWithAny(RiskRule.SupportedTags()...) {
 		if sharedRuntime.IsTaggedWithBaseTag("aws") {
 			sharedRuntimeIDsAWS[sharedRuntime.Id] = true
 		}
@@ -378,7 +382,7 @@ func createRiskForSharedRuntime(sharedRuntime model.SharedRuntime, prefix, detai
 	}
 	// create risk
 	risk := model.Risk{
-		Category:                    Category(),
+		Category:                    RiskRule.Category(),
 		Severity:                    model.CalculateSeverity(model.Unlikely, impact),
 		ExploitationLikelihood:      model.Unlikely,
 		ExploitationImpact:          impact,
@@ -412,7 +416,7 @@ func createRiskForTrustBoundary(trustBoundary model.TrustBoundary, prefix, detai
 	}
 	// create risk
 	risk := model.Risk{
-		Category:                    Category(),
+		Category:                    RiskRule.Category(),
 		Severity:                    model.CalculateSeverity(model.Unlikely, impact),
 		ExploitationLikelihood:      model.Unlikely,
 		ExploitationImpact:          impact,
@@ -446,7 +450,7 @@ func createRiskForTechnicalAsset(technicalAsset model.TechnicalAsset, prefix, de
 	}
 	// create risk
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(model.Unlikely, impact),
 		ExploitationLikelihood:       model.Unlikely,
 		ExploitationImpact:           impact,

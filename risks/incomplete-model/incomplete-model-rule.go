@@ -1,10 +1,14 @@
-package incomplete_model
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type incompleteModelRule string
+
+var RiskRule incompleteModelRule
+
+func (r incompleteModelRule) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "incomplete-model",
 		Title: "Incomplete Model",
@@ -26,11 +30,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r incompleteModelRule) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r incompleteModelRule) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -51,7 +55,7 @@ func GenerateRisks() []model.Risk {
 func createRiskTechAsset(technicalAsset model.TechnicalAsset) model.Risk {
 	title := "<b>Unknown Technology</b> specified at technical asset <b>" + technicalAsset.Title + "</b>"
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(model.Unlikely, model.LowImpact),
 		ExploitationLikelihood:       model.Unlikely,
 		ExploitationImpact:           model.LowImpact,
@@ -67,7 +71,7 @@ func createRiskTechAsset(technicalAsset model.TechnicalAsset) model.Risk {
 func createRiskCommLink(technicalAsset model.TechnicalAsset, commLink model.CommunicationLink) model.Risk {
 	title := "<b>Unknown Protocol</b> specified for communication link <b>" + commLink.Title + "</b> at technical asset <b>" + technicalAsset.Title + "</b>"
 	risk := model.Risk{
-		Category:                        Category(),
+		Category:                        RiskRule.Category(),
 		Severity:                        model.CalculateSeverity(model.Unlikely, model.LowImpact),
 		ExploitationLikelihood:          model.Unlikely,
 		ExploitationImpact:              model.LowImpact,

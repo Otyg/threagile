@@ -1,10 +1,14 @@
-package unnecessary_technical_asset
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type unnecessaryTechnicalAsset string
+
+var RiskRule unnecessaryTechnicalAsset
+
+func (r unnecessaryTechnicalAsset) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "unnecessary-technical-asset",
 		Title: "Unnecessary Technical Asset",
@@ -27,11 +31,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r unnecessaryTechnicalAsset) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r unnecessaryTechnicalAsset) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -48,7 +52,7 @@ func GenerateRisks() []model.Risk {
 func createRisk(technicalAsset model.TechnicalAsset) model.Risk {
 	title := "<b>Unnecessary Technical Asset</b> named <b>" + technicalAsset.Title + "</b>"
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(model.Unlikely, model.LowImpact),
 		ExploitationLikelihood:       model.Unlikely,
 		ExploitationImpact:           model.LowImpact,

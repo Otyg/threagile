@@ -1,10 +1,14 @@
-package missing_file_validation
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type missingFileValidationRule string
+
+var RiskRule missingFileValidationRule
+
+func (r missingFileValidationRule) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:           "missing-file-validation",
 		Title:        "Missing File Validation",
@@ -31,11 +35,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r missingFileValidationRule) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r missingFileValidationRule) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -60,7 +64,7 @@ func createRisk(technicalAsset model.TechnicalAsset) model.Risk {
 		impact = model.MediumImpact
 	}
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(model.VeryLikely, impact),
 		ExploitationLikelihood:       model.VeryLikely,
 		ExploitationImpact:           impact,

@@ -1,4 +1,4 @@
-package unnecessary_data_asset
+package main
 
 import (
 	"sort"
@@ -6,7 +6,11 @@ import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type unnecessaryDataAsset string
+
+var RiskRule unnecessaryDataAsset
+
+func (r unnecessaryDataAsset) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "unnecessary-data-asset",
 		Title: "Unnecessary Data Asset",
@@ -30,11 +34,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r unnecessaryDataAsset) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r unnecessaryDataAsset) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	// first create them in memory - otherwise in Go ranging over map is random order
 	// range over them in sorted (hence re-producible) way:
@@ -73,7 +77,7 @@ func createRisk(unusedDataAssetID string) model.Risk {
 	unusedDataAsset := model.ParsedModelRoot.DataAssets[unusedDataAssetID]
 	title := "<b>Unnecessary Data Asset</b> named <b>" + unusedDataAsset.Title + "</b>"
 	risk := model.Risk{
-		Category:                    Category(),
+		Category:                    RiskRule.Category(),
 		Severity:                    model.CalculateSeverity(model.Unlikely, model.LowImpact),
 		ExploitationLikelihood:      model.Unlikely,
 		ExploitationImpact:          model.LowImpact,

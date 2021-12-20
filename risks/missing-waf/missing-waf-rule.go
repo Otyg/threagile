@@ -1,10 +1,14 @@
-package missing_waf
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type missingWaf string
+
+var RiskRule missingWaf
+
+func (r missingWaf) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "missing-waf",
 		Title: "Missing Web Application Firewall (WAF)",
@@ -29,11 +33,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r missingWaf) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r missingWaf) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, technicalAsset := range model.ParsedModelRoot.TechnicalAssets {
 		if !technicalAsset.OutOfScope &&
@@ -61,7 +65,7 @@ func createRisk(technicalAsset model.TechnicalAsset) model.Risk {
 		impact = model.MediumImpact
 	}
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(likelihood, impact),
 		ExploitationLikelihood:       likelihood,
 		ExploitationImpact:           impact,

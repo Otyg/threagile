@@ -1,10 +1,14 @@
-package unguarded_direct_datastore_access
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type unguardedDirectDatastoreAccess string
+
+var RiskRule unguardedDirectDatastoreAccess
+
+func (r unguardedDirectDatastoreAccess) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:          "unguarded-direct-datastore-access",
 		Title:       "Unguarded Direct Datastore Access",
@@ -30,12 +34,12 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r unguardedDirectDatastoreAccess) SupportedTags() []string {
 	return []string{}
 }
 
 // check for datastores that should not be accessed directly across trust boundaries
-func GenerateRisks() []model.Risk {
+func (r unguardedDirectDatastoreAccess) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -72,7 +76,7 @@ func createRisk(dataStore model.TechnicalAsset, dataFlow model.CommunicationLink
 		impact = model.MediumImpact
 	}
 	risk := model.Risk{
-		Category:               Category(),
+		Category:               RiskRule.Category(),
 		Severity:               model.CalculateSeverity(model.Likely, impact),
 		ExploitationLikelihood: model.Likely,
 		ExploitationImpact:     impact,

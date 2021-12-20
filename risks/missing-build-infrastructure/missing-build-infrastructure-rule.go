@@ -1,10 +1,14 @@
-package missing_build_infrastructure
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type missingBuildInfrastructure string
+
+var RiskRule missingBuildInfrastructure
+
+func (r missingBuildInfrastructure) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "missing-build-infrastructure",
 		Title: "Missing Build Infrastructure",
@@ -31,11 +35,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r missingBuildInfrastructure) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r missingBuildInfrastructure) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	hasCustomDevelopedParts, hasBuildPipeline, hasSourcecodeRepo, hasDevOpsClient := false, false, false, false
 	impact := model.LowImpact
@@ -82,7 +86,7 @@ func GenerateRisks() []model.Risk {
 func createRisk(technicalAsset model.TechnicalAsset, impact model.RiskExploitationImpact) model.Risk {
 	title := "<b>Missing Build Infrastructure</b> in the threat model (referencing asset <b>" + technicalAsset.Title + "</b> as an example)"
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(model.Unlikely, impact),
 		ExploitationLikelihood:       model.Unlikely,
 		ExploitationImpact:           impact,

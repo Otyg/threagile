@@ -1,10 +1,14 @@
-package missing_identity_provider_isolation
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type missingIdentityProviderIsolation string
+
+var RiskRule missingIdentityProviderIsolation
+
+func (r missingIdentityProviderIsolation) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "missing-identity-provider-isolation",
 		Title: "Missing Identity Provider Isolation",
@@ -31,11 +35,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r missingIdentityProviderIsolation) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r missingIdentityProviderIsolation) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, technicalAsset := range model.ParsedModelRoot.TechnicalAssets {
 		if !technicalAsset.OutOfScope && technicalAsset.Technology.IsIdentityRelated() {
@@ -78,7 +82,7 @@ func createRisk(techAsset model.TechnicalAsset, moreImpact bool, sameExecutionEn
 		others = "<b>in the same execution environment</b>"
 	}
 	risk := model.Risk{
-		Category:               Category(),
+		Category:               RiskRule.Category(),
 		Severity:               model.CalculateSeverity(likelihood, impact),
 		ExploitationLikelihood: likelihood,
 		ExploitationImpact:     impact,

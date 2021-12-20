@@ -1,10 +1,14 @@
-package cross_site_scripting
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type crossSiteScriptingRule string
+
+var RiskRule crossSiteScriptingRule
+
+func (r crossSiteScriptingRule) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "cross-site-scripting",
 		Title: "Cross-Site Scripting (XSS)",
@@ -31,11 +35,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r crossSiteScriptingRule) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r crossSiteScriptingRule) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -54,7 +58,7 @@ func createRisk(technicalAsset model.TechnicalAsset) model.Risk {
 		impact = model.HighImpact
 	}
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(model.Likely, impact),
 		ExploitationLikelihood:       model.Likely,
 		ExploitationImpact:           impact,

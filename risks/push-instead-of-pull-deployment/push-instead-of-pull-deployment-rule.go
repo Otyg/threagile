@@ -1,10 +1,14 @@
-package push_instead_of_pull_deployment
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type pushInsteadOfPullDeployment string
+
+var RiskRule pushInsteadOfPullDeployment
+
+func (r pushInsteadOfPullDeployment) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "push-instead-of-pull-deployment",
 		Title: "Push instead of Pull Deployment",
@@ -31,11 +35,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r pushInsteadOfPullDeployment) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r pushInsteadOfPullDeployment) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	impact := model.LowImpact
 	for _, buildPipeline := range model.ParsedModelRoot.TechnicalAssets {
@@ -60,7 +64,7 @@ func GenerateRisks() []model.Risk {
 func createRisk(buildPipeline model.TechnicalAsset, deploymentTarget model.TechnicalAsset, deploymentCommLink model.CommunicationLink, impact model.RiskExploitationImpact) model.Risk {
 	title := "<b>Push instead of Pull Deployment</b> at <b>" + deploymentTarget.Title + "</b> via build pipeline asset <b>" + buildPipeline.Title + "</b>"
 	risk := model.Risk{
-		Category:                        Category(),
+		Category:                        RiskRule.Category(),
 		Severity:                        model.CalculateSeverity(model.Unlikely, impact),
 		ExploitationLikelihood:          model.Unlikely,
 		ExploitationImpact:              impact,

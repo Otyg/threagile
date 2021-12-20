@@ -1,10 +1,14 @@
-package cross_site_request_forgery
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type crossSiteRequestForgeryRule string
+
+var RiskRule crossSiteRequestForgeryRule
+
+func (r crossSiteRequestForgeryRule) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:          "cross-site-request-forgery",
 		Title:       "Cross-Site Request Forgery (CSRF)",
@@ -33,11 +37,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r crossSiteRequestForgeryRule) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r crossSiteRequestForgeryRule) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -66,7 +70,7 @@ func createRisk(technicalAsset model.TechnicalAsset, incomingFlow model.Communic
 		impact = model.MediumImpact
 	}
 	risk := model.Risk{
-		Category:                        Category(),
+		Category:                        RiskRule.Category(),
 		Severity:                        model.CalculateSeverity(likelihood, impact),
 		ExploitationLikelihood:          likelihood,
 		ExploitationImpact:              impact,

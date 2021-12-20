@@ -1,10 +1,14 @@
-package wrong_communication_link_content
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type wrongCommunicationLinkContent string
+
+var RiskRule wrongCommunicationLinkContent
+
+func (r wrongCommunicationLinkContent) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "wrong-communication-link-content",
 		Title: "Wrong Communication Link Content",
@@ -27,11 +31,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r wrongCommunicationLinkContent) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r wrongCommunicationLinkContent) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, techAsset := range model.ParsedModelRoot.TechnicalAssets {
 		for _, commLink := range techAsset.CommunicationLinks {
@@ -70,7 +74,7 @@ func createRisk(technicalAsset model.TechnicalAsset, commLink model.Communicatio
 	title := "<b>Wrong Communication Link Content</b> " + reason + " at <b>" + technicalAsset.Title + "</b> " +
 		"regarding communication link <b>" + commLink.Title + "</b>"
 	risk := model.Risk{
-		Category:                        Category(),
+		Category:                        RiskRule.Category(),
 		Severity:                        model.CalculateSeverity(model.Unlikely, model.LowImpact),
 		ExploitationLikelihood:          model.Unlikely,
 		ExploitationImpact:              model.LowImpact,

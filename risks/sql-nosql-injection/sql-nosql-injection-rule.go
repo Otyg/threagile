@@ -1,10 +1,14 @@
-package sql_nosql_injection
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type sqlNoSqlInjection string
+
+var RiskRule sqlNoSqlInjection
+
+func (r sqlNoSqlInjection) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "sql-nosql-injection",
 		Title: "SQL/NoSQL-Injection",
@@ -29,11 +33,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r sqlNoSqlInjection) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r sqlNoSqlInjection) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -64,7 +68,7 @@ func createRisk(technicalAsset model.TechnicalAsset, incomingFlow model.Communic
 		likelihood = model.Likely
 	}
 	risk := model.Risk{
-		Category:                        Category(),
+		Category:                        RiskRule.Category(),
 		Severity:                        model.CalculateSeverity(likelihood, impact),
 		ExploitationLikelihood:          likelihood,
 		ExploitationImpact:              impact,

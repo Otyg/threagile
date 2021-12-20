@@ -1,4 +1,4 @@
-package missing_network_segmentation
+package main
 
 import (
 	"sort"
@@ -6,9 +6,13 @@ import (
 	"github.com/otyg/threagile/model"
 )
 
+type missingNetworkSegmentation string
+
+var RiskRule missingNetworkSegmentation
+
 const raaLimit = 50
 
-func Category() model.RiskCategory {
+func (r missingNetworkSegmentation) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "missing-network-segmentation",
 		Title: "Missing Network Segmentation",
@@ -38,11 +42,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r missingNetworkSegmentation) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r missingNetworkSegmentation) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	// first create them in memory (see the link replacement below for nested trust boundaries) - otherwise in Go ranging over map is random order
 	// range over them in sorted (hence re-producible) way:
@@ -83,7 +87,7 @@ func createRisk(techAsset model.TechnicalAsset, moreRisky bool) model.Risk {
 		impact = model.MediumImpact
 	}
 	risk := model.Risk{
-		Category:               Category(),
+		Category:               RiskRule.Category(),
 		Severity:               model.CalculateSeverity(model.Unlikely, impact),
 		ExploitationLikelihood: model.Unlikely,
 		ExploitationImpact:     impact,

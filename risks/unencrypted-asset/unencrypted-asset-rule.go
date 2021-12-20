@@ -1,10 +1,14 @@
-package unencrypted_asset
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type unencryptedAsset string
+
+var RiskRule unencryptedAsset
+
+func (r unencryptedAsset) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "unencrypted-asset",
 		Title: "Unencrypted Technical Assets",
@@ -32,12 +36,12 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r unencryptedAsset) SupportedTags() []string {
 	return []string{}
 }
 
 // check for technical assets that should be encrypted due to their confidentiality
-func GenerateRisks() []model.Risk {
+func (r unencryptedAsset) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -76,7 +80,7 @@ func createRisk(technicalAsset model.TechnicalAsset, impact model.RiskExploitati
 		title += " missing enduser-individual encryption with " + model.DataWithEnduserIndividualKey.String()
 	}
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(model.Unlikely, impact),
 		ExploitationLikelihood:       model.Unlikely,
 		ExploitationImpact:           impact,

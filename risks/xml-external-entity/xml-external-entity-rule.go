@@ -1,10 +1,14 @@
-package xml_external_entity
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type xmlExternalEntity string
+
+var RiskRule xmlExternalEntity
+
+func (r xmlExternalEntity) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:          "xml-external-entity",
 		Title:       "XML External Entity (XXE)",
@@ -31,11 +35,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r xmlExternalEntity) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r xmlExternalEntity) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -60,7 +64,7 @@ func createRisk(technicalAsset model.TechnicalAsset) model.Risk {
 		impact = model.HighImpact
 	}
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(model.VeryLikely, impact),
 		ExploitationLikelihood:       model.VeryLikely,
 		ExploitationImpact:           impact,

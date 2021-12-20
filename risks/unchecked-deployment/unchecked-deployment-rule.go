@@ -1,10 +1,14 @@
-package unchecked_deployment
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type uncheckedDeployment string
+
+var RiskRule uncheckedDeployment
+
+func (r uncheckedDeployment) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "unchecked-deployment",
 		Title: "Unchecked Deployment",
@@ -31,11 +35,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r uncheckedDeployment) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r uncheckedDeployment) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, technicalAsset := range model.ParsedModelRoot.TechnicalAssets {
 		if !technicalAsset.OutOfScope && technicalAsset.Technology.IsDevelopmentRelevant() {
@@ -76,7 +80,7 @@ func createRisk(technicalAsset model.TechnicalAsset) model.Risk {
 	}
 	// create risk
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(model.Unlikely, impact),
 		ExploitationLikelihood:       model.Unlikely,
 		ExploitationImpact:           impact,

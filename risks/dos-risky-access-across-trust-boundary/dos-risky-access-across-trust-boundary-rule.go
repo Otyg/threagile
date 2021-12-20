@@ -1,10 +1,14 @@
-package dos_risky_access_across_trust_boundary
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type dosRiskyAccessAcrossTrustBoundary string
+
+var RiskRule dosRiskyAccessAcrossTrustBoundary
+
+func (r dosRiskyAccessAcrossTrustBoundary) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "dos-risky-access-across-trust-boundary",
 		Title: "DoS-risky Access Across Trust-Boundary",
@@ -34,11 +38,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r dosRiskyAccessAcrossTrustBoundary) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r dosRiskyAccessAcrossTrustBoundary) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -82,7 +86,7 @@ func createRisk(techAsset model.TechnicalAsset, dataFlow model.CommunicationLink
 		hopBetween = " forwarded via <b>" + hopBetween + "</b>"
 	}
 	risk := model.Risk{
-		Category:               Category(),
+		Category:               RiskRule.Category(),
 		Severity:               model.CalculateSeverity(model.Unlikely, impact),
 		ExploitationLikelihood: model.Unlikely,
 		ExploitationImpact:     impact,

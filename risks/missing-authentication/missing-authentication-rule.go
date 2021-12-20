@@ -1,10 +1,14 @@
-package missing_authentication
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type missingAuthentication string
+
+var RiskRule missingAuthentication
+
+func (r missingAuthentication) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:           "missing-authentication",
 		Title:        "Missing Authentication",
@@ -30,11 +34,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r missingAuthentication) SupportedTags() []string {
 	return []string{}
 }
 
-func GenerateRisks() []model.Risk {
+func (r missingAuthentication) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -64,7 +68,7 @@ func GenerateRisks() []model.Risk {
 					impact = model.LowImpact
 				}
 				if commLink.Authentication == model.NoneAuthentication && !commLink.Protocol.IsProcessLocal() {
-					risks = append(risks, CreateRisk(technicalAsset, commLink, commLink, "", impact, model.Likely, false, Category()))
+					risks = append(risks, CreateRisk(technicalAsset, commLink, commLink, "", impact, model.Likely, false, RiskRule.Category()))
 				}
 			}
 		}
