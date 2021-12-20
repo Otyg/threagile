@@ -1,10 +1,14 @@
-package accidental_secret_leak
+package main
 
 import (
 	"github.com/otyg/threagile/model"
 )
 
-func Category() model.RiskCategory {
+type accidentalSecretLeakRule string
+
+var RiskRule accidentalSecretLeakRule
+
+func (r accidentalSecretLeakRule) Category() model.RiskCategory {
 	return model.RiskCategory{
 		Id:    "accidental-secret-leak",
 		Title: "Accidental Secret Leak",
@@ -30,11 +34,11 @@ func Category() model.RiskCategory {
 	}
 }
 
-func SupportedTags() []string {
+func (r accidentalSecretLeakRule) SupportedTags() []string {
 	return []string{"git", "nexus"}
 }
 
-func GenerateRisks() []model.Risk {
+func (r accidentalSecretLeakRule) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		techAsset := model.ParsedModelRoot.TechnicalAssets[id]
@@ -73,7 +77,7 @@ func createRisk(technicalAsset model.TechnicalAsset, prefix, details string) mod
 	}
 	// create risk
 	risk := model.Risk{
-		Category:                     Category(),
+		Category:                     RiskRule.Category(),
 		Severity:                     model.CalculateSeverity(model.Unlikely, impact),
 		ExploitationLikelihood:       model.Unlikely,
 		ExploitationImpact:           impact,
