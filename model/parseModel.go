@@ -12,21 +12,15 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func checkErr(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[string]RiskTracking) ParsedModel {
 	modelInput := ModelInput{}
 	var error error
 	error = yaml.Unmarshal(modelYaml, &modelInput)
-	checkErr(error)
+	support.CheckErr(error)
 	//fmt.Println(modelInput)
 
 	var businessCriticality, err = ParseCriticality(modelInput.Business_criticality)
-	checkErr(err)
+	support.CheckErr(err)
 
 	reportDate := time.Now()
 	if len(modelInput.Date) > 0 {
@@ -69,17 +63,17 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 		id := fmt.Sprintf("%v", asset.ID)
 
 		usage, err := ParseUsage(asset.Usage)
-		checkErr(err)
+		support.CheckErr(err)
 		quantity, err := ParseQuantity(asset.Quantity)
-		checkErr(err)
+		support.CheckErr(err)
 
 		confidentiality, err := ParseConfidentiality(asset.Confidentiality)
-		checkErr(err)
+		support.CheckErr(err)
 		integrity, err := ParseCriticality(asset.Integrity)
-		checkErr(err)
+		support.CheckErr(err)
 
 		availability, err := ParseCriticality(asset.Availability)
-		checkErr(err)
+		support.CheckErr(err)
 
 		support.CheckIdSyntax(id)
 		if _, exists := ParsedModelRoot.DataAssets[id]; exists {
@@ -107,7 +101,7 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 		id := fmt.Sprintf("%v", asset.ID)
 
 		usage, err := ParseUsage(asset.Usage)
-		checkErr(err)
+		support.CheckErr(err)
 
 		var dataAssetsProcessed = make([]string, 0)
 		if asset.Data_assets_processed != nil {
@@ -130,32 +124,32 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 		}
 
 		technicalAssetType, err := ParseTechnicalAssetType(asset.Type)
-		checkErr(err)
+		support.CheckErr(err)
 
 		technicalAssetSize, err := ParseTechnicalAssetSize(asset.Size)
-		checkErr(err)
+		support.CheckErr(err)
 
 		technicalAssetTechnology, err := ParseTechnicalAssetTechnology(asset.Technology)
-		checkErr(err)
+		support.CheckErr(err)
 
 		encryption, err := ParseEncryptionStyle(asset.Encryption)
-		checkErr(err)
+		support.CheckErr(err)
 
 		technicalAssetMachine, err := ParseTechnicalAssetMachine(asset.Machine)
-		checkErr(err)
+		support.CheckErr(err)
 		confidentiality, err := ParseConfidentiality(asset.Confidentiality)
-		checkErr(err)
+		support.CheckErr(err)
 		integrity, err := ParseCriticality(asset.Integrity)
-		checkErr(err)
+		support.CheckErr(err)
 
 		availability, err := ParseCriticality(asset.Availability)
-		checkErr(err)
+		support.CheckErr(err)
 
 		dataFormatsAccepted := make([]DataFormat, 0)
 		if asset.Data_formats_accepted != nil {
 			for _, dataFormatName := range asset.Data_formats_accepted {
 				parsedDataFormat, err := ParseDataFormatName(dataFormatName)
-				checkErr(err)
+				support.CheckErr(err)
 				dataFormatsAccepted = append(dataFormatsAccepted, parsedDataFormat)
 			}
 		}
@@ -166,13 +160,13 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 				constraint := true
 				weight := 1
 				authentication, err := ParseAuthentication(commLink.Authentication)
-				checkErr(err)
+				support.CheckErr(err)
 				authorization, err := ParseAuthorization(commLink.Authorization)
-				checkErr(err)
+				support.CheckErr(err)
 				usage, err := ParseUsage(commLink.Usage)
-				checkErr(err)
+				support.CheckErr(err)
 				protocol, err := ParseProtocol(commLink.Protocol)
-				checkErr(err)
+				support.CheckErr(err)
 				var dataAssetsSent []string
 				var dataAssetsReceived []string
 
@@ -198,7 +192,7 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 
 				constraint = !commLink.Diagram_tweak_constraint
 
-				checkErr(err)
+				support.CheckErr(err)
 
 				dataFlowTitle := fmt.Sprintf("%v", commLinkTitle)
 				commLink := CommunicationLink{
@@ -298,7 +292,7 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 		}
 
 		trustBoundaryType, err := ParseTrustBoundaryType(boundary.Type)
-		checkErr(err)
+		support.CheckErr(err)
 		trustBoundary := TrustBoundary{
 			Id:                    id,
 			Title:                 title, //fmt.Sprintf("%v", boundary["title"]),
@@ -359,10 +353,10 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 		id := fmt.Sprintf("%v", indivCat.ID)
 
 		function, err := ParseRiskFunction(indivCat.Function)
-		checkErr(err)
+		support.CheckErr(err)
 
 		stride, err := ParseStride(indivCat.STRIDE)
-		checkErr(err)
+		support.CheckErr(err)
 
 		cat := RiskCategory{
 			Id:                         id,
@@ -394,13 +388,13 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 		if indivCat.Risks_identified != nil { // TODO: also add syntax checks of input YAML when linked asset is not found or when syntehtic-id is already used...
 			for title, indivRiskInstance := range indivCat.Risks_identified {
 				severity, err := ParseRiskSeverity(indivRiskInstance.Severity)
-				checkErr(err)
+				support.CheckErr(err)
 				exploitationLikelihood, err := ParseRiskExploitationLikelihood(indivRiskInstance.Exploitation_likelihood)
-				checkErr(err)
+				support.CheckErr(err)
 				exploitationImpact, err := ParseRiskExploitationImpact(indivRiskInstance.Exploitation_impact)
-				checkErr(err)
+				support.CheckErr(err)
 				dataBreachProbability, err := ParseDataBreachProbability(indivRiskInstance.Data_breach_probability)
-				checkErr(err)
+				support.CheckErr(err)
 				var mostRelevantDataAssetId, mostRelevantTechnicalAssetId, mostRelevantCommunicationLinkId, mostRelevantTrustBoundaryId, mostRelevantSharedRuntimeId string
 				var dataBreachTechnicalAssetIDs []string
 
@@ -438,7 +432,7 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 					}
 				}
 
-				checkErr(err)
+				support.CheckErr(err)
 
 				indivRiskInstance := Risk{
 					SyntheticId:                     createSyntheticId(cat.Id, mostRelevantDataAssetId, mostRelevantTechnicalAssetId, mostRelevantCommunicationLinkId, mostRelevantTrustBoundaryId, mostRelevantSharedRuntimeId),
@@ -475,7 +469,7 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 		}
 
 		status, err := ParseRiskStatus(riskTracking.Status)
-		checkErr(err)
+		support.CheckErr(err)
 
 		tracking := RiskTracking{
 			SyntheticRiskId: strings.TrimSpace(syntheticRiskId),
@@ -585,7 +579,7 @@ func checkNestedTrustBoundariesExisting() {
 
 func createDataFlowId(sourceAssetId, title string) string {
 	reg, err := regexp.Compile("[^A-Za-z0-9]+")
-	checkErr(err)
+	support.CheckErr(err)
 	return sourceAssetId + ">" + strings.Trim(reg.ReplaceAllString(strings.ToLower(title), "-"), "- ")
 }
 

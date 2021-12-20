@@ -92,12 +92,6 @@ func WriteReportPDF(reportFilename string,
 	writeReportToFile(reportFilename)
 }
 
-func checkErr(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 func createPdfAndInitMetadata() {
 	pdf = gofpdf.New("P", "mm", "A4", "")
 	pdf.SetCreator(model.ParsedModelRoot.Author.Homepage, true)
@@ -147,13 +141,13 @@ func addBreadcrumb() {
 func parseBackgroundTemplate(templateFilename string) {
 	/*
 		imageBox, err := rice.FindBox("template")
-		checkErr(err)
+		support.CheckErr(err)
 		file, err := ioutil.TempFile("", "background-*-.pdf")
-		checkErr(err)
+		support.CheckErr(err)
 		defer os.Remove(file.Name())
 		backgroundBytes := imageBox.MustBytes("background.pdf")
 		err = ioutil.WriteFile(file.Name(), backgroundBytes, 0644)
-		checkErr(err)
+		support.CheckErr(err)
 	*/
 	coverTemplateId = gofpdi.ImportPage(pdf, templateFilename, 1, "/MediaBox")
 	contentTemplateId = gofpdi.ImportPage(pdf, templateFilename, 2, "/MediaBox")
@@ -1186,12 +1180,12 @@ func createRiskMitigationStatus() {
 // CAUTION: Long labels might cause endless loop, then remove labels and render them manually later inside the PDF
 func embedStackedBarChart(sbcChart chart.StackedBarChart, x float64, y float64) {
 	tmpFilePNG, err := ioutil.TempFile(model.TempFolder, "chart-*-.png")
-	checkErr(err)
+	support.CheckErr(err)
 	defer os.Remove(tmpFilePNG.Name())
 	file, _ := os.Create(tmpFilePNG.Name())
 	defer file.Close()
 	err = sbcChart.Render(chart.PNG, file)
-	checkErr(err)
+	support.CheckErr(err)
 	var options gofpdf.ImageOptions
 	options.ImageType = ""
 	pdf.RegisterImage(tmpFilePNG.Name(), "")
@@ -1200,13 +1194,13 @@ func embedStackedBarChart(sbcChart chart.StackedBarChart, x float64, y float64) 
 
 func embedPieChart(pieChart chart.PieChart, x float64, y float64) {
 	tmpFilePNG, err := ioutil.TempFile(model.TempFolder, "chart-*-.png")
-	checkErr(err)
+	support.CheckErr(err)
 	defer os.Remove(tmpFilePNG.Name())
 	file, err := os.Create(tmpFilePNG.Name())
-	checkErr(err)
+	support.CheckErr(err)
 	defer file.Close()
 	err = pieChart.Render(chart.PNG, file)
-	checkErr(err)
+	support.CheckErr(err)
 	var options gofpdf.ImageOptions
 	options.ImageType = ""
 	pdf.RegisterImage(tmpFilePNG.Name(), "")
@@ -4119,9 +4113,9 @@ func getHeightWhenWidthIsFix(imageFullFilename string, width float64) float64 {
 	/* #nosec imageFullFilename is not tainted (see caller restricting it to image files of model folder only) */
 	file, err := os.Open(imageFullFilename)
 	defer file.Close()
-	checkErr(err)
+	support.CheckErr(err)
 	image, _, err := image.DecodeConfig(file)
-	checkErr(err)
+	support.CheckErr(err)
 	return float64(image.Height) / (float64(image.Width) / width)
 }
 
@@ -4165,15 +4159,15 @@ func embedDataFlowDiagram(diagramFilenamePNG string) {
 				// ok, use temp PNG then
 				// now rotate left by 90 degrees
 				rotatedFile, err := ioutil.TempFile(model.TempFolder, "diagram-*-.png")
-				checkErr(err)
+				support.CheckErr(err)
 				defer os.Remove(rotatedFile.Name())
 				dstImage := image.NewRGBA(image.Rect(0, 0, srcDimensions.Dy(), srcDimensions.Dx()))
 				err = graphics.Rotate(dstImage, srcImage, &graphics.RotateOptions{-1 * math.Pi / 2.0})
-				checkErr(err)
+				support.CheckErr(err)
 				newImage, _ := os.Create(rotatedFile.Name())
 					defer newImage.Close()
 					err = png.Encode(newImage, dstImage)
-					checkErr(err)
+					support.CheckErr(err)
 					diagramFilenamePNG = rotatedFile.Name()
 				}
 			} else {
@@ -4255,15 +4249,15 @@ func embedDataRiskMapping(diagramFilenamePNG string) {
 					// ok, use temp PNG then
 				// now rotate left by 90 degrees
 				rotatedFile, err := ioutil.TempFile(model.TempFolder, "diagram-*-.png")
-				checkErr(err)
+				support.CheckErr(err)
 				defer os.Remove(rotatedFile.Name())
 				dstImage := image.NewRGBA(image.Rect(0, 0, srcDimensions.Dy(), srcDimensions.Dx()))
 				err = graphics.Rotate(dstImage, srcImage, &graphics.RotateOptions{-1 * math.Pi / 2.0})
-				checkErr(err)
+				support.CheckErr(err)
 				newImage, _ := os.Create(rotatedFile.Name())
 				defer newImage.Close()
 					err = png.Encode(newImage, dstImage)
-					checkErr(err)
+					support.CheckErr(err)
 					diagramFilenamePNG = rotatedFile.Name()
 				}
 			} else {
@@ -4289,7 +4283,7 @@ func embedDataRiskMapping(diagramFilenamePNG string) {
 
 func writeReportToFile(reportFilename string) {
 	err := pdf.OutputFileAndClose(reportFilename)
-	checkErr(err)
+	support.CheckErr(err)
 }
 
 func addHeadline(headline string, small bool) {

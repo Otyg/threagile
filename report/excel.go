@@ -9,6 +9,7 @@ import (
 
 	"github.com/otyg/threagile/colors"
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/support"
 )
 
 var excelRow int
@@ -31,14 +32,14 @@ func WriteRisksExcelToFile(filename string) {
 		Language:       "en-US",
 		Version:        "1.0.0",
 	})
-	checkErr(err)
+	support.CheckErr(err)
 
 	sheetIndex := excel.NewSheet(sheetName)
 	excel.DeleteSheet("Sheet1")
 	err = excel.SetPageLayout(sheetName,
 		excelize.PageLayoutOrientation(excelize.OrientationLandscape),
 		excelize.PageLayoutPaperSize(9)) // A4
-	checkErr(err)
+	support.CheckErr(err)
 
 	err = excel.SetHeaderFooter(sheetName, &excelize.FormatHeaderFooter{
 		DifferentFirst:   false,
@@ -49,7 +50,7 @@ func WriteRisksExcelToFile(filename string) {
 		EvenFooter:       "&L&D&R&T",
 		FirstHeader:      `&Threat Model &"-,` + model.ParsedModelRoot.Title + `"Bold&"-,Regular"Risks Summary+000A&D`,
 	})
-	checkErr(err)
+	support.CheckErr(err)
 
 	err = excel.SetCellValue(sheetName, "A1", "Severity")
 	err = excel.SetCellValue(sheetName, "B1", "Likelihood")
@@ -92,7 +93,7 @@ func WriteRisksExcelToFile(filename string) {
 	err = excel.SetColWidth(sheetName, "R", "R", 18)
 	err = excel.SetColWidth(sheetName, "S", "S", 20)
 	err = excel.SetColWidth(sheetName, "T", "T", 20)
-	checkErr(err)
+	support.CheckErr(err)
 
 	styleSeverityCriticalBold, err := excel.NewStyle(`{"font":{"color":"` + colors.RgbHexColorCriticalRisk() + `","size":12,"bold":true}}`)
 	styleSeverityCriticalCenter, err := excel.NewStyle(`{"alignment":{"horizontal":"center","shrink_to_fit":true,"wrap_text":false},"font":{"color":"` + colors.RgbHexColorCriticalRisk() + `","size":12}}`)
@@ -204,18 +205,18 @@ func WriteRisksExcelToFile(filename string) {
 			err = excel.SetCellStyle(sheetName, "R"+strconv.Itoa(excelRow), "R"+strconv.Itoa(excelRow), styleBlackCenter)
 			err = excel.SetCellStyle(sheetName, "S"+strconv.Itoa(excelRow), "S"+strconv.Itoa(excelRow), styleBlackCenter)
 			err = excel.SetCellStyle(sheetName, "T"+strconv.Itoa(excelRow), "T"+strconv.Itoa(excelRow), styleBlackLeft)
-			checkErr(err)
+			support.CheckErr(err)
 		}
 	}
 
 	//styleHead, err := excel.NewStyle(`{"font":{"bold":true,"italic":false,"size":14,"color":"#000000"},"fill":{"type":"pattern","color":["#eeeeee"],"pattern":1}}`)
 	styleHeadCenter, err := excel.NewStyle(`{"font":{"bold":true,"italic":false,"size":14,"color":"#000000"},"fill":{"type":"pattern","color":["#eeeeee"],"pattern":1},"alignment":{"horizontal":"center","shrink_to_fit":true,"wrap_text":false}}`)
 	err = excel.SetCellStyle(sheetName, "A1", "T1", styleHeadCenter)
-	checkErr(err)
+	support.CheckErr(err)
 
 	excel.SetActiveSheet(sheetIndex)
 	err = excel.SaveAs(filename)
-	checkErr(err)
+	support.CheckErr(err)
 }
 
 func WriteTagsExcelToFile(filename string) { // TODO: eventually when len(sortedTagsAvailable) == 0 is: write a hint in the execel that no tags are used
@@ -236,14 +237,14 @@ func WriteTagsExcelToFile(filename string) { // TODO: eventually when len(sorted
 		Language:       "en-US",
 		Version:        "1.0.0",
 	})
-	checkErr(err)
+	support.CheckErr(err)
 
 	sheetIndex := excel.NewSheet(sheetName)
 	excel.DeleteSheet("Sheet1")
 	err = excel.SetPageLayout(sheetName,
 		excelize.PageLayoutOrientation(excelize.OrientationLandscape),
 		excelize.PageLayoutPaperSize(9)) // A4
-	checkErr(err)
+	support.CheckErr(err)
 
 	err = excel.SetHeaderFooter(sheetName, &excelize.FormatHeaderFooter{
 		DifferentFirst:   false,
@@ -254,7 +255,7 @@ func WriteTagsExcelToFile(filename string) { // TODO: eventually when len(sorted
 		EvenFooter:       "&L&D&R&T",
 		FirstHeader:      `&Tag Matrix &"-,` + model.ParsedModelRoot.Title + `"Bold&"-,Regular"Summary+000A&D`,
 	})
-	checkErr(err)
+	support.CheckErr(err)
 
 	err = excel.SetCellValue(sheetName, "A1", "Element") // TODO is "Element" the correct generic name when referencing assets, links, trust boudaries etc.? Eventually add separate column "type of element" like "technical asset" or "data asset"?
 	sortedTagsAvailable := model.TagsActuallyUsed()
@@ -269,7 +270,7 @@ func WriteTagsExcelToFile(filename string) { // TODO: eventually when len(sorted
 	if len(sortedTagsAvailable) > 0 {
 		err = excel.SetColWidth(sheetName, "B", axis, 35)
 	}
-	checkErr(err)
+	support.CheckErr(err)
 
 	styleBlackCenter, err := excel.NewStyle(`{"alignment":{"horizontal":"center","shrink_to_fit":true,"wrap_text":false},"font":{"color":"#000000","size":12}}`)
 	styleBlackLeftBold, err := excel.NewStyle(`{"alignment":{"horizontal":"left","shrink_to_fit":true,"wrap_text":false},"font":{"color":"#000000","size":12,"bold":true}}`)
@@ -299,11 +300,11 @@ func WriteTagsExcelToFile(filename string) { // TODO: eventually when len(sorted
 	if len(sortedTagsAvailable) > 0 {
 		err = excel.SetCellStyle(sheetName, "B1", axis+"1", styleHeadCenter)
 	}
-	checkErr(err)
+	support.CheckErr(err)
 
 	excel.SetActiveSheet(sheetIndex)
 	err = excel.SaveAs(filename)
-	checkErr(err)
+	support.CheckErr(err)
 }
 
 func writeRow(excel *excelize.File, sheetName string, axis string, styleBlackLeftBold int, styleBlackCenter int,
@@ -317,7 +318,7 @@ func writeRow(excel *excelize.File, sheetName string, axis string, styleBlackLef
 	}
 	err = excel.SetCellStyle(sheetName, "A"+strconv.Itoa(excelRow), "A"+strconv.Itoa(excelRow), styleBlackLeftBold)
 	err = excel.SetCellStyle(sheetName, "B"+strconv.Itoa(excelRow), axis+strconv.Itoa(excelRow), styleBlackCenter)
-	checkErr(err)
+	support.CheckErr(err)
 }
 
 var alphabet = []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}

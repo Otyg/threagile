@@ -148,12 +148,6 @@ func checkRiskTracking() {
 
 // === Error handling stuff ========================================
 
-func checkErr(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 func main() {
 	parseCommandlineArgs()
 	if *serverPort > 0 {
@@ -308,7 +302,7 @@ func doIt(inputFilename string, outputDirectory string) {
 		gvFile := outputDirectory + "/" + dataFlowDiagramFilenameDOT
 		if !keepDiagramSourceFiles {
 			tmpFileGV, err := ioutil.TempFile(model.TempFolder, dataFlowDiagramFilenameDOT)
-			checkErr(err)
+			support.CheckErr(err)
 			gvFile = tmpFileGV.Name()
 			defer os.Remove(gvFile)
 		}
@@ -320,7 +314,7 @@ func doIt(inputFilename string, outputDirectory string) {
 		gvFile := outputDirectory + "/" + dataAssetDiagramFilenameDOT
 		if !keepDiagramSourceFiles {
 			tmpFile, err := ioutil.TempFile(model.TempFolder, dataAssetDiagramFilenameDOT)
-			checkErr(err)
+			support.CheckErr(err)
 			gvFile = tmpFile.Name()
 			defer os.Remove(gvFile)
 		}
@@ -377,7 +371,7 @@ func doIt(inputFilename string, outputDirectory string) {
 	if renderPDF {
 		// hash the YAML input file
 		f, err := os.Open(inputFilename)
-		checkErr(err)
+		support.CheckErr(err)
 		defer f.Close()
 		hasher := sha256.New()
 		if _, err := io.Copy(hasher, f); err != nil {
@@ -408,10 +402,10 @@ func applyRAA() string {
 	// determine plugin to load
 	// load plugin: open the ".so" file to load the symbols
 	plug, err := plugin.Open(*raaPlugin)
-	checkErr(err)
+	support.CheckErr(err)
 	// look up a symbol (an exported function or variable): in this case, function CalculateRAA
 	symCalculateRAA, err := plug.Lookup("CalculateRAA")
-	checkErr(err)
+	support.CheckErr(err)
 	// use the plugin
 	raaCalcFunc, ok := symCalculateRAA.(func() string) // symCalculateRAA.(func(model.ParsedModel) string)
 	if !ok {
@@ -432,10 +426,10 @@ func loadRiskRulePlugins() {
 			log.Fatal("Risk rule implementation file not found: ", pluginFile)
 		}
 		plug, err := plugin.Open(pluginFile)
-		checkErr(err)
+		support.CheckErr(err)
 		// look up a symbol (an exported function or variable): in this case variable CustomRiskRule
 		symRiskRule, err := plug.Lookup("RiskRule")
-		checkErr(err)
+		support.CheckErr(err)
 		// register the risk rule plugin for later use: in this case interface type model.RiskRule (defined above)
 		symRiskRuleVar, ok := symRiskRule.(model.RiskRule)
 		if !ok {
@@ -477,10 +471,10 @@ func execute(context *gin.Context, dryRun bool) (yamlContent []byte, ok bool) {
 	}()
 
 	dpi, err := strconv.Atoi(context.DefaultQuery("dpi", strconv.Itoa(defaultGraphvizDPI)))
-	checkErr(err)
+	support.CheckErr(err)
 
 	fileUploaded, header, err := context.Request.FormFile("file")
-	checkErr(err)
+	support.CheckErr(err)
 
 	if header.Size > 50000000 {
 		msg := "maximum model upload file size exceeded (denial-of-service protection)"
@@ -494,14 +488,14 @@ func execute(context *gin.Context, dryRun bool) (yamlContent []byte, ok bool) {
 	filenameUploaded := strings.TrimSpace(header.Filename)
 
 	tmpInputDir, err := ioutil.TempDir(model.TempFolder, "threagile-input-")
-	checkErr(err)
+	support.CheckErr(err)
 	defer os.RemoveAll(tmpInputDir)
 
 	tmpModelFile, err := ioutil.TempFile(tmpInputDir, "threagile-model-*")
-	checkErr(err)
+	support.CheckErr(err)
 	defer os.Remove(tmpModelFile.Name())
 	_, err = io.Copy(tmpModelFile, fileUploaded)
-	checkErr(err)
+	support.CheckErr(err)
 
 	yamlFile := tmpModelFile.Name()
 
@@ -511,7 +505,7 @@ func execute(context *gin.Context, dryRun bool) (yamlContent []byte, ok bool) {
 			fmt.Println("Decompressing uploaded archive")
 		}
 		filenamesUnzipped, err := unzip(tmpModelFile.Name(), tmpInputDir)
-		checkErr(err)
+		support.CheckErr(err)
 		found := false
 		for _, name := range filenamesUnzipped {
 			if strings.ToLower(filepath.Ext(name)) == ".yaml" {
@@ -526,11 +520,11 @@ func execute(context *gin.Context, dryRun bool) (yamlContent []byte, ok bool) {
 	}
 
 	tmpOutputDir, err := ioutil.TempDir(model.TempFolder, "threagile-output-")
-	checkErr(err)
+	support.CheckErr(err)
 	defer os.RemoveAll(tmpOutputDir)
 
 	tmpResultFile, err := ioutil.TempFile(model.TempFolder, "threagile-result-*.zip")
-	checkErr(err)
+	support.CheckErr(err)
 	defer os.Remove(tmpResultFile.Name())
 
 	if dryRun {
@@ -538,12 +532,12 @@ func execute(context *gin.Context, dryRun bool) (yamlContent []byte, ok bool) {
 	} else {
 		doItViaRuntimeCall(yamlFile, tmpOutputDir, *executeModelMacro, *raaPlugin, *skipRiskRules, *ignoreOrphanedRiskTracking, true, true, true, true, true, true, true, true, true, dpi)
 	}
-	checkErr(err)
+	support.CheckErr(err)
 
 	yamlContent, err = ioutil.ReadFile(yamlFile)
-	checkErr(err)
+	support.CheckErr(err)
 	err = ioutil.WriteFile(tmpOutputDir+"/threagile.yaml", yamlContent, 0400)
-	checkErr(err)
+	support.CheckErr(err)
 
 	if !dryRun {
 		files := []string{
@@ -562,7 +556,7 @@ func execute(context *gin.Context, dryRun bool) (yamlContent []byte, ok bool) {
 			files = append(files, tmpOutputDir+"/"+dataAssetDiagramFilenameDOT)
 		}
 		err = zipFiles(tmpResultFile.Name(), files)
-		checkErr(err)
+		support.CheckErr(err)
 		if *verbose {
 			log.Println("Streaming back result file: " + tmpResultFile.Name())
 		}
@@ -761,13 +755,13 @@ func startServer() {
 
 func exampleFile(context *gin.Context) {
 	example, err := ioutil.ReadFile("/app/threagile-example-model.yaml")
-	checkErr(err)
+	support.CheckErr(err)
 	context.Data(http.StatusOK, gin.MIMEYAML, example)
 }
 
 func stubFile(context *gin.Context) {
 	stub, err := ioutil.ReadFile("/app/threagile-stub-model.yaml")
-	checkErr(err)
+	support.CheckErr(err)
 	context.Data(http.StatusOK, gin.MIMEYAML, addSupportedTags(stub)) // TODO use also the MIMEYAML way of serving YAML in model export?
 }
 
@@ -964,7 +958,7 @@ func analyzeModelOnServerDirectly(context *gin.Context) {
 	}
 	defer os.RemoveAll(tmpOutputDir)
 	tmpResultFile, err := ioutil.TempFile(model.TempFolder, "threagile-result-*.zip")
-	checkErr(err)
+	support.CheckErr(err)
 	defer os.Remove(tmpResultFile.Name())
 
 	err = ioutil.WriteFile(tmpModelFile.Name(), []byte(yamlText), 0400)
@@ -996,7 +990,7 @@ func analyzeModelOnServerDirectly(context *gin.Context) {
 		files = append(files, tmpOutputDir+"/"+dataAssetDiagramFilenameDOT)
 	}
 	err = zipFiles(tmpResultFile.Name(), files)
-	checkErr(err)
+	support.CheckErr(err)
 	if *verbose {
 		fmt.Println("Streaming back result file: " + tmpResultFile.Name())
 	}
@@ -1804,7 +1798,7 @@ func getModel(context *gin.Context) {
 	_, yamlText, ok := readModel(context, context.Param("model-id"), key, folderNameOfKey)
 	if ok {
 		tmpResultFile, err := ioutil.TempFile(model.TempFolder, "threagile-*.yaml")
-		checkErr(err)
+		support.CheckErr(err)
 		err = ioutil.WriteFile(tmpResultFile.Name(), []byte(yamlText), 0400)
 		if err != nil {
 			log.Println(err)
@@ -2794,7 +2788,7 @@ func parseCommandlineArgs() {
 	if *license {
 		printLogo()
 		content, err := ioutil.ReadFile("/app/LICENSE.txt")
-		checkErr(err)
+		support.CheckErr(err)
 		fmt.Print(string(content))
 		fmt.Println()
 		os.Exit(0)
@@ -2858,9 +2852,9 @@ func createExampleModelFile() {
 
 func createStubModelFile() {
 	stub, err := ioutil.ReadFile("/app/threagile-stub-model.yaml")
-	checkErr(err)
+	support.CheckErr(err)
 	err = ioutil.WriteFile(*outputDir+"/threagile-stub-model.yaml", addSupportedTags(stub), 0644)
-	checkErr(err)
+	support.CheckErr(err)
 }
 
 func createEditingSupportFiles() {
@@ -3034,10 +3028,10 @@ func writeDataAssetDiagramGraphvizDOT(diagramFilenameDOT string, dpi int) *os.Fi
 
 	// Write the DOT file
 	file, err := os.Create(diagramFilenameDOT)
-	checkErr(err)
+	support.CheckErr(err)
 	defer file.Close()
 	_, err = fmt.Fprintln(file, dotContent.String())
-	checkErr(err)
+	support.CheckErr(err)
 	return file
 }
 
@@ -3277,10 +3271,10 @@ func writeDataFlowDiagramGraphvizDOT(diagramFilenameDOT string, dpi int) *os.Fil
 
 	// Write the DOT file
 	file, err := os.Create(diagramFilenameDOT)
-	checkErr(err)
+	support.CheckErr(err)
 	defer file.Close()
 	_, err = fmt.Fprintln(file, dotContent.String())
-	checkErr(err)
+	support.CheckErr(err)
 	return file
 }
 
@@ -3421,11 +3415,11 @@ func renderDataFlowDiagramGraphvizImage(dotFile *os.File, targetDir string) {
 	}
 	// tmp files
 	tmpFileDOT, err := ioutil.TempFile(model.TempFolder, "diagram-*-.gv")
-	checkErr(err)
+	support.CheckErr(err)
 	defer os.Remove(tmpFileDOT.Name())
 
 	tmpFilePNG, err := ioutil.TempFile(model.TempFolder, "diagram-*-.png")
-	checkErr(err)
+	support.CheckErr(err)
 	defer os.Remove(tmpFilePNG.Name())
 
 	// copy into tmp file as input
@@ -3469,11 +3463,11 @@ func renderDataAssetDiagramGraphvizImage(dotFile *os.File, targetDir string) { /
 	}
 	// tmp files
 	tmpFileDOT, err := ioutil.TempFile(model.TempFolder, "diagram-*-.gv")
-	checkErr(err)
+	support.CheckErr(err)
 	defer os.Remove(tmpFileDOT.Name())
 
 	tmpFilePNG, err := ioutil.TempFile(model.TempFolder, "diagram-*-.png")
-	checkErr(err)
+	support.CheckErr(err)
 	defer os.Remove(tmpFilePNG.Name())
 
 	// copy into tmp file as input
