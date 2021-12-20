@@ -2,7 +2,6 @@ package main
 
 import (
 	"archive/zip"
-	"bufio"
 	"bytes"
 	"compress/gzip"
 	"crypto/aes"
@@ -34,6 +33,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/otyg/threagile/colors"
+	"github.com/otyg/threagile/macros"
 	add_build_pipeline "github.com/otyg/threagile/macros/built-in/add-build-pipeline"
 	add_vault "github.com/otyg/threagile/macros/built-in/add-vault"
 	pretty_print "github.com/otyg/threagile/macros/built-in/pretty-print"
@@ -295,291 +295,7 @@ func doIt(inputFilename string, outputDirectory string) {
 	checkRiskTracking()
 
 	if len(*executeModelMacro) > 0 {
-		var macroDetails model.MacroDetails
-		switch *executeModelMacro {
-		case add_build_pipeline.GetMacroDetails().ID:
-			macroDetails = add_build_pipeline.GetMacroDetails()
-		case add_vault.GetMacroDetails().ID:
-			macroDetails = add_vault.GetMacroDetails()
-		case pretty_print.GetMacroDetails().ID:
-			macroDetails = pretty_print.GetMacroDetails()
-		case remove_unused_tags.GetMacroDetails().ID:
-			macroDetails = remove_unused_tags.GetMacroDetails()
-		case seed_risk_tracking.GetMacroDetails().ID:
-			macroDetails = seed_risk_tracking.GetMacroDetails()
-		case seed_tags.GetMacroDetails().ID:
-			macroDetails = seed_tags.GetMacroDetails()
-		default:
-			log.Fatal("Unknown model macro: ", *executeModelMacro)
-		}
-		fmt.Println("Executing model macro:", macroDetails.ID)
-		fmt.Println()
-		fmt.Println()
-		printBorder(len(macroDetails.Title), true)
-		fmt.Println(macroDetails.Title)
-		printBorder(len(macroDetails.Title), true)
-		if len(macroDetails.Description) > 0 {
-			fmt.Println(macroDetails.Description)
-		}
-		fmt.Println()
-		reader := bufio.NewReader(os.Stdin)
-		var err error
-		var nextQuestion model.MacroQuestion
-		for {
-			switch macroDetails.ID {
-			case add_build_pipeline.GetMacroDetails().ID:
-				nextQuestion, err = add_build_pipeline.GetNextQuestion()
-			case add_vault.GetMacroDetails().ID:
-				nextQuestion, err = add_vault.GetNextQuestion()
-			case pretty_print.GetMacroDetails().ID:
-				nextQuestion, err = pretty_print.GetNextQuestion()
-			case remove_unused_tags.GetMacroDetails().ID:
-				nextQuestion, err = remove_unused_tags.GetNextQuestion()
-			case seed_risk_tracking.GetMacroDetails().ID:
-				nextQuestion, err = seed_risk_tracking.GetNextQuestion()
-			case seed_tags.GetMacroDetails().ID:
-				nextQuestion, err = seed_tags.GetNextQuestion()
-			}
-			checkErr(err)
-			if nextQuestion.NoMoreQuestions() {
-				break
-			}
-			fmt.Println()
-			printBorder(len(nextQuestion.Title), false)
-			fmt.Println(nextQuestion.Title)
-			printBorder(len(nextQuestion.Title), false)
-			if len(nextQuestion.Description) > 0 {
-				fmt.Println(nextQuestion.Description)
-			}
-			resultingMultiValueSelection := make([]string, 0)
-			if nextQuestion.IsValueConstrained() {
-				if nextQuestion.MultiSelect {
-					selectedValues := make(map[string]bool, 0)
-					for {
-						fmt.Println("Please select (multiple executions possible) from the following values (use number to select/deselect):")
-						fmt.Println("    0:", "SELECTION PROCESS FINISHED: CONTINUE TO NEXT QUESTION")
-						for i, val := range nextQuestion.PossibleAnswers {
-							number := i + 1
-							padding, selected := "", " "
-							if number < 10 {
-								padding = " "
-							}
-							if val, exists := selectedValues[val]; exists && val {
-								selected = "*"
-							}
-							fmt.Println(" "+selected+" "+padding+strconv.Itoa(number)+":", val)
-						}
-						fmt.Println()
-						fmt.Print("Enter number to select/deselect (or 0 when finished): ")
-						answer, err := reader.ReadString('\n')
-						// convert CRLF to LF
-						answer = strings.TrimSpace(strings.Replace(answer, "\n", "", -1))
-						checkErr(err)
-						if val, err := strconv.Atoi(answer); err == nil { // flip selection
-							if val == 0 {
-								for key, selected := range selectedValues {
-									if selected {
-										resultingMultiValueSelection = append(resultingMultiValueSelection, key)
-									}
-								}
-								break
-							} else if val > 0 && val <= len(nextQuestion.PossibleAnswers) {
-								selectedValues[nextQuestion.PossibleAnswers[val-1]] = !selectedValues[nextQuestion.PossibleAnswers[val-1]]
-							}
-						}
-					}
-				} else {
-					fmt.Println("Please choose from the following values (enter value directly or use number):")
-					for i, val := range nextQuestion.PossibleAnswers {
-						number := i + 1
-						padding := ""
-						if number < 10 {
-							padding = " "
-						}
-						fmt.Println("   "+padding+strconv.Itoa(number)+":", val)
-					}
-				}
-			}
-			message := ""
-			validResult := true
-			if !nextQuestion.IsValueConstrained() || !nextQuestion.MultiSelect {
-				fmt.Println()
-				fmt.Println("Enter your answer (use 'BACK' to go one step back or 'QUIT' to quit without executing the model macro)")
-				fmt.Print("Answer")
-				if len(nextQuestion.DefaultAnswer) > 0 {
-					fmt.Print(" (default '" + nextQuestion.DefaultAnswer + "')")
-				}
-				fmt.Print(": ")
-				answer, err := reader.ReadString('\n')
-				// convert CRLF to LF
-				answer = strings.TrimSpace(strings.Replace(answer, "\n", "", -1))
-				checkErr(err)
-				if len(answer) == 0 && len(nextQuestion.DefaultAnswer) > 0 { // accepting the default
-					answer = nextQuestion.DefaultAnswer
-				} else if nextQuestion.IsValueConstrained() { // convert number to value
-					if val, err := strconv.Atoi(answer); err == nil {
-						if val > 0 && val <= len(nextQuestion.PossibleAnswers) {
-							answer = nextQuestion.PossibleAnswers[val-1]
-						}
-					}
-				}
-				if strings.ToLower(answer) == "quit" {
-					fmt.Println("Quitting without executing the model macro")
-					return
-				} else if strings.ToLower(answer) == "back" {
-					switch macroDetails.ID {
-					case add_build_pipeline.GetMacroDetails().ID:
-						message, validResult, err = add_build_pipeline.GoBack()
-					case add_vault.GetMacroDetails().ID:
-						message, validResult, err = add_vault.GoBack()
-					case pretty_print.GetMacroDetails().ID:
-						message, validResult, err = pretty_print.GoBack()
-					case remove_unused_tags.GetMacroDetails().ID:
-						message, validResult, err = remove_unused_tags.GoBack()
-					case seed_risk_tracking.GetMacroDetails().ID:
-						message, validResult, err = seed_risk_tracking.GoBack()
-					case seed_tags.GetMacroDetails().ID:
-						message, validResult, err = seed_tags.GoBack()
-					}
-				} else if len(answer) > 0 { // individual answer
-					if nextQuestion.IsValueConstrained() {
-						if !nextQuestion.IsMatchingValueConstraint(answer) {
-							fmt.Println()
-							fmt.Println(">>> INVALID <<<")
-							fmt.Println("Answer does not match any allowed value. Please try again:")
-							continue
-						}
-					}
-					switch macroDetails.ID {
-					case add_build_pipeline.GetMacroDetails().ID:
-						message, validResult, err = add_build_pipeline.ApplyAnswer(nextQuestion.ID, answer)
-					case add_vault.GetMacroDetails().ID:
-						message, validResult, err = add_vault.ApplyAnswer(nextQuestion.ID, answer)
-					case pretty_print.GetMacroDetails().ID:
-						message, validResult, err = pretty_print.ApplyAnswer(nextQuestion.ID, answer)
-					case remove_unused_tags.GetMacroDetails().ID:
-						message, validResult, err = remove_unused_tags.ApplyAnswer(nextQuestion.ID, answer)
-					case seed_risk_tracking.GetMacroDetails().ID:
-						message, validResult, err = seed_risk_tracking.ApplyAnswer(nextQuestion.ID, answer)
-					case seed_tags.GetMacroDetails().ID:
-						message, validResult, err = seed_tags.ApplyAnswer(nextQuestion.ID, answer)
-					}
-				}
-			} else {
-				switch macroDetails.ID {
-				case add_build_pipeline.GetMacroDetails().ID:
-					message, validResult, err = add_build_pipeline.ApplyAnswer(nextQuestion.ID, resultingMultiValueSelection...)
-				case add_vault.GetMacroDetails().ID:
-					message, validResult, err = add_vault.ApplyAnswer(nextQuestion.ID, resultingMultiValueSelection...)
-				case pretty_print.GetMacroDetails().ID:
-					message, validResult, err = pretty_print.ApplyAnswer(nextQuestion.ID, resultingMultiValueSelection...)
-				case remove_unused_tags.GetMacroDetails().ID:
-					message, validResult, err = remove_unused_tags.ApplyAnswer(nextQuestion.ID, resultingMultiValueSelection...)
-				case seed_risk_tracking.GetMacroDetails().ID:
-					message, validResult, err = seed_risk_tracking.ApplyAnswer(nextQuestion.ID, resultingMultiValueSelection...)
-				case seed_tags.GetMacroDetails().ID:
-					message, validResult, err = seed_tags.ApplyAnswer(nextQuestion.ID, resultingMultiValueSelection...)
-				}
-			}
-			checkErr(err)
-			if !validResult {
-				fmt.Println()
-				fmt.Println(">>> INVALID <<<")
-			}
-			fmt.Println(message)
-			fmt.Println()
-		}
-		for {
-			fmt.Println()
-			fmt.Println()
-			fmt.Println("#################################################################")
-			fmt.Println("Do you want to execute the model macro (updating the model file)?")
-			fmt.Println("#################################################################")
-			fmt.Println()
-			fmt.Println("The following changes will be applied:")
-			var changes []string
-			message := ""
-			validResult := true
-			var err error
-			switch macroDetails.ID {
-			case add_build_pipeline.GetMacroDetails().ID:
-				changes, message, validResult, err = add_build_pipeline.GetFinalChangeImpact(&modelInput)
-			case add_vault.GetMacroDetails().ID:
-				changes, message, validResult, err = add_vault.GetFinalChangeImpact(&modelInput)
-			case pretty_print.GetMacroDetails().ID:
-				changes, message, validResult, err = pretty_print.GetFinalChangeImpact(&modelInput)
-			case remove_unused_tags.GetMacroDetails().ID:
-				changes, message, validResult, err = remove_unused_tags.GetFinalChangeImpact(&modelInput)
-			case seed_risk_tracking.GetMacroDetails().ID:
-				changes, message, validResult, err = seed_risk_tracking.GetFinalChangeImpact(&modelInput)
-			case seed_tags.GetMacroDetails().ID:
-				changes, message, validResult, err = seed_tags.GetFinalChangeImpact(&modelInput)
-			}
-			checkErr(err)
-			for _, change := range changes {
-				fmt.Println(" -", change)
-			}
-			if !validResult {
-				fmt.Println()
-				fmt.Println(">>> INVALID <<<")
-			}
-			fmt.Println()
-			fmt.Println(message)
-			fmt.Println()
-			fmt.Print("Apply these changes to the model file?\nType Yes or No: ")
-			answer, err := reader.ReadString('\n')
-			// convert CRLF to LF
-			answer = strings.TrimSpace(strings.Replace(answer, "\n", "", -1))
-			checkErr(err)
-			answer = strings.ToLower(answer)
-			fmt.Println()
-			if answer == "yes" || answer == "y" {
-				message := ""
-				validResult := true
-				var err error
-				switch macroDetails.ID {
-				case add_build_pipeline.GetMacroDetails().ID:
-					message, validResult, err = add_build_pipeline.Execute(&modelInput)
-				case add_vault.GetMacroDetails().ID:
-					message, validResult, err = add_vault.Execute(&modelInput)
-				case pretty_print.GetMacroDetails().ID:
-					message, validResult, err = pretty_print.Execute(&modelInput)
-				case remove_unused_tags.GetMacroDetails().ID:
-					message, validResult, err = remove_unused_tags.Execute(&modelInput)
-				case seed_risk_tracking.GetMacroDetails().ID:
-					message, validResult, err = seed_risk_tracking.Execute(&modelInput)
-				case seed_tags.GetMacroDetails().ID:
-					message, validResult, err = seed_tags.Execute(&modelInput)
-				}
-				checkErr(err)
-				if !validResult {
-					fmt.Println()
-					fmt.Println(">>> INVALID <<<")
-				}
-				fmt.Println(message)
-				fmt.Println()
-				backupFilename := inputFilename + ".backup"
-				fmt.Println("Creating backup model file:", backupFilename) // TODO add random files in /dev/shm space?
-				_, err = copyFile(inputFilename, backupFilename)
-				checkErr(err)
-				fmt.Println("Updating model")
-				yamlBytes, err := yaml.Marshal(modelInput)
-				checkErr(err)
-				/*
-					yamlBytes = model.ReformatYAML(yamlBytes)
-				*/
-				fmt.Println("Writing model file:", inputFilename)
-				err = ioutil.WriteFile(inputFilename, yamlBytes, 0400)
-				checkErr(err)
-				fmt.Println("Model file successfully updated")
-				return
-			} else if answer == "no" || answer == "n" {
-				fmt.Println("Quitting without executing the model macro")
-				return
-			}
-		}
-		fmt.Println()
-		return
+		macros.ExecuteModelMacro(executeModelMacro, modelInput, inputFilename)
 	}
 
 	renderDataFlowDiagram, renderDataAssetDiagram, renderRisksJSON, renderTechnicalAssetsJSON, renderStatsJSON, renderRisksExcel, renderTagsExcel, renderPDF, renderDefectDojo := *generateDataFlowDiagram, *generateDataAssetDiagram, *generateRisksJSON, *generateTechnicalAssetsJSON, *generateStatsJSON, *generateRisksExcel, *generateTagsExcel, *generateReportPDF, *generateDefectdojoGeneric
@@ -683,17 +399,6 @@ func doIt(inputFilename string, outputDirectory string) {
 			introTextRAA,
 			builtinRiskRulesPlugins)
 	}
-}
-
-func printBorder(length int, bold bool) {
-	char := "-"
-	if bold {
-		char = "="
-	}
-	for i := 1; i <= length; i++ {
-		fmt.Print(char)
-	}
-	fmt.Println()
 }
 
 func applyRAA() string {
@@ -3148,7 +2853,7 @@ func printVersion() {
 }
 
 func createExampleModelFile() {
-	copyFile("/app/threagile-example-model.yaml", *outputDir+"/threagile-example-model.yaml")
+	support.CopyFile("/app/threagile-example-model.yaml", *outputDir+"/threagile-example-model.yaml")
 }
 
 func createStubModelFile() {
@@ -3159,8 +2864,8 @@ func createStubModelFile() {
 }
 
 func createEditingSupportFiles() {
-	copyFile("/app/schema.json", *outputDir+"/schema.json")
-	copyFile("/app/live-templates.txt", *outputDir+"/live-templates.txt")
+	support.CopyFile("/app/schema.json", *outputDir+"/schema.json")
+	support.CopyFile("/app/live-templates.txt", *outputDir+"/live-templates.txt")
 }
 
 func printExamples() {
@@ -3195,31 +2900,6 @@ func printExamples() {
 
 func printTypes(title string, value interface{}) {
 	fmt.Println(fmt.Sprintf("  %v: %v", title, value))
-}
-
-func copyFile(src, dst string) (int64, error) {
-	sourceFileStat, err := os.Stat(src)
-	if err != nil {
-		return 0, err
-	}
-
-	if !sourceFileStat.Mode().IsRegular() {
-		return 0, fmt.Errorf("%s is not a regular file", src)
-	}
-
-	source, err := os.Open(src)
-	if err != nil {
-		return 0, err
-	}
-	defer source.Close()
-
-	destination, err := os.Create(dst)
-	if err != nil {
-		return 0, err
-	}
-	defer destination.Close()
-	nBytes, err := io.Copy(destination, source)
-	return nBytes, err
 }
 
 func parseModel(inputFilename string) {
