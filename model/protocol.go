@@ -1,5 +1,10 @@
 package model
 
+import (
+	"errors"
+	"strings"
+)
+
 type Protocol int
 
 const (
@@ -112,7 +117,15 @@ func (what Protocol) String() string {
 		"ssh", "ssh-tunnel", "smtp", "smtp-encrypted", "pop3", "pop3-encrypted", "imap", "imap-encrypted", "ftp", "ftps", "sftp", "scp", "ldap", "ldaps", "jms", "nfs", "smb", "smb-encrypted", "local-file-access", "nrpe", "xmpp",
 		"iiop", "iiop-encrypted", "jrmp", "jrmp-encrypted", "in-process-library-call", "container-spawning"}[what]
 }
-
+func ParseProtocol(value string) (result Protocol, err error) {
+	value = strings.TrimSpace(value)
+	for _, candidate := range ProtocolValues() {
+		if candidate.String() == value {
+			return candidate.(Protocol), err
+		}
+	}
+	return result, errors.New("Unable to parse into type: " + value)
+}
 func (what Protocol) IsProcessLocal() bool {
 	return what == InProcessLibraryCall || what == LocalFileAccess || what == ContainerSpawning
 }

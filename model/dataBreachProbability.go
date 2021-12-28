@@ -1,6 +1,10 @@
 package model
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"errors"
+	"strings"
+)
 
 type DataBreachProbability int
 
@@ -16,6 +20,16 @@ func DataBreachProbabilityValues() []TypeEnum {
 		Possible,
 		Probable,
 	}
+}
+
+func ParseDataBreachProbability(value string) (result DataBreachProbability, err error) {
+	value = strings.TrimSpace(value)
+	for _, candidate := range DataBreachProbabilityValues() {
+		if candidate.String() == value {
+			return candidate.(DataBreachProbability), err
+		}
+	}
+	return result, errors.New("Unable to parse into type: " + value)
 }
 
 func (what DataBreachProbability) String() string {

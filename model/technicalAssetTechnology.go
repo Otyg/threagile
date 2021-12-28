@@ -1,5 +1,10 @@
 package model
 
+import (
+	"errors"
+	"strings"
+)
+
 type TechnicalAssetTechnology int
 
 const (
@@ -136,6 +141,15 @@ func (what TechnicalAssetTechnology) String() string {
 		"scheduler", "mainframe", "block-storage", "library"}[what]
 }
 
+func ParseTechnicalAssetTechnology(value string) (technicalAssetTechnology TechnicalAssetTechnology, err error) {
+	value = strings.TrimSpace(value)
+	for _, candidate := range TechnicalAssetTechnologyValues() {
+		if candidate.String() == value {
+			return candidate.(TechnicalAssetTechnology), err
+		}
+	}
+	return technicalAssetTechnology, errors.New("Unable to parse into technology: " + value)
+}
 func (what TechnicalAssetTechnology) IsWebApplication() bool {
 	return what == WebServer || what == WebApplication || what == ApplicationServer || what == ERP || what == CMS || what == IdentityProvider || what == ReportEngine
 }

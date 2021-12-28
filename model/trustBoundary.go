@@ -1,6 +1,10 @@
 package model
 
-import "sort"
+import (
+	"errors"
+	"sort"
+	"strings"
+)
 
 type InputTrustBoundary struct {
 	ID                      string   `json:"id"`
@@ -113,6 +117,15 @@ func (what TrustBoundaryType) String() string {
 		"execution-environment"}[what]
 }
 
+func ParseTrustBoundaryType(value string) (result TrustBoundaryType, err error) {
+	value = strings.TrimSpace(value)
+	for _, candidate := range TrustBoundaryTypeValues() {
+		if candidate.String() == value {
+			return candidate.(TrustBoundaryType), err
+		}
+	}
+	return result, errors.New("Unable to parse into type: " + value)
+}
 func (what TrustBoundaryType) IsNetworkBoundary() bool {
 	return what == NetworkOnPrem || what == NetworkDedicatedHoster || what == NetworkVirtualLAN ||
 		what == NetworkCloudProvider || what == NetworkCloudSecurityGroup || what == NetworkPolicyNamespaceIsolation

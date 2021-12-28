@@ -1,6 +1,10 @@
 package model
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"errors"
+	"strings"
+)
 
 type RiskSeverity int
 
@@ -20,6 +24,16 @@ func RiskSeverityValues() []TypeEnum {
 		HighSeverity,
 		CriticalSeverity,
 	}
+}
+
+func ParseRiskSeverity(value string) (result RiskSeverity, err error) {
+	value = strings.TrimSpace(value)
+	for _, candidate := range RiskSeverityValues() {
+		if candidate.String() == value {
+			return candidate.(RiskSeverity), err
+		}
+	}
+	return result, errors.New("Unable to parse into type: " + value)
 }
 
 func (what RiskSeverity) String() string {

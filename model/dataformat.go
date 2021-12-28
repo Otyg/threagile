@@ -1,5 +1,10 @@
 package model
 
+import (
+	"errors"
+	"strings"
+)
+
 type DataFormat int
 
 const (
@@ -32,6 +37,16 @@ func (what DataFormat) Title() string {
 func (what DataFormat) Description() string {
 	return [...]string{"JSON marshalled object data", "XML structured data", "Serialization-based object graphs",
 		"File input/uploads", "CSV tabular data"}[what]
+}
+
+func ParseDataFormatName(value string) (dataFormat DataFormat, err error) {
+	value = strings.TrimSpace(value)
+	for _, candidate := range DataFormatValues() {
+		if candidate.String() == value {
+			return candidate.(DataFormat), err
+		}
+	}
+	return dataFormat, errors.New("Unable to parse into type: " + value)
 }
 
 type ByDataFormatAcceptedSort []DataFormat
