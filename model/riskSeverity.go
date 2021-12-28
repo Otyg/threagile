@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"strings"
+
+	"github.com/otyg/threagile/model/core"
 )
 
 type RiskSeverity int
@@ -16,8 +18,8 @@ const (
 	CriticalSeverity
 )
 
-func RiskSeverityValues() []TypeEnum {
-	return []TypeEnum{
+func RiskSeverityValues() []core.TypeEnum {
+	return []core.TypeEnum{
 		LowSeverity,
 		MediumSeverity,
 		ElevatedSeverity,

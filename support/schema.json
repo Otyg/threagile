@@ -1,6 +1,6 @@
 {
-  "$schema": "https://threagile.io/schema#",
-  "id": "https://threagile.io/schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Otyg/threagile/master/support/schema.json",
   "title": "Threagile",
   "description": "Agile Threat Modeling",
   "type": "object",
@@ -204,6 +204,7 @@
             "description": "Confidentiality",
             "type": "string",
             "enum": [
+              "unknown",
               "public",
               "internal",
               "restricted",
@@ -215,6 +216,7 @@
             "description": "Integrity",
             "type": "string",
             "enum": [
+              "unknown",
               "archive",
               "operational",
               "important",
@@ -226,6 +228,7 @@
             "description": "Availability",
             "type": "string",
             "enum": [
+              "unknown",
               "archive",
               "operational",
               "important",
@@ -403,6 +406,7 @@
             "description": "Encryption",
             "type": "string",
             "enum": [
+              "unknown",
               "none",
               "transparent",
               "data-with-symmetric-shared-key",
@@ -421,6 +425,7 @@
             "description": "Confidentiality",
             "type": "string",
             "enum": [
+              "unknown",
               "public",
               "internal",
               "restricted",
@@ -432,6 +437,7 @@
             "description": "Integrity",
             "type": "string",
             "enum": [
+              "unknown",
               "archive",
               "operational",
               "important",
@@ -443,6 +449,7 @@
             "description": "Availability",
             "type": "string",
             "enum": [
+              "unknown",
               "archive",
               "operational",
               "important",
@@ -866,6 +873,10 @@
           },
           "cheat_sheet": {
             "description": "Cheat sheet",
+            "type": "string"
+          },
+          "testing_guide": {
+            "description": "Testing Guide",
             "type": "string"
           },
           "action": {

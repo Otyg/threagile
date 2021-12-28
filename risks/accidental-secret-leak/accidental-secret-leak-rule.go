@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type accidentalSecretLeakRule string
@@ -65,14 +67,14 @@ func createRisk(technicalAsset model.TechnicalAsset, prefix, details string) mod
 		title += ": <u>" + details + "</u>"
 	}
 	impact := model.LowImpact
-	if technicalAsset.HighestConfidentiality() >= model.Confidential ||
-		technicalAsset.HighestIntegrity() >= model.Critical ||
-		technicalAsset.HighestAvailability() >= model.Critical {
+	if technicalAsset.HighestConfidentiality() >= confidentiality.Confidential ||
+		technicalAsset.HighestIntegrity() >= criticality.Critical ||
+		technicalAsset.HighestAvailability() >= criticality.Critical {
 		impact = model.MediumImpact
 	}
-	if technicalAsset.HighestConfidentiality() == model.StrictlyConfidential ||
-		technicalAsset.HighestIntegrity() == model.MissionCritical ||
-		technicalAsset.HighestAvailability() == model.MissionCritical {
+	if technicalAsset.HighestConfidentiality() == confidentiality.StrictlyConfidential ||
+		technicalAsset.HighestIntegrity() == criticality.MissionCritical ||
+		technicalAsset.HighestAvailability() == criticality.MissionCritical {
 		impact = model.HighImpact
 	}
 	// create risk

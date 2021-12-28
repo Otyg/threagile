@@ -4,6 +4,8 @@ import (
 	"sort"
 
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type missingNetworkSegmentation string
@@ -34,7 +36,7 @@ func (r missingNetworkSegmentation) Category() model.RiskCategory {
 			model.BuildPipeline.String() + ", " + model.SourcecodeRepository.String() + ", " + model.Monitoring.String() + ", or similar and there is no direct connection between these " +
 			"(hence no requirement to be so close to each other).",
 		RiskAssessment: "Default is " + model.LowSeverity.String() + " risk. The risk is increased to " + model.MediumSeverity.String() + " when the asset missing the " +
-			"trust-boundary protection is rated as " + model.StrictlyConfidential.String() + " or " + model.MissionCritical.String() + ".",
+			"trust-boundary protection is rated as " + confidentiality.StrictlyConfidential.String() + " or " + criticality.MissionCritical.String() + ".",
 		FalsePositives: "When all assets within the network segmentation trust-boundary are hardened and protected to the same extend as if all were " +
 			"containing/processing highly sensitive data.",
 		ModelFailurePossibleReason: false,
@@ -58,8 +60,8 @@ func (r missingNetworkSegmentation) GenerateRisks() []model.Risk {
 	for _, key := range keys {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[key]
 		if !technicalAsset.OutOfScope && technicalAsset.Technology != model.ReverseProxy && technicalAsset.Technology != model.WAF && technicalAsset.Technology != model.IDS && technicalAsset.Technology != model.IPS && technicalAsset.Technology != model.ServiceRegistry {
-			if technicalAsset.RAA >= raaLimit && (technicalAsset.Type == model.Datastore || technicalAsset.Confidentiality >= model.Confidential ||
-				technicalAsset.Integrity >= model.Critical || technicalAsset.Availability >= model.Critical) {
+			if technicalAsset.RAA >= raaLimit && (technicalAsset.Type == model.Datastore || technicalAsset.Confidentiality >= confidentiality.Confidential ||
+				technicalAsset.Integrity >= criticality.Critical || technicalAsset.Availability >= criticality.Critical) {
 				// now check for any other same-network assets of certain types which have no direct connection
 				for _, sparringAssetCandidateId := range keys { // so inner loop again over all assets
 					if technicalAsset.Id != sparringAssetCandidateId {
@@ -68,8 +70,8 @@ func (r missingNetworkSegmentation) GenerateRisks() []model.Risk {
 							technicalAsset.IsSameTrustBoundaryNetworkOnly(sparringAssetCandidateId) &&
 							!technicalAsset.HasDirectConnection(sparringAssetCandidateId) &&
 							!sparringAssetCandidate.Technology.IsCloseToHighValueTargetsTolerated() {
-							highRisk := technicalAsset.Confidentiality == model.StrictlyConfidential ||
-								technicalAsset.Integrity == model.MissionCritical || technicalAsset.Availability == model.MissionCritical
+							highRisk := technicalAsset.Confidentiality == confidentiality.StrictlyConfidential ||
+								technicalAsset.Integrity == criticality.MissionCritical || technicalAsset.Availability == criticality.MissionCritical
 							risks = append(risks, createRisk(technicalAsset, highRisk))
 							break
 						}

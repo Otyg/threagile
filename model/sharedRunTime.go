@@ -1,6 +1,11 @@
 package model
 
-import "sort"
+import (
+	"sort"
+
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
+)
 
 type InputSharedRuntime struct {
 	ID                       string   `json:"id"`
@@ -22,8 +27,8 @@ func (what SharedRuntime) IsTaggedWithBaseTag(basetag string) bool {
 	return IsTaggedWithBaseTag(what.Tags, basetag)
 }
 
-func (what SharedRuntime) HighestConfidentiality() Confidentiality {
-	highest := Public
+func (what SharedRuntime) HighestConfidentiality() confidentiality.Confidentiality {
+	highest := confidentiality.Public
 	for _, id := range what.TechnicalAssetsRunning {
 		techAsset := ParsedModelRoot.TechnicalAssets[id]
 		if techAsset.HighestConfidentiality() > highest {
@@ -33,8 +38,8 @@ func (what SharedRuntime) HighestConfidentiality() Confidentiality {
 	return highest
 }
 
-func (what SharedRuntime) HighestIntegrity() Criticality {
-	highest := Archive
+func (what SharedRuntime) HighestIntegrity() criticality.Criticality {
+	highest := criticality.Archive
 	for _, id := range what.TechnicalAssetsRunning {
 		techAsset := ParsedModelRoot.TechnicalAssets[id]
 		if techAsset.HighestIntegrity() > highest {
@@ -44,8 +49,8 @@ func (what SharedRuntime) HighestIntegrity() Criticality {
 	return highest
 }
 
-func (what SharedRuntime) HighestAvailability() Criticality {
-	highest := Archive
+func (what SharedRuntime) HighestAvailability() criticality.Criticality {
+	highest := criticality.Archive
 	for _, id := range what.TechnicalAssetsRunning {
 		techAsset := ParsedModelRoot.TechnicalAssets[id]
 		if techAsset.HighestAvailability() > highest {

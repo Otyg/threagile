@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type untrustedDeserialization string
@@ -83,9 +85,9 @@ func createRisk(technicalAsset model.TechnicalAsset, acrossTrustBoundary bool, c
 		likelihood = model.VeryLikely
 		title += " across a trust boundary (at least via communication link <b>" + commLinkTitle + "</b>)"
 	}
-	if technicalAsset.HighestConfidentiality() == model.StrictlyConfidential ||
-		technicalAsset.HighestIntegrity() == model.MissionCritical ||
-		technicalAsset.HighestAvailability() == model.MissionCritical {
+	if technicalAsset.HighestConfidentiality() == confidentiality.StrictlyConfidential ||
+		technicalAsset.HighestIntegrity() == criticality.MissionCritical ||
+		technicalAsset.HighestAvailability() == criticality.MissionCritical {
 		impact = model.VeryHighImpact
 	}
 	risk := model.Risk{

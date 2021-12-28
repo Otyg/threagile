@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type missingAuthenticationSecondFactor string
@@ -47,9 +49,9 @@ func (r missingAuthenticationSecondFactor) GenerateRisks() []model.Risk {
 			technicalAsset.Technology.IsUnprotectedCommsTolerated() {
 			continue
 		}
-		if technicalAsset.HighestConfidentiality() >= model.Confidential ||
-			technicalAsset.HighestIntegrity() >= model.Critical ||
-			technicalAsset.HighestAvailability() >= model.Critical ||
+		if technicalAsset.HighestConfidentiality() >= confidentiality.Confidential ||
+			technicalAsset.HighestIntegrity() >= criticality.Critical ||
+			technicalAsset.HighestAvailability() >= criticality.Critical ||
 			technicalAsset.MultiTenant {
 			// check each incoming data flow
 			commLinks := model.IncomingTechnicalCommunicationLinksMappedByTargetId[technicalAsset.Id]
@@ -59,8 +61,8 @@ func (r missingAuthenticationSecondFactor) GenerateRisks() []model.Risk {
 					continue
 				}
 				if caller.UsedAsClientByHuman {
-					moreRisky := commLink.HighestConfidentiality() >= model.Confidential ||
-						commLink.HighestIntegrity() >= model.Critical
+					moreRisky := commLink.HighestConfidentiality() >= confidentiality.Confidential ||
+						commLink.HighestIntegrity() >= criticality.Critical
 					if moreRisky && commLink.Authentication != model.TwoFactor {
 						risks = append(risks, createRisk(technicalAsset, commLink, commLink, "", model.MediumImpact, model.Unlikely, true, RiskRule.Category()))
 					}
@@ -73,8 +75,8 @@ func (r missingAuthenticationSecondFactor) GenerateRisks() []model.Risk {
 							continue
 						}
 						if callersCaller.UsedAsClientByHuman {
-							moreRisky := callersCommLink.HighestConfidentiality() >= model.Confidential ||
-								callersCommLink.HighestIntegrity() >= model.Critical
+							moreRisky := callersCommLink.HighestConfidentiality() >= confidentiality.Confidential ||
+								callersCommLink.HighestIntegrity() >= criticality.Critical
 							if moreRisky && callersCommLink.Authentication != model.TwoFactor {
 								risks = append(risks, createRisk(technicalAsset, commLink, callersCommLink, caller.Title, model.MediumImpact, model.Unlikely, true, RiskRule.Category()))
 							}

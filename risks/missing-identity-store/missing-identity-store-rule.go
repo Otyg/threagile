@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type missingIdentityStore string
@@ -58,15 +60,15 @@ func (r missingIdentityStore) GenerateRisks() []model.Risk {
 				targetAsset := model.ParsedModelRoot.TechnicalAssets[commLink.TargetId]
 				if impact == model.LowImpact {
 					mostRelevantAsset = targetAsset
-					if targetAsset.HighestConfidentiality() >= model.Confidential ||
-						targetAsset.HighestIntegrity() >= model.Critical ||
-						targetAsset.HighestAvailability() >= model.Critical {
+					if targetAsset.HighestConfidentiality() >= confidentiality.Confidential ||
+						targetAsset.HighestIntegrity() >= criticality.Critical ||
+						targetAsset.HighestAvailability() >= criticality.Critical {
 						impact = model.MediumImpact
 					}
 				}
-				if targetAsset.Confidentiality >= model.Confidential ||
-					targetAsset.Integrity >= model.Critical ||
-					targetAsset.Availability >= model.Critical {
+				if targetAsset.Confidentiality >= confidentiality.Confidential ||
+					targetAsset.Integrity >= criticality.Critical ||
+					targetAsset.Availability >= criticality.Critical {
 					impact = model.MediumImpact
 				}
 				// just for referencing the most interesting asset

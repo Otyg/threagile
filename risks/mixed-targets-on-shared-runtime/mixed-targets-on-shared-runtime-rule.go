@@ -4,6 +4,8 @@ import (
 	"sort"
 
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type mixedTargetsOnSharedRuntime string
@@ -100,8 +102,8 @@ func createRisk(sharedRuntime model.SharedRuntime) model.Risk {
 func isMoreRisky(sharedRuntime model.SharedRuntime) bool {
 	for _, techAssetId := range sharedRuntime.TechnicalAssetsRunning {
 		techAsset := model.ParsedModelRoot.TechnicalAssets[techAssetId]
-		if techAsset.Confidentiality == model.StrictlyConfidential || techAsset.Integrity == model.MissionCritical ||
-			techAsset.Availability == model.MissionCritical {
+		if techAsset.Confidentiality == confidentiality.StrictlyConfidential || techAsset.Integrity == criticality.MissionCritical ||
+			techAsset.Availability == criticality.MissionCritical {
 			return true
 		}
 	}

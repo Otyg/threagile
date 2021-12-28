@@ -3,6 +3,8 @@ package model
 import (
 	"errors"
 	"strings"
+
+	"github.com/otyg/threagile/model/core"
 )
 
 type Authorization int
@@ -13,8 +15,8 @@ const (
 	EnduserIdentityPropagation
 )
 
-func AuthorizationValues() []TypeEnum {
-	return []TypeEnum{
+func AuthorizationValues() []core.TypeEnum {
+	return []core.TypeEnum{
 		NoneAuthorization,
 		TechnicalUser,
 		EnduserIdentityPropagation,

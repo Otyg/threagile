@@ -3,6 +3,8 @@ package model
 import (
 	"errors"
 	"strings"
+
+	"github.com/otyg/threagile/model/core"
 )
 
 type TechnicalAssetTechnology int
@@ -67,8 +69,8 @@ const (
 	Library
 )
 
-func TechnicalAssetTechnologyValues() []TypeEnum {
-	return []TypeEnum{
+func TechnicalAssetTechnologyValues() []core.TypeEnum {
+	return []core.TypeEnum{
 		UnknownTechnology,
 		ClientSystem,
 		Browser,

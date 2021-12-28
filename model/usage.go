@@ -3,6 +3,8 @@ package model
 import (
 	"errors"
 	"strings"
+
+	"github.com/otyg/threagile/model/core"
 )
 
 type Usage int
@@ -12,8 +14,8 @@ const (
 	DevOps
 )
 
-func UsageValues() []TypeEnum {
-	return []TypeEnum{
+func UsageValues() []core.TypeEnum {
+	return []core.TypeEnum{
 		Business,
 		DevOps,
 	}

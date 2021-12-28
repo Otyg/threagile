@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type missingFileValidationRule string
@@ -58,9 +60,9 @@ func (r missingFileValidationRule) GenerateRisks() []model.Risk {
 func createRisk(technicalAsset model.TechnicalAsset) model.Risk {
 	title := "<b>Missing File Validation</b> risk at <b>" + technicalAsset.Title + "</b>"
 	impact := model.LowImpact
-	if technicalAsset.HighestConfidentiality() == model.StrictlyConfidential ||
-		technicalAsset.HighestIntegrity() == model.MissionCritical ||
-		technicalAsset.HighestAvailability() == model.MissionCritical {
+	if technicalAsset.HighestConfidentiality() == confidentiality.StrictlyConfidential ||
+		technicalAsset.HighestIntegrity() == criticality.MissionCritical ||
+		technicalAsset.HighestAvailability() == criticality.MissionCritical {
 		impact = model.MediumImpact
 	}
 	risk := model.Risk{

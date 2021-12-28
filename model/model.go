@@ -1,6 +1,10 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	"github.com/otyg/threagile/model/criticality"
+)
 
 type ModelInput struct { // TODO: Eventually remove this and directly use ParsedModelRoot? But then the error messages for model errors are not quite as good anymore...
 	Threagile_version                                  string
@@ -36,7 +40,7 @@ type ParsedModel struct {
 	ManagementSummaryComment                      string
 	BusinessOverview                              Overview
 	TechnicalOverview                             Overview
-	BusinessCriticality                           Criticality
+	BusinessCriticality                           criticality.Criticality
 	SecurityRequirements                          map[string]string
 	Questions                                     map[string]string
 	AbuseCases                                    map[string]string

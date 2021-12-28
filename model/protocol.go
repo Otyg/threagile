@@ -3,6 +3,8 @@ package model
 import (
 	"errors"
 	"strings"
+
+	"github.com/otyg/threagile/model/core"
 )
 
 type Protocol int
@@ -57,8 +59,8 @@ const (
 	ContainerSpawning
 )
 
-func ProtocolValues() []TypeEnum {
-	return []TypeEnum{
+func ProtocolValues() []core.TypeEnum {
+	return []core.TypeEnum{
 		UnknownProtocol,
 		HTTP,
 		HTTPS,

@@ -6,6 +6,8 @@ import (
 	"strings"
 
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 func GetMacroDetails() model.MacroDetails {
@@ -189,9 +191,9 @@ func applyChange(modelInput *model.ModelInput, changeLogCollector *[]string, dry
 			Origin:                   "",
 			Owner:                    "",
 			Quantity:                 model.VeryFew.String(),
-			Confidentiality:          model.StrictlyConfidential.String(),
-			Integrity:                model.Critical.String(),
-			Availability:             model.Critical.String(),
+			Confidentiality:          confidentiality.StrictlyConfidential.String(),
+			Integrity:                criticality.Critical.String(),
+			Availability:             criticality.Critical.String(),
 			Justification_cia_rating: "Configuration secrets are rated as being 'strictly-confidential'.",
 		}
 		*changeLogCollector = append(*changeLogCollector, "adding data asset: configuration-secrets")
@@ -228,9 +230,9 @@ func applyChange(modelInput *model.ModelInput, changeLogCollector *[]string, dry
 				Machine:                    model.Virtual.String(),                    // TODO: let user enter or too detailed for a wizard?
 				Encryption:                 model.DataWithSymmetricSharedKey.String(), // can be assumed for a vault product as at least having some good encryption
 				Owner:                      "",
-				Confidentiality:            model.Confidential.String(),
-				Integrity:                  model.Critical.String(),
-				Availability:               model.Critical.String(),
+				Confidentiality:            confidentiality.Confidential.String(),
+				Integrity:                  criticality.Critical.String(),
+				Availability:               criticality.Critical.String(),
 				Justification_cia_rating:   "Vault components are only rated as 'confidential' as vaults usually apply a trust barrier to encrypt all data-at-rest with a vault key.",
 				Multi_tenant:               strings.ToLower(macroState["multi-tenant"][0]) == "yes",
 				Redundant:                  false,
@@ -343,9 +345,9 @@ func applyChange(modelInput *model.ModelInput, changeLogCollector *[]string, dry
 			Machine:                    model.Virtual.String(),
 			Encryption:                 model.Transparent.String(),
 			Owner:                      "",
-			Confidentiality:            model.StrictlyConfidential.String(),
-			Integrity:                  model.Critical.String(),
-			Availability:               model.Critical.String(),
+			Confidentiality:            confidentiality.StrictlyConfidential.String(),
+			Integrity:                  criticality.Critical.String(),
+			Availability:               criticality.Critical.String(),
 			Justification_cia_rating:   "Vault components are rated as 'strictly-confidential'.",
 			Multi_tenant:               strings.ToLower(macroState["multi-tenant"][0]) == "yes",
 			Redundant:                  false,

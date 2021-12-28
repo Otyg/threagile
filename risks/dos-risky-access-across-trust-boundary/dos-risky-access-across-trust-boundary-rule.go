@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type dosRiskyAccessAcrossTrustBoundary string
@@ -25,12 +26,12 @@ func (r dosRiskyAccessAcrossTrustBoundary) Category() model.RiskCategory {
 		Function: model.Operations,
 		STRIDE:   model.DenialOfService,
 		DetectionLogic: "In-scope technical assets (excluding " + model.LoadBalancer.String() + ") with " +
-			"availability rating of " + model.Critical.String() + " or higher which have incoming data-flows across a " +
+			"availability rating of " + criticality.Critical.String() + " or higher which have incoming data-flows across a " +
 			"network trust-boundary (excluding " + model.DevOps.String() + " usage).",
 		RiskAssessment: "Matching technical assets with availability rating " +
-			"of " + model.Critical.String() + " or higher are " +
+			"of " + criticality.Critical.String() + " or higher are " +
 			"at " + model.LowSeverity.String() + " risk. When the availability rating is " +
-			model.MissionCritical.String() + " and neither a VPN nor IP filter for the incoming data-flow nor redundancy " +
+			criticality.MissionCritical.String() + " and neither a VPN nor IP filter for the incoming data-flow nor redundancy " +
 			"for the asset is applied, the risk-rating is considered " + model.MediumSeverity.String() + ".", // TODO reduce also, when data-flow authenticated and encrypted?
 		FalsePositives:             "When the accessed target operations are not time- or resource-consuming.",
 		ModelFailurePossibleReason: false,
@@ -47,7 +48,7 @@ func (r dosRiskyAccessAcrossTrustBoundary) GenerateRisks() []model.Risk {
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
 		if !technicalAsset.OutOfScope && technicalAsset.Technology != model.LoadBalancer &&
-			technicalAsset.Availability >= model.Critical {
+			technicalAsset.Availability >= criticality.Critical {
 			for _, incomingAccess := range model.IncomingTechnicalCommunicationLinksMappedByTargetId[technicalAsset.Id] {
 				sourceAsset := model.ParsedModelRoot.TechnicalAssets[incomingAccess.SourceId]
 				if sourceAsset.Technology.IsTrafficForwarding() {
@@ -68,7 +69,7 @@ func (r dosRiskyAccessAcrossTrustBoundary) GenerateRisks() []model.Risk {
 func checkRisk(technicalAsset model.TechnicalAsset, incomingAccess model.CommunicationLink, hopBetween string, risks []model.Risk) []model.Risk {
 	if incomingAccess.IsAcrossTrustBoundaryNetworkOnly() &&
 		!incomingAccess.Protocol.IsProcessLocal() && incomingAccess.Usage != model.DevOps {
-		highRisk := technicalAsset.Availability == model.MissionCritical &&
+		highRisk := technicalAsset.Availability == criticality.MissionCritical &&
 			!incomingAccess.VPN && !incomingAccess.IpFiltered && !technicalAsset.Redundant
 		risks = append(risks, createRisk(technicalAsset, incomingAccess, hopBetween,
 			model.ParsedModelRoot.TechnicalAssets[incomingAccess.SourceId], highRisk))

@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
 )
 
 type accidentalLoggingOfSensitiveDataRule string
@@ -45,12 +46,12 @@ func (r accidentalLoggingOfSensitiveDataRule) GenerateRisks() []model.Risk {
 		impact := model.MediumImpact
 		datas := append(technicalAsset.DataAssetsProcessedSorted(), technicalAsset.DataAssetsStoredSorted()...)
 		for _, data := range datas {
-			if data.Confidentiality >= model.Restricted || data.IsTaggedWithAny(r.SupportedTags()...) {
+			if data.Confidentiality >= confidentiality.Restricted || data.IsTaggedWithAny(r.SupportedTags()...) {
 				hasSensitiveData = true
-				if data.Confidentiality == model.Confidential && impact == model.MediumImpact {
+				if data.Confidentiality == confidentiality.Confidential && impact == model.MediumImpact {
 					impact = model.HighImpact
 				}
-				if data.Confidentiality == model.StrictlyConfidential && impact <= model.HighImpact {
+				if data.Confidentiality == confidentiality.StrictlyConfidential && impact <= model.HighImpact {
 					impact = model.VeryHighImpact
 				}
 				sensitiveData = append(sensitiveData, data.Id)

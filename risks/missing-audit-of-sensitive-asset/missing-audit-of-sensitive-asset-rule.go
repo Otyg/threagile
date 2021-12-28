@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type missingAuditOfSensitiveAsset string
@@ -42,23 +44,23 @@ func (r missingAuditOfSensitiveAsset) GenerateRisks() []model.Risk {
 		}
 		impact := model.MediumImpact
 		isSensitiveAsset := false
-		if technicalAsset.Confidentiality >= model.Restricted || technicalAsset.Integrity >= model.Important || technicalAsset.IsTaggedWithAny(r.SupportedTags()...) {
+		if technicalAsset.Confidentiality >= confidentiality.Restricted || technicalAsset.Integrity >= criticality.Important || technicalAsset.IsTaggedWithAny(r.SupportedTags()...) {
 			isSensitiveAsset = true
-			if technicalAsset.Confidentiality == model.Confidential || technicalAsset.Integrity == model.Critical {
+			if technicalAsset.Confidentiality == confidentiality.Confidential || technicalAsset.Integrity == criticality.Critical {
 				impact = model.HighImpact
-			} else if technicalAsset.Confidentiality == model.StrictlyConfidential || technicalAsset.Integrity == model.MissionCritical {
+			} else if technicalAsset.Confidentiality == confidentiality.StrictlyConfidential || technicalAsset.Integrity == criticality.MissionCritical {
 				impact = model.VeryHighImpact
 			}
 		}
 		if !isSensitiveAsset {
 			datas := append(technicalAsset.DataAssetsProcessedSorted(), technicalAsset.DataAssetsStoredSorted()...)
 			for _, data := range datas {
-				if data.Confidentiality >= model.Restricted || data.Integrity >= model.Important || data.IsTaggedWithAny(r.SupportedTags()...) {
+				if data.Confidentiality >= confidentiality.Restricted || data.Integrity >= criticality.Important || data.IsTaggedWithAny(r.SupportedTags()...) {
 					isSensitiveAsset = true
-					if (data.Confidentiality == model.Confidential || data.Integrity == model.Critical) && impact < model.HighImpact {
+					if (data.Confidentiality == confidentiality.Confidential || data.Integrity == criticality.Critical) && impact < model.HighImpact {
 						impact = model.HighImpact
 					}
-					if (data.Confidentiality == model.StrictlyConfidential || data.Integrity == model.MissionCritical) && impact <= model.VeryHighImpact {
+					if (data.Confidentiality == confidentiality.StrictlyConfidential || data.Integrity == criticality.MissionCritical) && impact <= model.VeryHighImpact {
 						impact = model.VeryHighImpact
 					}
 				}

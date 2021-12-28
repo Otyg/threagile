@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type codeBackdooringRule string
@@ -77,7 +79,7 @@ func createRisk(technicalAsset model.TechnicalAsset, elevatedRisk bool) model.Ri
 		if elevatedRisk {
 			impact = model.MediumImpact
 		}
-		if technicalAsset.HighestConfidentiality() >= model.Confidential || technicalAsset.HighestIntegrity() >= model.Critical {
+		if technicalAsset.HighestConfidentiality() >= confidentiality.Confidential || technicalAsset.HighestIntegrity() >= criticality.Critical {
 			impact = model.MediumImpact
 			if elevatedRisk {
 				impact = model.HighImpact
@@ -91,7 +93,7 @@ func createRisk(technicalAsset model.TechnicalAsset, elevatedRisk bool) model.Ri
 		if codeDeploymentTargetCommLink.Usage == model.DevOps {
 			for _, dataAssetID := range codeDeploymentTargetCommLink.DataAssetsSent {
 				// it appears to be code when elevated integrity rating of sent data asset
-				if model.ParsedModelRoot.DataAssets[dataAssetID].Integrity >= model.Important {
+				if model.ParsedModelRoot.DataAssets[dataAssetID].Integrity >= criticality.Important {
 					// here we've got a deployment target which has its data assets at risk via deployment of backdoored code
 					uniqueDataBreachTechnicalAssetIDs[codeDeploymentTargetCommLink.TargetId] = true
 					break

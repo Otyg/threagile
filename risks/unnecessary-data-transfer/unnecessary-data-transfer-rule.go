@@ -4,6 +4,8 @@ import (
 	"sort"
 
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type unnecessaryDataTransfer string
@@ -78,7 +80,7 @@ func checkRisksAgainstTechnicalAsset(risks []model.Risk, technicalAsset model.Te
 		if !technicalAsset.ProcessesOrStoresDataAsset(transferredDataAssetId) {
 			transferredDataAsset := model.ParsedModelRoot.DataAssets[transferredDataAssetId]
 			//fmt.Print("--->>> Checking "+technicalAsset.Id+": "+transferredDataAsset.Id+" sent via "+dataFlow.Id+"\n")
-			if transferredDataAsset.Confidentiality >= model.Confidential || transferredDataAsset.Integrity >= model.Critical {
+			if transferredDataAsset.Confidentiality >= confidentiality.Confidential || transferredDataAsset.Integrity >= criticality.Critical {
 				commPartnerId := dataFlow.TargetId
 				if inverseDirection {
 					commPartnerId = dataFlow.SourceId
@@ -95,7 +97,7 @@ func checkRisksAgainstTechnicalAsset(risks []model.Risk, technicalAsset model.Te
 		if !technicalAsset.ProcessesOrStoresDataAsset(transferredDataAssetId) {
 			transferredDataAsset := model.ParsedModelRoot.DataAssets[transferredDataAssetId]
 			//fmt.Print("--->>> Checking "+technicalAsset.Id+": "+transferredDataAsset.Id+" received via "+dataFlow.Id+"\n")
-			if transferredDataAsset.Confidentiality >= model.Confidential || transferredDataAsset.Integrity >= model.Critical {
+			if transferredDataAsset.Confidentiality >= confidentiality.Confidential || transferredDataAsset.Integrity >= criticality.Critical {
 				commPartnerId := dataFlow.TargetId
 				if inverseDirection {
 					commPartnerId = dataFlow.SourceId
@@ -121,7 +123,7 @@ func isNewRisk(risks []model.Risk, risk model.Risk) bool {
 }
 
 func createRisk(technicalAsset model.TechnicalAsset, dataAssetTransferred model.DataAsset, commPartnerAsset model.TechnicalAsset) model.Risk {
-	moreRisky := dataAssetTransferred.Confidentiality == model.StrictlyConfidential || dataAssetTransferred.Integrity == model.MissionCritical
+	moreRisky := dataAssetTransferred.Confidentiality == confidentiality.StrictlyConfidential || dataAssetTransferred.Integrity == criticality.MissionCritical
 
 	impact := model.LowImpact
 	if moreRisky {

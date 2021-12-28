@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"strings"
+
+	"github.com/otyg/threagile/model/core"
 )
 
 type RiskStatus int
@@ -17,8 +19,8 @@ const (
 	FalsePositive
 )
 
-func RiskStatusValues() []TypeEnum {
-	return []TypeEnum{
+func RiskStatusValues() []core.TypeEnum {
+	return []core.TypeEnum{
 		Unchecked,
 		InDiscussion,
 		Accepted,

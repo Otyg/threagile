@@ -3,6 +3,8 @@ package model
 import (
 	"errors"
 	"strings"
+
+	"github.com/otyg/threagile/model/core"
 )
 
 type DataFormat int
@@ -15,8 +17,8 @@ const (
 	CSV
 )
 
-func DataFormatValues() []TypeEnum {
-	return []TypeEnum{
+func DataFormatValues() []core.TypeEnum {
+	return []core.TypeEnum{
 		JSON,
 		XML,
 		Serialization,

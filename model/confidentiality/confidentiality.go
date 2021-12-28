@@ -1,22 +1,26 @@
-package model
+package confidentiality
 
 import (
 	"errors"
 	"strings"
+
+	"github.com/otyg/threagile/model/core"
 )
 
 type Confidentiality int
 
 const (
-	Public Confidentiality = iota
+	Unknown Confidentiality = iota
+	Public
 	Internal
 	Restricted
 	Confidential
 	StrictlyConfidential
 )
 
-func ConfidentialityValues() []TypeEnum {
-	return []TypeEnum{
+func ConfidentialityValues() []core.TypeEnum {
+	return []core.TypeEnum{
+		Unknown,
 		Public,
 		Internal,
 		Restricted,
@@ -37,25 +41,25 @@ func ParseConfidentiality(value string) (confidentiality Confidentiality, err er
 
 func (what Confidentiality) String() string {
 	// NOTE: maintain list also in schema.json for validation in IDEs
-	return [...]string{"public", "internal", "restricted", "confidential", "strictly-confidential"}[what]
+	return [...]string{"unknown", "public", "internal", "restricted", "confidential", "strictly-confidential"}[what]
 }
 
 func (what Confidentiality) AttackerAttractivenessForAsset() float64 {
 	// fibonacci starting at 8
-	return [...]float64{8, 13, 21, 34, 55}[what]
+	return [...]float64{8, 13, 21, 34, 55, 89}[what]
 }
 func (what Confidentiality) AttackerAttractivenessForProcessedOrStoredData() float64 {
 	// fibonacci starting at 5
-	return [...]float64{5, 8, 13, 21, 34}[what]
+	return [...]float64{5, 8, 13, 21, 34, 55}[what]
 }
 func (what Confidentiality) AttackerAttractivenessForInOutTransferredData() float64 {
 	// fibonacci starting at 2
-	return [...]float64{2, 3, 5, 8, 13}[what]
+	return [...]float64{2, 3, 5, 8, 13, 21}[what]
 }
 
 func (what Confidentiality) RatingStringInScale() string {
 	result := "(rated "
-	if what == Public {
+	if what == Public || what == Unknown {
 		result += "1"
 	}
 	if what == Internal {

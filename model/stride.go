@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"strings"
+
+	"github.com/otyg/threagile/model/core"
 )
 
 type STRIDE int
@@ -17,8 +19,8 @@ const (
 	ElevationOfPrivilege
 )
 
-func STRIDEValues() []TypeEnum {
-	return []TypeEnum{
+func STRIDEValues() []core.TypeEnum {
+	return []core.TypeEnum{
 		Spoofing,
 		Tampering,
 		Repudiation,

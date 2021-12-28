@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type missingVault string
@@ -49,14 +51,14 @@ func (r missingVault) GenerateRisks() []model.Risk {
 		if techAsset.Technology == model.Vault {
 			hasVault = true
 		}
-		if techAsset.HighestConfidentiality() >= model.Confidential ||
-			techAsset.HighestIntegrity() >= model.Critical ||
-			techAsset.HighestAvailability() >= model.Critical {
+		if techAsset.HighestConfidentiality() >= confidentiality.Confidential ||
+			techAsset.HighestIntegrity() >= criticality.Critical ||
+			techAsset.HighestAvailability() >= criticality.Critical {
 			impact = model.MediumImpact
 		}
-		if techAsset.Confidentiality >= model.Confidential ||
-			techAsset.Integrity >= model.Critical ||
-			techAsset.Availability >= model.Critical {
+		if techAsset.Confidentiality >= confidentiality.Confidential ||
+			techAsset.Integrity >= criticality.Critical ||
+			techAsset.Availability >= criticality.Critical {
 			impact = model.MediumImpact
 		}
 		// just for referencing the most interesting asset

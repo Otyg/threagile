@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type missingBuildInfrastructure string
@@ -50,15 +52,15 @@ func (r missingBuildInfrastructure) GenerateRisks() []model.Risk {
 			hasCustomDevelopedParts = true
 			if impact == model.LowImpact {
 				mostRelevantAsset = technicalAsset
-				if technicalAsset.HighestConfidentiality() >= model.Confidential ||
-					technicalAsset.HighestIntegrity() >= model.Critical ||
-					technicalAsset.HighestAvailability() >= model.Critical {
+				if technicalAsset.HighestConfidentiality() >= confidentiality.Confidential ||
+					technicalAsset.HighestIntegrity() >= criticality.Critical ||
+					technicalAsset.HighestAvailability() >= criticality.Critical {
 					impact = model.MediumImpact
 				}
 			}
-			if technicalAsset.Confidentiality >= model.Confidential ||
-				technicalAsset.Integrity >= model.Critical ||
-				technicalAsset.Availability >= model.Critical {
+			if technicalAsset.Confidentiality >= confidentiality.Confidential ||
+				technicalAsset.Integrity >= criticality.Critical ||
+				technicalAsset.Availability >= criticality.Critical {
 				impact = model.MediumImpact
 			}
 			// just for referencing the most interesting asset

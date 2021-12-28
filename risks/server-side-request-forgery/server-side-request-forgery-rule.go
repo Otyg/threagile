@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
 )
 
 type servierSideRequestForgery string
@@ -61,7 +62,7 @@ func createRisk(technicalAsset model.TechnicalAsset, outgoingFlow model.Communic
 		"the target <b>" + target.Title + "</b> via <b>" + outgoingFlow.Title + "</b>"
 	impact := model.LowImpact
 	// check by the target itself (can be in another trust-boundary)
-	if target.HighestConfidentiality() == model.StrictlyConfidential {
+	if target.HighestConfidentiality() == confidentiality.StrictlyConfidential {
 		impact = model.MediumImpact
 	}
 	// check all potential attack targets within the same trust boundary (accessible via web protocols)
@@ -72,7 +73,7 @@ func createRisk(technicalAsset model.TechnicalAsset, outgoingFlow model.Communic
 			for _, commLinkIncoming := range model.IncomingTechnicalCommunicationLinksMappedByTargetId[potentialTargetAsset.Id] {
 				if commLinkIncoming.Protocol.IsPotentialWebAccessProtocol() {
 					uniqueDataBreachTechnicalAssetIDs[potentialTargetAsset.Id] = true
-					if potentialTargetAsset.HighestConfidentiality() == model.StrictlyConfidential {
+					if potentialTargetAsset.HighestConfidentiality() == confidentiality.StrictlyConfidential {
 						impact = model.MediumImpact
 					}
 				}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
 )
 
 type useOfWeakCryptoInTransit string
@@ -57,15 +58,15 @@ func (r useOfWeakCryptoInTransit) GenerateRisks() []model.Risk {
 			}
 			var exploitationImpact model.RiskExploitationImpact
 			switch mostCriticalDataAsset.Confidentiality {
-			case model.Public:
+			case confidentiality.Public:
 				exploitationImpact = model.LowImpact
-			case model.Internal:
+			case confidentiality.Internal:
 				exploitationImpact = model.LowImpact
-			case model.Restricted:
+			case confidentiality.Restricted:
 				exploitationImpact = model.MediumImpact
-			case model.Confidential:
+			case confidentiality.Confidential:
 				exploitationImpact = model.HighImpact
-			case model.StrictlyConfidential:
+			case confidentiality.StrictlyConfidential:
 				exploitationImpact = model.VeryHighImpact
 			}
 			risks = append(risks, createRisk(technicalAsset, mostCriticalCommlink, mostCriticalDataAsset, exploitationImpact))

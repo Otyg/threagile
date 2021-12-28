@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type unencryptedCommunication string
@@ -93,7 +95,7 @@ func createRisk(technicalAsset model.TechnicalAsset, dataFlow model.Communicatio
 	}
 	if dataFlow.VPN {
 		title += " (even VPN-protected connections need to encrypt their data in-transit when confidentiality is " +
-			"rated " + model.StrictlyConfidential.String() + " or integrity is rated " + model.MissionCritical.String() + ")"
+			"rated " + confidentiality.StrictlyConfidential.String() + " or integrity is rated " + criticality.MissionCritical.String() + ")"
 	}
 	likelihood := model.Unlikely
 	if dataFlow.IsAcrossTrustBoundaryNetworkOnly() {
@@ -115,9 +117,9 @@ func createRisk(technicalAsset model.TechnicalAsset, dataFlow model.Communicatio
 }
 
 func isHighSensitivity(dataAsset model.DataAsset) bool {
-	return dataAsset.Confidentiality == model.StrictlyConfidential || dataAsset.Integrity == model.MissionCritical
+	return dataAsset.Confidentiality == confidentiality.StrictlyConfidential || dataAsset.Integrity == criticality.MissionCritical
 }
 
 func isMediumSensitivity(dataAsset model.DataAsset) bool {
-	return dataAsset.Confidentiality == model.Confidential || dataAsset.Integrity == model.Critical
+	return dataAsset.Confidentiality == confidentiality.Confidential || dataAsset.Integrity == criticality.Critical
 }

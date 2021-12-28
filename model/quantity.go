@@ -3,6 +3,8 @@ package model
 import (
 	"errors"
 	"strings"
+
+	"github.com/otyg/threagile/model/core"
 )
 
 type Quantity int
@@ -14,8 +16,8 @@ const (
 	VeryMany
 )
 
-func QuantityValues() []TypeEnum {
-	return []TypeEnum{
+func QuantityValues() []core.TypeEnum {
+	return []core.TypeEnum{
 		VeryFew,
 		Few,
 		Many,

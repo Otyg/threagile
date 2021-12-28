@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type serviceRegistryPoisoning string
@@ -54,9 +56,9 @@ func createRisk(technicalAsset model.TechnicalAsset, incomingFlows []model.Commu
 
 	for _, incomingFlow := range incomingFlows {
 		caller := model.ParsedModelRoot.TechnicalAssets[incomingFlow.SourceId]
-		if technicalAsset.HighestConfidentiality() == model.StrictlyConfidential || technicalAsset.HighestIntegrity() == model.MissionCritical || technicalAsset.HighestAvailability() == model.MissionCritical ||
-			caller.HighestConfidentiality() == model.StrictlyConfidential || caller.HighestIntegrity() == model.MissionCritical || caller.HighestAvailability() == model.MissionCritical ||
-			incomingFlow.HighestConfidentiality() == model.StrictlyConfidential || incomingFlow.HighestIntegrity() == model.MissionCritical || incomingFlow.HighestAvailability() == model.MissionCritical {
+		if technicalAsset.HighestConfidentiality() == confidentiality.StrictlyConfidential || technicalAsset.HighestIntegrity() == criticality.MissionCritical || technicalAsset.HighestAvailability() == criticality.MissionCritical ||
+			caller.HighestConfidentiality() == confidentiality.StrictlyConfidential || caller.HighestIntegrity() == criticality.MissionCritical || caller.HighestAvailability() == criticality.MissionCritical ||
+			incomingFlow.HighestConfidentiality() == confidentiality.StrictlyConfidential || incomingFlow.HighestIntegrity() == criticality.MissionCritical || incomingFlow.HighestAvailability() == criticality.MissionCritical {
 			impact = model.MediumImpact
 			break
 		}

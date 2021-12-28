@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"strings"
+
+	"github.com/otyg/threagile/model/core"
 )
 
 type DataBreachProbability int
@@ -14,8 +16,8 @@ const (
 	Probable
 )
 
-func DataBreachProbabilityValues() []TypeEnum {
-	return []TypeEnum{
+func DataBreachProbabilityValues() []core.TypeEnum {
+	return []core.TypeEnum{
 		Improbable,
 		Possible,
 		Probable,

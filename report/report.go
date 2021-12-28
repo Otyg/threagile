@@ -19,6 +19,7 @@ import (
 	"github.com/jung-kurt/gofpdf/contrib/gofpdi"
 	"github.com/otyg/threagile/colors"
 	"github.com/otyg/threagile/model"
+	Criticality "github.com/otyg/threagile/model/criticality"
 	"github.com/otyg/threagile/support"
 	"github.com/wcharczuk/go-chart"
 	"github.com/wcharczuk/go-chart/drawing"
@@ -813,7 +814,7 @@ func createManagementSummary() {
 					FillColor: makeColor(colors.RgbHexColorHighRisk()).WithAlpha(98),
 					//FontColor: makeColor(colors.RgbHexColorHighRisk()),
 					FontSize: 65}},
-			{Value: float64(countCritical), //Label: strconv.Itoa(countCritical) + " Critical",
+			{Value: float64(countCritical), //Label: strconv.Itoa(countCritical) + "Criticality.Critical",
 				Style: chart.Style{
 					FillColor: makeColor(colors.RgbHexColorCriticalRisk()).WithAlpha(98),
 					//FontColor: makeColor(colors.RgbHexColorCriticalRisk()),
@@ -1092,7 +1093,7 @@ func createRiskMitigationStatus() {
 						FillColor: makeColor(colors.RgbHexColorHighRisk()).WithAlpha(98),
 						//FontColor: makeColor(colors.RgbHexColorHighRisk()),
 						FontSize: 65}},
-				{Value: float64(countCritical), //Label: strconv.Itoa(countCritical) + " Critical",
+				{Value: float64(countCritical), //Label: strconv.Itoa(countCritical) + "Criticality.Critical",
 					Style: chart.Style{
 						FillColor: makeColor(colors.RgbHexColorCriticalRisk()).WithAlpha(98),
 						//FontColor: makeColor(colors.RgbHexColorCriticalRisk()),
@@ -3989,64 +3990,76 @@ func createTargetDescription(baseFolder string) {
 	intro.Reset()
 	pdfColorGray()
 	intro.WriteString("(  ")
-	if criticality == model.Archive {
+	if criticality == Criticality.Unknown {
 		html.Write(5, intro.String())
 		intro.Reset()
 		pdfColorBlack()
-		intro.WriteString("<b><u>" + strings.ToUpper(model.Archive.String()) + "</u></b>")
+		intro.WriteString("<b><u>" + strings.ToUpper(Criticality.Unknown.String()) + "</u></b>")
 		html.Write(5, intro.String())
 		intro.Reset()
 		pdfColorGray()
 	} else {
-		intro.WriteString(model.Archive.String())
+		intro.WriteString(Criticality.Unknown.String())
 	}
 	intro.WriteString("  |  ")
-	if criticality == model.Operational {
+	if criticality == Criticality.Archive {
 		html.Write(5, intro.String())
 		intro.Reset()
 		pdfColorBlack()
-		intro.WriteString("<b><u>" + strings.ToUpper(model.Operational.String()) + "</u></b>")
+		intro.WriteString("<b><u>" + strings.ToUpper(Criticality.Archive.String()) + "</u></b>")
 		html.Write(5, intro.String())
 		intro.Reset()
 		pdfColorGray()
 	} else {
-		intro.WriteString(model.Operational.String())
+		intro.WriteString(Criticality.Archive.String())
 	}
 	intro.WriteString("  |  ")
-	if criticality == model.Important {
+	if criticality == Criticality.Operational {
 		html.Write(5, intro.String())
 		intro.Reset()
 		pdfColorBlack()
-		intro.WriteString("<b><u>" + strings.ToUpper(model.Important.String()) + "</u></b>")
+		intro.WriteString("<b><u>" + strings.ToUpper(Criticality.Operational.String()) + "</u></b>")
 		html.Write(5, intro.String())
 		intro.Reset()
 		pdfColorGray()
 	} else {
-		intro.WriteString(model.Important.String())
+		intro.WriteString(Criticality.Operational.String())
 	}
 	intro.WriteString("  |  ")
-	if criticality == model.Critical {
+	if criticality == Criticality.Important {
 		html.Write(5, intro.String())
 		intro.Reset()
 		pdfColorBlack()
-		intro.WriteString("<b><u>" + strings.ToUpper(model.Critical.String()) + "</u></b>")
+		intro.WriteString("<b><u>" + strings.ToUpper(Criticality.Important.String()) + "</u></b>")
 		html.Write(5, intro.String())
 		intro.Reset()
 		pdfColorGray()
 	} else {
-		intro.WriteString(model.Critical.String())
+		intro.WriteString(Criticality.Important.String())
 	}
 	intro.WriteString("  |  ")
-	if criticality == model.MissionCritical {
+	if criticality == Criticality.Critical {
 		html.Write(5, intro.String())
 		intro.Reset()
 		pdfColorBlack()
-		intro.WriteString("<b><u>" + strings.ToUpper(model.MissionCritical.String()) + "</u></b>")
+		intro.WriteString("<b><u>" + strings.ToUpper(Criticality.Critical.String()) + "</u></b>")
 		html.Write(5, intro.String())
 		intro.Reset()
 		pdfColorGray()
 	} else {
-		intro.WriteString(model.MissionCritical.String())
+		intro.WriteString(Criticality.Critical.String())
+	}
+	intro.WriteString("  |  ")
+	if criticality == Criticality.MissionCritical {
+		html.Write(5, intro.String())
+		intro.Reset()
+		pdfColorBlack()
+		intro.WriteString("<b><u>" + strings.ToUpper(Criticality.MissionCritical.String()) + "</u></b>")
+		html.Write(5, intro.String())
+		intro.Reset()
+		pdfColorGray()
+	} else {
+		intro.WriteString(Criticality.MissionCritical.String())
 	}
 	intro.WriteString("  )")
 	html.Write(5, intro.String())
@@ -4112,8 +4125,8 @@ func getHeightWhenWidthIsFix(imageFullFilename string, width float64) float64 {
 	}
 	/* #nosec imageFullFilename is not tainted (see caller restricting it to image files of model folder only) */
 	file, err := os.Open(imageFullFilename)
-	defer file.Close()
 	support.CheckErr(err)
+	defer file.Close()
 	image, _, err := image.DecodeConfig(file)
 	support.CheckErr(err)
 	return float64(image.Height) / (float64(image.Width) / width)
