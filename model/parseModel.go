@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/go-version"
 	"github.com/otyg/threagile/model/confidentiality"
 	"github.com/otyg/threagile/model/criticality"
 	"github.com/otyg/threagile/support"
@@ -20,6 +21,13 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 	support.CheckErr(error)
 	//fmt.Println(modelInput)
 	// Add check for threagile-version of model
+	model_version, error := version.NewVersion(modelInput.Threagile_version)
+	support.CheckErr(error)
+	main_version, error := version.NewVersion(ThreagileVersion)
+	support.CheckErr(error)
+	if model_version.GreaterThan(main_version) {
+		panic("Model file is created for a newer version of threagile: " + main_version.Original())
+	}
 	var businessCriticality, err = criticality.ParseCriticality(modelInput.Business_criticality)
 	support.CheckErr(err)
 
