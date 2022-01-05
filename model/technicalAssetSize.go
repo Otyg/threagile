@@ -3,6 +3,8 @@ package model
 import (
 	"errors"
 	"strings"
+
+	"github.com/otyg/threagile/model/core"
 )
 
 type TechnicalAssetSize int
@@ -14,8 +16,8 @@ const (
 	Component
 )
 
-func TechnicalAssetSizeValues() []TypeEnum {
-	return []TypeEnum{
+func TechnicalAssetSizeValues() []core.TypeEnum {
+	return []core.TypeEnum{
 		System,
 		Service,
 		Application,

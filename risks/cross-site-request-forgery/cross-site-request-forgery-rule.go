@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type crossSiteRequestForgeryRule string
@@ -66,7 +67,7 @@ func createRisk(technicalAsset model.TechnicalAsset, incomingFlow model.Communic
 	sourceAsset := model.ParsedModelRoot.TechnicalAssets[incomingFlow.SourceId]
 	title := "<b>Cross-Site Request Forgery (CSRF)</b> risk at <b>" + technicalAsset.Title + "</b> via <b>" + incomingFlow.Title + "</b> from <b>" + sourceAsset.Title + "</b>"
 	impact := model.LowImpact
-	if incomingFlow.HighestIntegrity() == model.MissionCritical {
+	if incomingFlow.HighestIntegrity() == criticality.MissionCritical {
 		impact = model.MediumImpact
 	}
 	risk := model.Risk{

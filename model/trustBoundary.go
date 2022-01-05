@@ -4,6 +4,10 @@ import (
 	"errors"
 	"sort"
 	"strings"
+
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/core"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type InputTrustBoundary struct {
@@ -53,8 +57,8 @@ func (what TrustBoundary) ParentTrustBoundaryID() string {
 	return result
 }
 
-func (what TrustBoundary) HighestConfidentiality() Confidentiality {
-	highest := Public
+func (what TrustBoundary) HighestConfidentiality() confidentiality.Confidentiality {
+	highest := confidentiality.Public
 	for _, id := range what.RecursivelyAllTechnicalAssetIDsInside() {
 		techAsset := ParsedModelRoot.TechnicalAssets[id]
 		if techAsset.HighestConfidentiality() > highest {
@@ -64,8 +68,8 @@ func (what TrustBoundary) HighestConfidentiality() Confidentiality {
 	return highest
 }
 
-func (what TrustBoundary) HighestIntegrity() Criticality {
-	highest := Archive
+func (what TrustBoundary) HighestIntegrity() criticality.Criticality {
+	highest := criticality.Archive
 	for _, id := range what.RecursivelyAllTechnicalAssetIDsInside() {
 		techAsset := ParsedModelRoot.TechnicalAssets[id]
 		if techAsset.HighestIntegrity() > highest {
@@ -75,8 +79,8 @@ func (what TrustBoundary) HighestIntegrity() Criticality {
 	return highest
 }
 
-func (what TrustBoundary) HighestAvailability() Criticality {
-	highest := Archive
+func (what TrustBoundary) HighestAvailability() criticality.Criticality {
+	highest := criticality.Archive
 	for _, id := range what.RecursivelyAllTechnicalAssetIDsInside() {
 		techAsset := ParsedModelRoot.TechnicalAssets[id]
 		if techAsset.HighestAvailability() > highest {
@@ -98,8 +102,8 @@ const (
 	ExecutionEnvironment
 )
 
-func TrustBoundaryTypeValues() []TypeEnum {
-	return []TypeEnum{
+func TrustBoundaryTypeValues() []core.TypeEnum {
+	return []core.TypeEnum{
 		NetworkOnPrem,
 		NetworkDedicatedHoster,
 		NetworkVirtualLAN,

@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
 )
 
 type credentialStoredOutsideOfVault string
@@ -58,7 +59,7 @@ func (r credentialStoredOutsideOfVault) GenerateRisks() []model.Risk {
 			if technicalAsset.OutOfScope || technicalAsset.Technology == model.Vault {
 				continue
 			}
-			if technicalAsset.Confidentiality == model.StrictlyConfidential && technicalAsset.Encryption != model.NoneEncryption {
+			if technicalAsset.Confidentiality == confidentiality.StrictlyConfidential && technicalAsset.Encryption != model.NoneEncryption {
 				// Assume that a technical asset classed for Strictly Confidential is well protected
 				if exploitationProbability > model.Unlikely {
 					exploitationProbability = exploitationProbability - 1

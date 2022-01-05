@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type pushInsteadOfPullDeployment string
@@ -48,9 +50,9 @@ func (r pushInsteadOfPullDeployment) GenerateRisks() []model.Risk {
 				targetAsset := model.ParsedModelRoot.TechnicalAssets[deploymentLink.TargetId]
 				if !deploymentLink.Readonly && deploymentLink.Usage == model.DevOps &&
 					!targetAsset.OutOfScope && !targetAsset.Technology.IsDevelopmentRelevant() && targetAsset.Usage == model.Business {
-					if targetAsset.HighestConfidentiality() >= model.Confidential ||
-						targetAsset.HighestIntegrity() >= model.Critical ||
-						targetAsset.HighestAvailability() >= model.Critical {
+					if targetAsset.HighestConfidentiality() >= confidentiality.Confidential ||
+						targetAsset.HighestIntegrity() >= criticality.Critical ||
+						targetAsset.HighestAvailability() >= criticality.Critical {
 						impact = model.MediumImpact
 					}
 					risks = append(risks, createRisk(buildPipeline, targetAsset, deploymentLink, impact))

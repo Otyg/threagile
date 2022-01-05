@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type crossSiteScriptingRule string
@@ -54,7 +56,7 @@ func (r crossSiteScriptingRule) GenerateRisks() []model.Risk {
 func createRisk(technicalAsset model.TechnicalAsset) model.Risk {
 	title := "<b>Cross-Site Scripting (XSS)</b> risk at <b>" + technicalAsset.Title + "</b>"
 	impact := model.MediumImpact
-	if technicalAsset.HighestConfidentiality() == model.StrictlyConfidential || technicalAsset.HighestIntegrity() == model.MissionCritical {
+	if technicalAsset.HighestConfidentiality() == confidentiality.StrictlyConfidential || technicalAsset.HighestIntegrity() == criticality.MissionCritical {
 		impact = model.HighImpact
 	}
 	risk := model.Risk{

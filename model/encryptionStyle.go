@@ -3,6 +3,8 @@ package model
 import (
 	"errors"
 	"strings"
+
+	"github.com/otyg/threagile/model/core"
 )
 
 type EncryptionStyle int
@@ -15,8 +17,8 @@ const (
 	DataWithEnduserIndividualKey
 )
 
-func EncryptionStyleValues() []TypeEnum {
-	return []TypeEnum{
+func EncryptionStyleValues() []core.TypeEnum {
+	return []core.TypeEnum{
 		NoneEncryption,
 		Transparent,
 		DataWithSymmetricSharedKey,

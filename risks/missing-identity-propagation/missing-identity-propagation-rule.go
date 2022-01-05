@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type missingIdentityPropagation string
@@ -52,13 +54,13 @@ func (r missingIdentityPropagation) GenerateRisks() []model.Risk {
 			continue
 		}
 		if technicalAsset.Technology.IsUsuallyProcessingEnduserRequests() &&
-			(technicalAsset.Confidentiality >= model.Confidential ||
-				technicalAsset.Integrity >= model.Critical ||
-				technicalAsset.Availability >= model.Critical ||
+			(technicalAsset.Confidentiality >= confidentiality.Confidential ||
+				technicalAsset.Integrity >= criticality.Critical ||
+				technicalAsset.Availability >= criticality.Critical ||
 				(technicalAsset.MultiTenant &&
-					(technicalAsset.Confidentiality >= model.Restricted ||
-						technicalAsset.Integrity >= model.Important ||
-						technicalAsset.Availability >= model.Important))) {
+					(technicalAsset.Confidentiality >= confidentiality.Restricted ||
+						technicalAsset.Integrity >= criticality.Important ||
+						technicalAsset.Availability >= criticality.Important))) {
 			// check each incoming authenticated data flow
 			commLinks := model.IncomingTechnicalCommunicationLinksMappedByTargetId[technicalAsset.Id]
 			for _, commLink := range commLinks {
@@ -71,9 +73,9 @@ func (r missingIdentityPropagation) GenerateRisks() []model.Risk {
 					if commLink.Usage == model.DevOps && commLink.Authorization != model.NoneAuthorization {
 						continue
 					}
-					highRisk := technicalAsset.Confidentiality == model.StrictlyConfidential ||
-						technicalAsset.Integrity == model.MissionCritical ||
-						technicalAsset.Availability == model.MissionCritical
+					highRisk := technicalAsset.Confidentiality == confidentiality.StrictlyConfidential ||
+						technicalAsset.Integrity == criticality.MissionCritical ||
+						technicalAsset.Availability == criticality.MissionCritical
 					risks = append(risks, createRisk(technicalAsset, commLink, highRisk))
 				}
 			}

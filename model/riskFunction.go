@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"strings"
+
+	"github.com/otyg/threagile/model/core"
 )
 
 type RiskFunction int
@@ -15,8 +17,8 @@ const (
 	Operations
 )
 
-func RiskFunctionValues() []TypeEnum {
-	return []TypeEnum{
+func RiskFunctionValues() []core.TypeEnum {
+	return []core.TypeEnum{
 		BusinessSide,
 		Architecture,
 		Development,

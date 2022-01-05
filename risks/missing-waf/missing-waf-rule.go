@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type missingWaf string
@@ -59,9 +61,9 @@ func createRisk(technicalAsset model.TechnicalAsset) model.Risk {
 	title := "<b>Missing Web Application Firewall (WAF)</b> risk at <b>" + technicalAsset.Title + "</b>"
 	likelihood := model.Unlikely
 	impact := model.LowImpact
-	if technicalAsset.HighestConfidentiality() == model.StrictlyConfidential ||
-		technicalAsset.HighestIntegrity() == model.MissionCritical ||
-		technicalAsset.HighestAvailability() == model.MissionCritical {
+	if technicalAsset.HighestConfidentiality() == confidentiality.StrictlyConfidential ||
+		technicalAsset.HighestIntegrity() == criticality.MissionCritical ||
+		technicalAsset.HighestAvailability() == criticality.MissionCritical {
 		impact = model.MediumImpact
 	}
 	risk := model.Risk{

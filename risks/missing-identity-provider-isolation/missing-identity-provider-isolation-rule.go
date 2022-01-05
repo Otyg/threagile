@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type missingIdentityProviderIsolation string
@@ -27,7 +29,7 @@ func (r missingIdentityProviderIsolation) Category() model.RiskCategory {
 			"when surrounded by other (not identity-related) assets (without a network trust-boundary in-between). " +
 			"This risk is especially prevalent when other non-identity related assets are within the same execution environment (i.e. same database or same application server).",
 		RiskAssessment: "Default is " + model.HighImpact.String() + " impact. The impact is increased to " + model.VeryHighImpact.String() + " when the asset missing the " +
-			"trust-boundary protection is rated as " + model.StrictlyConfidential.String() + " or " + model.MissionCritical.String() + ".",
+			"trust-boundary protection is rated as " + confidentiality.StrictlyConfidential.String() + " or " + criticality.MissionCritical.String() + ".",
 		FalsePositives: "When all assets within the network segmentation trust-boundary are hardened and protected to the same extend as if all were " +
 			"identity providers with data of highest sensitivity.",
 		ModelFailurePossibleReason: false,
@@ -43,9 +45,9 @@ func (r missingIdentityProviderIsolation) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, technicalAsset := range model.ParsedModelRoot.TechnicalAssets {
 		if !technicalAsset.OutOfScope && technicalAsset.Technology.IsIdentityRelated() {
-			moreImpact := technicalAsset.Confidentiality == model.StrictlyConfidential ||
-				technicalAsset.Integrity == model.MissionCritical ||
-				technicalAsset.Availability == model.MissionCritical
+			moreImpact := technicalAsset.Confidentiality == confidentiality.StrictlyConfidential ||
+				technicalAsset.Integrity == criticality.MissionCritical ||
+				technicalAsset.Availability == criticality.MissionCritical
 			sameExecutionEnv := false
 			createRiskEntry := false
 			// now check for any other same-network assets of non-identity-related types

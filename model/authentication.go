@@ -3,6 +3,8 @@ package model
 import (
 	"errors"
 	"strings"
+
+	"github.com/otyg/threagile/model/core"
 )
 
 type Authentication int
@@ -17,8 +19,8 @@ const (
 	Externalized
 )
 
-func AuthenticationValues() []TypeEnum {
-	return []TypeEnum{
+func AuthenticationValues() []core.TypeEnum {
+	return []core.TypeEnum{
 		NoneAuthentication,
 		Credentials,
 		SessionId,

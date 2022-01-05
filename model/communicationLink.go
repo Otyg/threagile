@@ -5,6 +5,8 @@ import (
 	"sort"
 
 	"github.com/otyg/threagile/colors"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type InputCommunicationLink struct {
@@ -62,8 +64,8 @@ func (what CommunicationLink) IsAcrossTrustBoundaryNetworkOnly() bool {
 	return trustBoundaryOfSourceAsset.Id != trustBoundaryOfTargetAsset.Id && trustBoundaryOfTargetAsset.Type.IsNetworkBoundary()
 }
 
-func (what CommunicationLink) HighestConfidentiality() Confidentiality {
-	highest := Public
+func (what CommunicationLink) HighestConfidentiality() confidentiality.Confidentiality {
+	highest := confidentiality.Public
 	for _, dataId := range what.DataAssetsSent {
 		dataAsset := ParsedModelRoot.DataAssets[dataId]
 		if dataAsset.Confidentiality > highest {
@@ -79,8 +81,8 @@ func (what CommunicationLink) HighestConfidentiality() Confidentiality {
 	return highest
 }
 
-func (what CommunicationLink) HighestIntegrity() Criticality {
-	highest := Archive
+func (what CommunicationLink) HighestIntegrity() criticality.Criticality {
+	highest := criticality.Archive
 	for _, dataId := range what.DataAssetsSent {
 		dataAsset := ParsedModelRoot.DataAssets[dataId]
 		if dataAsset.Integrity > highest {
@@ -96,8 +98,8 @@ func (what CommunicationLink) HighestIntegrity() Criticality {
 	return highest
 }
 
-func (what CommunicationLink) HighestAvailability() Criticality {
-	highest := Archive
+func (what CommunicationLink) HighestAvailability() criticality.Criticality {
+	highest := criticality.Archive
 	for _, dataId := range what.DataAssetsSent {
 		dataAsset := ParsedModelRoot.DataAssets[dataId]
 		if dataAsset.Availability > highest {
@@ -139,23 +141,23 @@ func (what CommunicationLink) DetermineLabelColor() string {
 		} else {*/
 	// check for red
 	for _, sentDataAsset := range what.DataAssetsSent {
-		if ParsedModelRoot.DataAssets[sentDataAsset].Integrity == MissionCritical {
+		if ParsedModelRoot.DataAssets[sentDataAsset].Integrity == criticality.MissionCritical {
 			return colors.Red
 		}
 	}
 	for _, receivedDataAsset := range what.DataAssetsReceived {
-		if ParsedModelRoot.DataAssets[receivedDataAsset].Integrity == MissionCritical {
+		if ParsedModelRoot.DataAssets[receivedDataAsset].Integrity == criticality.MissionCritical {
 			return colors.Red
 		}
 	}
 	// check for amber
 	for _, sentDataAsset := range what.DataAssetsSent {
-		if ParsedModelRoot.DataAssets[sentDataAsset].Integrity == Critical {
+		if ParsedModelRoot.DataAssets[sentDataAsset].Integrity == criticality.Critical {
 			return colors.Amber
 		}
 	}
 	for _, receivedDataAsset := range what.DataAssetsReceived {
-		if ParsedModelRoot.DataAssets[receivedDataAsset].Integrity == Critical {
+		if ParsedModelRoot.DataAssets[receivedDataAsset].Integrity == criticality.Critical {
 			return colors.Amber
 		}
 	}
@@ -180,23 +182,23 @@ func (what CommunicationLink) DetermineArrowColor() string {
 	}
 	// check for red
 	for _, sentDataAsset := range what.DataAssetsSent {
-		if ParsedModelRoot.DataAssets[sentDataAsset].Confidentiality == StrictlyConfidential {
+		if ParsedModelRoot.DataAssets[sentDataAsset].Confidentiality == confidentiality.StrictlyConfidential {
 			return colors.Red
 		}
 	}
 	for _, receivedDataAsset := range what.DataAssetsReceived {
-		if ParsedModelRoot.DataAssets[receivedDataAsset].Confidentiality == StrictlyConfidential {
+		if ParsedModelRoot.DataAssets[receivedDataAsset].Confidentiality == confidentiality.StrictlyConfidential {
 			return colors.Red
 		}
 	}
 	// check for amber
 	for _, sentDataAsset := range what.DataAssetsSent {
-		if ParsedModelRoot.DataAssets[sentDataAsset].Confidentiality == Confidential {
+		if ParsedModelRoot.DataAssets[sentDataAsset].Confidentiality == confidentiality.Confidential {
 			return colors.Amber
 		}
 	}
 	for _, receivedDataAsset := range what.DataAssetsReceived {
-		if ParsedModelRoot.DataAssets[receivedDataAsset].Confidentiality == Confidential {
+		if ParsedModelRoot.DataAssets[receivedDataAsset].Confidentiality == confidentiality.Confidential {
 			return colors.Amber
 		}
 	}
@@ -208,23 +210,23 @@ func (what CommunicationLink) DetermineArrowColor() string {
 		} else {
 			// check for red
 			for _, sentDataAsset := range dataFlow.DataAssetsSent { // first check if any red?
-				if ParsedModelRoot.DataAssets[sentDataAsset].Integrity == MissionCritical {
+				if ParsedModelRoot.DataAssets[sentDataAsset].Integrity ==criticality.MissionCritical {
 					return colors.Red
 				}
 			}
 			for _, receivedDataAsset := range dataFlow.DataAssetsReceived { // first check if any red?
-				if ParsedModelRoot.DataAssets[receivedDataAsset].Integrity == MissionCritical {
+				if ParsedModelRoot.DataAssets[receivedDataAsset].Integrity ==criticality.MissionCritical {
 					return colors.Red
 				}
 			}
 			// check for amber
 			for _, sentDataAsset := range dataFlow.DataAssetsSent { // then check if any amber?
-				if ParsedModelRoot.DataAssets[sentDataAsset].Integrity == Critical {
+				if ParsedModelRoot.DataAssets[sentDataAsset].Integrity ==criticality.Critical {
 					return colors.Amber
 				}
 			}
 			for _, receivedDataAsset := range dataFlow.DataAssetsReceived { // then check if any amber?
-				if ParsedModelRoot.DataAssets[receivedDataAsset].Integrity == Critical {
+				if ParsedModelRoot.DataAssets[receivedDataAsset].Integrity ==criticality.Critical {
 					return colors.Amber
 				}
 			}

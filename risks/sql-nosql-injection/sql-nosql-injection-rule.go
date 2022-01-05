@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type sqlNoSqlInjection string
@@ -60,7 +62,7 @@ func createRisk(technicalAsset model.TechnicalAsset, incomingFlow model.Communic
 	title := "<b>SQL/NoSQL-Injection</b> risk at <b>" + caller.Title + "</b> against database <b>" + technicalAsset.Title + "</b>" +
 		" via <b>" + incomingFlow.Title + "</b>"
 	impact := model.MediumImpact
-	if technicalAsset.HighestConfidentiality() == model.StrictlyConfidential || technicalAsset.HighestIntegrity() == model.MissionCritical {
+	if technicalAsset.HighestConfidentiality() == confidentiality.StrictlyConfidential || technicalAsset.HighestIntegrity() == criticality.MissionCritical {
 		impact = model.HighImpact
 	}
 	likelihood := model.VeryLikely

@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
 )
 
 type insecureHandlingOfSensitiveData string
@@ -36,20 +37,20 @@ func (r insecureHandlingOfSensitiveData) SupportedTags() []string {
 func (r insecureHandlingOfSensitiveData) GenerateRisks() []model.Risk {
 	risks := make([]model.Risk, 0)
 	for _, technicalAsset := range model.SortedTechnicalAssetsByTitle() {
-		if technicalAsset.Confidentiality == model.StrictlyConfidential || technicalAsset.OutOfScope {
+		if technicalAsset.Confidentiality == confidentiality.StrictlyConfidential || technicalAsset.OutOfScope {
 			continue
 		}
 		var exploitationLikelihood model.RiskExploitationLikelihood
 		var dataBreachProbability model.DataBreachProbability
 		storedDataAssetsAtRisk := make(map[string]bool)
 		switch technicalAsset.Confidentiality {
-		case model.Confidential:
+		case confidentiality.Confidential:
 			exploitationLikelihood = model.Unlikely
 			dataBreachProbability = model.Improbable
-		case model.Restricted:
+		case confidentiality.Restricted:
 			exploitationLikelihood = model.Likely
 			dataBreachProbability = model.Possible
-		case model.Internal:
+		case confidentiality.Internal:
 			exploitationLikelihood = model.VeryLikely
 			dataBreachProbability = model.Possible
 		default:
@@ -60,13 +61,13 @@ func (r insecureHandlingOfSensitiveData) GenerateRisks() []model.Risk {
 			if technicalAsset.Confidentiality < dataAsset.Confidentiality {
 				var exploitationImpact model.RiskExploitationImpact
 				switch dataAsset.Confidentiality {
-				case model.Internal:
+				case confidentiality.Internal:
 					exploitationImpact = model.LowImpact
-				case model.Restricted:
+				case confidentiality.Restricted:
 					exploitationImpact = model.MediumImpact
-				case model.Confidential:
+				case confidentiality.Confidential:
 					exploitationImpact = model.HighImpact
-				case model.StrictlyConfidential:
+				case confidentiality.StrictlyConfidential:
 					exploitationImpact = model.VeryHighImpact
 				}
 				storedDataAssetsAtRisk[dataAsset.Id] = true
@@ -78,13 +79,13 @@ func (r insecureHandlingOfSensitiveData) GenerateRisks() []model.Risk {
 			if !alreadyAtRisk && technicalAsset.Confidentiality < dataAsset.Confidentiality {
 				var exploitationImpact model.RiskExploitationImpact
 				switch dataAsset.Confidentiality {
-				case model.Internal:
+				case confidentiality.Internal:
 					exploitationImpact = model.LowImpact
-				case model.Restricted:
+				case confidentiality.Restricted:
 					exploitationImpact = model.MediumImpact
-				case model.Confidential:
+				case confidentiality.Confidential:
 					exploitationImpact = model.HighImpact
-				case model.StrictlyConfidential:
+				case confidentiality.StrictlyConfidential:
 					exploitationImpact = model.VeryHighImpact
 				}
 				if exploitationLikelihood > model.Unlikely {
@@ -100,7 +101,7 @@ func (r insecureHandlingOfSensitiveData) GenerateRisks() []model.Risk {
 	return risks
 }
 
-func createRisk(class model.Confidentiality, technicalAsset model.TechnicalAsset, impact model.RiskExploitationImpact, probability model.RiskExploitationLikelihood, mostCriticalDataId string, dataProbability model.DataBreachProbability) model.Risk {
+func createRisk(class confidentiality.Confidentiality, technicalAsset model.TechnicalAsset, impact model.RiskExploitationImpact, probability model.RiskExploitationLikelihood, mostCriticalDataId string, dataProbability model.DataBreachProbability) model.Risk {
 	title := "<b>Potential insecure handling of " + class.String() + " data</b> at <b>" + technicalAsset.Title + "</b>"
 	risk := model.Risk{
 		Category:                     RiskRule.Category(),

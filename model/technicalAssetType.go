@@ -3,6 +3,8 @@ package model
 import (
 	"errors"
 	"strings"
+
+	"github.com/otyg/threagile/model/core"
 )
 
 type TechnicalAssetType int
@@ -13,8 +15,8 @@ const (
 	Datastore
 )
 
-func TechnicalAssetTypeValues() []TypeEnum {
-	return []TypeEnum{
+func TechnicalAssetTypeValues() []core.TypeEnum {
+	return []core.TypeEnum{
 		ExternalEntity,
 		Process,
 		Datastore,

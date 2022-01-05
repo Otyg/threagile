@@ -5,6 +5,8 @@ import (
 	"sort"
 
 	"github.com/otyg/threagile/colors"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type InputTechnicalAsset struct {
@@ -46,8 +48,8 @@ type TechnicalAsset struct {
 	Encryption                                                                              EncryptionStyle
 	JustificationOutOfScope                                                                 string
 	Owner                                                                                   string
-	Confidentiality                                                                         Confidentiality
-	Integrity, Availability                                                                 Criticality
+	Confidentiality                                                                         confidentiality.Confidentiality
+	Integrity, Availability                                                                 criticality.Criticality
 	JustificationCiaRating                                                                  string
 	Tags, DataAssetsProcessed, DataAssetsStored                                             []string
 	DataFormatsAccepted                                                                     []DataFormat
@@ -117,7 +119,7 @@ func (what TechnicalAsset) HighestSensitivityScore() float64 {
 		what.Availability.AttackerAttractivenessForAsset()
 }
 
-func (what TechnicalAsset) HighestConfidentiality() Confidentiality {
+func (what TechnicalAsset) HighestConfidentiality() confidentiality.Confidentiality {
 	highest := what.Confidentiality
 	for _, dataId := range what.DataAssetsProcessed {
 		dataAsset := ParsedModelRoot.DataAssets[dataId]
@@ -166,7 +168,7 @@ func (what TechnicalAsset) CommunicationLinksSorted() []CommunicationLink {
 	return result
 }
 
-func (what TechnicalAsset) HighestIntegrity() Criticality {
+func (what TechnicalAsset) HighestIntegrity() criticality.Criticality {
 	highest := what.Integrity
 	for _, dataId := range what.DataAssetsProcessed {
 		dataAsset := ParsedModelRoot.DataAssets[dataId]
@@ -183,7 +185,7 @@ func (what TechnicalAsset) HighestIntegrity() Criticality {
 	return highest
 }
 
-func (what TechnicalAsset) HighestAvailability() Criticality {
+func (what TechnicalAsset) HighestAvailability() criticality.Criticality {
 	highest := what.Availability
 	for _, dataId := range what.DataAssetsProcessed {
 		dataAsset := ParsedModelRoot.DataAssets[dataId]
@@ -301,30 +303,30 @@ func (what TechnicalAsset) ProcessesOrStoresDataAsset(dataAssetId string) bool {
 func (what TechnicalAsset) DetermineLabelColor() string {
 	// TODO: Just move into main.go and let the generated risk determine the color, don't duplicate the logic here
 	// Check for red
-	if what.Integrity == MissionCritical {
+	if what.Integrity == criticality.MissionCritical {
 		return colors.Red
 	}
 	for _, storedDataAsset := range what.DataAssetsStored {
-		if ParsedModelRoot.DataAssets[storedDataAsset].Integrity == MissionCritical {
+		if ParsedModelRoot.DataAssets[storedDataAsset].Integrity == criticality.MissionCritical {
 			return colors.Red
 		}
 	}
 	for _, processedDataAsset := range what.DataAssetsProcessed {
-		if ParsedModelRoot.DataAssets[processedDataAsset].Integrity == MissionCritical {
+		if ParsedModelRoot.DataAssets[processedDataAsset].Integrity == criticality.MissionCritical {
 			return colors.Red
 		}
 	}
 	// Check for amber
-	if what.Integrity == Critical {
+	if what.Integrity == criticality.Critical {
 		return colors.Amber
 	}
 	for _, storedDataAsset := range what.DataAssetsStored {
-		if ParsedModelRoot.DataAssets[storedDataAsset].Integrity == Critical {
+		if ParsedModelRoot.DataAssets[storedDataAsset].Integrity == criticality.Critical {
 			return colors.Amber
 		}
 	}
 	for _, processedDataAsset := range what.DataAssetsProcessed {
-		if ParsedModelRoot.DataAssets[processedDataAsset].Integrity == Critical {
+		if ParsedModelRoot.DataAssets[processedDataAsset].Integrity == criticality.Critical {
 			return colors.Amber
 		}
 	}
@@ -360,36 +362,36 @@ func (what TechnicalAsset) DetermineLabelColor() string {
 func (what TechnicalAsset) DetermineShapeBorderColor() string {
 	// TODO: Just move into main.go and let the generated risk determine the color, don't duplicate the logic here
 	// Check for red
-	if what.Confidentiality == StrictlyConfidential {
+	if what.Confidentiality == confidentiality.StrictlyConfidential {
 		return colors.Red
 	}
 	for _, storedDataAsset := range what.DataAssetsStored {
-		if ParsedModelRoot.DataAssets[storedDataAsset].Confidentiality == StrictlyConfidential {
+		if ParsedModelRoot.DataAssets[storedDataAsset].Confidentiality == confidentiality.StrictlyConfidential {
 			return colors.Red
 		}
 	}
 	for _, processedDataAsset := range what.DataAssetsProcessed {
-		if ParsedModelRoot.DataAssets[processedDataAsset].Confidentiality == StrictlyConfidential {
+		if ParsedModelRoot.DataAssets[processedDataAsset].Confidentiality == confidentiality.StrictlyConfidential {
 			return colors.Red
 		}
 	}
 	// Check for amber
-	if what.Confidentiality == Confidential {
+	if what.Confidentiality == confidentiality.Confidential {
 		return colors.Amber
 	}
 	for _, storedDataAsset := range what.DataAssetsStored {
-		if ParsedModelRoot.DataAssets[storedDataAsset].Confidentiality == Confidential {
+		if ParsedModelRoot.DataAssets[storedDataAsset].Confidentiality == confidentiality.Confidential {
 			return colors.Amber
 		}
 	}
 	for _, processedDataAsset := range what.DataAssetsProcessed {
-		if ParsedModelRoot.DataAssets[processedDataAsset].Confidentiality == Confidential {
+		if ParsedModelRoot.DataAssets[processedDataAsset].Confidentiality == confidentiality.Confidential {
 			return colors.Amber
 		}
 	}
 	return colors.Black
 	/*
-		if what.Integrity == MissionCritical {
+		if what.Integrity ==criticality.MissionCritical {
 			for _, dataFlow := range IncomingTechnicalCommunicationLinksMappedByTargetId[what.Id] {
 				if !dataFlow.Readonly && dataFlow.Authentication == NoneAuthentication {
 					return colors.Red
@@ -397,7 +399,7 @@ func (what TechnicalAsset) DetermineShapeBorderColor() string {
 			}
 		}
 
-		if what.Integrity == Critical {
+		if what.Integrity ==criticality.Critical {
 			for _, dataFlow := range IncomingTechnicalCommunicationLinksMappedByTargetId[what.Id] {
 				if !dataFlow.Readonly && dataFlow.Authentication == NoneAuthentication {
 					return colors.Amber

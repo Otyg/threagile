@@ -39,6 +39,9 @@ import (
 	seed_risk_tracking "github.com/otyg/threagile/macros/built-in/seed-risk-tracking"
 	seed_tags "github.com/otyg/threagile/macros/built-in/seed-tags"
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/core"
+	"github.com/otyg/threagile/model/criticality"
 	"github.com/otyg/threagile/report"
 	"github.com/otyg/threagile/support"
 
@@ -648,8 +651,8 @@ func startServer() {
 	router.GET("/meta/types", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"quantity":                     arrayOfStringValues(model.QuantityValues()),
-			"confidentiality":              arrayOfStringValues(model.ConfidentialityValues()),
-			"criticality":                  arrayOfStringValues(model.CriticalityValues()),
+			"confidentiality":              arrayOfStringValues(confidentiality.ConfidentialityValues()),
+			"criticality":                  arrayOfStringValues(criticality.CriticalityValues()),
 			"technical_asset_type":         arrayOfStringValues(model.TechnicalAssetTypeValues()),
 			"technical_asset_size":         arrayOfStringValues(model.TechnicalAssetSizeValues()),
 			"authorization":                arrayOfStringValues(model.AuthorizationValues()),
@@ -1692,17 +1695,17 @@ func populateDataAsset(context *gin.Context, payload payloadDataAsset) (dataAsse
 		handleErrorInServiceCall(err, context)
 		return dataAssetInput, false
 	}
-	confidentiality, err := model.ParseConfidentiality(payload.Confidentiality)
+	confidentiality, err := confidentiality.ParseConfidentiality(payload.Confidentiality)
 	if err != nil {
 		handleErrorInServiceCall(err, context)
 		return dataAssetInput, false
 	}
-	integrity, err := model.ParseCriticality(payload.Integrity)
+	integrity, err := criticality.ParseCriticality(payload.Integrity)
 	if err != nil {
 		handleErrorInServiceCall(err, context)
 		return dataAssetInput, false
 	}
-	availability, err := model.ParseCriticality(payload.Availability)
+	availability, err := criticality.ParseCriticality(payload.Availability)
 	if err != nil {
 		handleErrorInServiceCall(err, context)
 		return dataAssetInput, false
@@ -1762,7 +1765,7 @@ func getSharedRuntimes(context *gin.Context) {
 	}
 }
 
-func arrayOfStringValues(values []model.TypeEnum) []string {
+func arrayOfStringValues(values []core.TypeEnum) []string {
 	result := make([]string, 0)
 	for _, value := range values {
 		result = append(result, value.String())
@@ -1941,7 +1944,7 @@ func setOverview(context *gin.Context) {
 			})
 			return
 		}
-		criticality, err := model.ParseCriticality(payload.Business_criticality)
+		criticality, err := criticality.ParseCriticality(payload.Business_criticality)
 		if err != nil {
 			handleErrorInServiceCall(err, context)
 			return
@@ -2677,9 +2680,9 @@ func parseCommandlineArgs() {
 		fmt.Println()
 		printTypes("Authorization", model.AuthorizationValues())
 		fmt.Println()
-		printTypes("Confidentiality", model.ConfidentialityValues())
+		printTypes("Confidentiality", confidentiality.ConfidentialityValues())
 		fmt.Println()
-		printTypes("Criticality (for integrity and availability)", model.CriticalityValues())
+		printTypes("Criticality (for integrity and availability)", criticality.CriticalityValues())
 		fmt.Println()
 		printTypes("Data Breach Probability", model.DataBreachProbabilityValues())
 		fmt.Println()

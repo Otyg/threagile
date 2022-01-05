@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type missingAuthentication string
@@ -46,9 +48,9 @@ func (r missingAuthentication) GenerateRisks() []model.Risk {
 			technicalAsset.Technology == model.ReverseProxy || technicalAsset.Technology == model.ServiceRegistry || technicalAsset.Technology == model.WAF || technicalAsset.Technology == model.IDS || technicalAsset.Technology == model.IPS {
 			continue
 		}
-		if technicalAsset.HighestConfidentiality() >= model.Confidential ||
-			technicalAsset.HighestIntegrity() >= model.Critical ||
-			technicalAsset.HighestAvailability() >= model.Critical ||
+		if technicalAsset.HighestConfidentiality() >= confidentiality.Confidential ||
+			technicalAsset.HighestIntegrity() >= criticality.Critical ||
+			technicalAsset.HighestAvailability() >= criticality.Critical ||
 			technicalAsset.MultiTenant {
 			// check each incoming data flow
 			commLinks := model.IncomingTechnicalCommunicationLinksMappedByTargetId[technicalAsset.Id]
@@ -57,10 +59,10 @@ func (r missingAuthentication) GenerateRisks() []model.Risk {
 				if caller.Technology.IsUnprotectedCommsTolerated() || caller.Type == model.Datastore {
 					continue
 				}
-				highRisk := commLink.HighestConfidentiality() == model.StrictlyConfidential ||
-					commLink.HighestIntegrity() == model.MissionCritical
-				lowRisk := commLink.HighestConfidentiality() <= model.Internal &&
-					commLink.HighestIntegrity() == model.Operational
+				highRisk := commLink.HighestConfidentiality() == confidentiality.StrictlyConfidential ||
+					commLink.HighestIntegrity() == criticality.MissionCritical
+				lowRisk := commLink.HighestConfidentiality() <= confidentiality.Internal &&
+					commLink.HighestIntegrity() == criticality.Operational
 				impact := model.MediumImpact
 				if highRisk {
 					impact = model.HighImpact

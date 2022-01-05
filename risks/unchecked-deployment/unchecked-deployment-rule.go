@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type uncheckedDeployment string
@@ -60,13 +62,13 @@ func createRisk(technicalAsset model.TechnicalAsset) model.Risk {
 		if codeDeploymentTargetCommLink.Usage == model.DevOps {
 			for _, dataAssetID := range codeDeploymentTargetCommLink.DataAssetsSent {
 				// it appears to be code when elevated integrity rating of sent data asset
-				if model.ParsedModelRoot.DataAssets[dataAssetID].Integrity >= model.Important {
+				if model.ParsedModelRoot.DataAssets[dataAssetID].Integrity >= criticality.Important {
 					// here we've got a deployment target which has its data assets at risk via deployment of backdoored code
 					uniqueDataBreachTechnicalAssetIDs[codeDeploymentTargetCommLink.TargetId] = true
 					targetTechAsset := model.ParsedModelRoot.TechnicalAssets[codeDeploymentTargetCommLink.TargetId]
-					if targetTechAsset.HighestConfidentiality() >= model.Confidential ||
-						targetTechAsset.HighestIntegrity() >= model.Critical ||
-						targetTechAsset.HighestAvailability() >= model.Critical {
+					if targetTechAsset.HighestConfidentiality() >= confidentiality.Confidential ||
+						targetTechAsset.HighestIntegrity() >= criticality.Critical ||
+						targetTechAsset.HighestAvailability() >= criticality.Critical {
 						impact = model.MediumImpact
 					}
 					break

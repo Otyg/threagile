@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type unencryptedAsset string
@@ -26,8 +28,8 @@ func (r unencryptedAsset) Category() model.RiskCategory {
 		DetectionLogic: "In-scope unencrypted technical assets (excluding " + model.ReverseProxy.String() +
 			", " + model.LoadBalancer.String() + ", " + model.WAF.String() + ", " + model.IDS.String() +
 			", " + model.IPS.String() + " and embedded components like " + model.Library.String() + ") " +
-			"storing data assets rated at least as " + model.Confidential.String() + " or " + model.Critical.String() + ". " +
-			"For technical assets storing data assets rated as " + model.StrictlyConfidential.String() + " or " + model.MissionCritical.String() + " the " +
+			"storing data assets rated at least as " + confidentiality.Confidential.String() + " or " + criticality.Critical.String() + ". " +
+			"For technical assets storing data assets rated as " + confidentiality.StrictlyConfidential.String() + " or " + criticality.MissionCritical.String() + " the " +
 			"encryption must be of type " + model.DataWithEnduserIndividualKey.String() + ".",
 		RiskAssessment:             "Depending on the confidentiality rating of the stored data-assets either medium or high risk.",
 		FalsePositives:             "When all sensitive data stored within the asset is already fully encrypted on document or data level.",
@@ -46,10 +48,10 @@ func (r unencryptedAsset) GenerateRisks() []model.Risk {
 	for _, id := range model.SortedTechnicalAssetIDs() {
 		technicalAsset := model.ParsedModelRoot.TechnicalAssets[id]
 		if !technicalAsset.OutOfScope && !IsEncryptionWaiver(technicalAsset) &&
-			(technicalAsset.HighestConfidentiality() >= model.Confidential ||
-				technicalAsset.HighestIntegrity() >= model.Critical) {
-			verySensitive := technicalAsset.HighestConfidentiality() == model.StrictlyConfidential ||
-				technicalAsset.HighestIntegrity() == model.MissionCritical
+			(technicalAsset.HighestConfidentiality() >= confidentiality.Confidential ||
+				technicalAsset.HighestIntegrity() >= criticality.Critical) {
+			verySensitive := technicalAsset.HighestConfidentiality() == confidentiality.StrictlyConfidential ||
+				technicalAsset.HighestIntegrity() == criticality.MissionCritical
 			requiresEnduserKey := verySensitive && technicalAsset.Technology.IsUsuallyStoringEnduserData()
 			if technicalAsset.Encryption == model.NoneEncryption {
 				impact := model.MediumImpact

@@ -8,18 +8,27 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/go-version"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 	"github.com/otyg/threagile/support"
 	"gopkg.in/yaml.v2"
 )
 
 func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[string]RiskTracking) ParsedModel {
 	modelInput := ModelInput{}
-	var error error
-	error = yaml.Unmarshal(modelYaml, &modelInput)
+	var error error = yaml.Unmarshal(modelYaml, &modelInput)
 	support.CheckErr(error)
 	//fmt.Println(modelInput)
-
-	var businessCriticality, err = ParseCriticality(modelInput.Business_criticality)
+	// Add check for threagile-version of model
+	model_version, error := version.NewVersion(modelInput.Threagile_version)
+	support.CheckErr(error)
+	main_version, error := version.NewVersion(ThreagileVersion)
+	support.CheckErr(error)
+	if model_version.GreaterThan(main_version) {
+		panic("Model file is created for a newer version of threagile: " + main_version.Original())
+	}
+	var businessCriticality, err = criticality.ParseCriticality(modelInput.Business_criticality)
 	support.CheckErr(err)
 
 	reportDate := time.Now()
@@ -67,12 +76,12 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 		quantity, err := ParseQuantity(asset.Quantity)
 		support.CheckErr(err)
 
-		confidentiality, err := ParseConfidentiality(asset.Confidentiality)
+		confidentiality, err := confidentiality.ParseConfidentiality(asset.Confidentiality)
 		support.CheckErr(err)
-		integrity, err := ParseCriticality(asset.Integrity)
+		integrity, err := criticality.ParseCriticality(asset.Integrity)
 		support.CheckErr(err)
 
-		availability, err := ParseCriticality(asset.Availability)
+		availability, err := criticality.ParseCriticality(asset.Availability)
 		support.CheckErr(err)
 
 		support.CheckIdSyntax(id)
@@ -137,12 +146,12 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 
 		technicalAssetMachine, err := ParseTechnicalAssetMachine(asset.Machine)
 		support.CheckErr(err)
-		confidentiality, err := ParseConfidentiality(asset.Confidentiality)
+		confidentiality, err := confidentiality.ParseConfidentiality(asset.Confidentiality)
 		support.CheckErr(err)
-		integrity, err := ParseCriticality(asset.Integrity)
+		integrity, err := criticality.ParseCriticality(asset.Integrity)
 		support.CheckErr(err)
 
-		availability, err := ParseCriticality(asset.Availability)
+		availability, err := criticality.ParseCriticality(asset.Availability)
 		support.CheckErr(err)
 
 		dataFormatsAccepted := make([]DataFormat, 0)
@@ -274,7 +283,7 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 				if !found {
 					panic(errors.New("missing referenced technical asset " + technicalAssetsInside[i] + " at trust boundary '" + title + "'"))
 				}
-				if checklistToAvoidAssetBeingModeledInMultipleTrustBoundaries[technicalAssetsInside[i]] == true {
+				if checklistToAvoidAssetBeingModeledInMultipleTrustBoundaries[technicalAssetsInside[i]] {
 					panic(errors.New("referenced technical asset " + technicalAssetsInside[i] + " at trust boundary '" + title + "' is modeled in multiple trust boundaries"))
 				}
 				checklistToAvoidAssetBeingModeledInMultipleTrustBoundaries[technicalAssetsInside[i]] = true
@@ -515,7 +524,7 @@ func checkTagExists(referencedTag, where string) {
 }
 
 func removePathElementsFromImageFiles(overview Overview) Overview {
-	for i, _ := range overview.Images {
+	for i := range overview.Images {
 		newValue := make(map[string]string)
 		for file, desc := range overview.Images[i] {
 			newValue[filepath.Base(file)] = desc

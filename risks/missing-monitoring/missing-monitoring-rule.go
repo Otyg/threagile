@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type missingMonitoring string
@@ -45,25 +47,25 @@ func (r missingMonitoring) GenerateRisks() []model.Risk {
 			hasMonitoring = true
 			break
 		}
-		if techAsset.HighestConfidentiality() == model.Confidential ||
-			techAsset.HighestIntegrity() == model.Critical ||
-			techAsset.HighestAvailability() == model.Critical {
+		if techAsset.HighestConfidentiality() == confidentiality.Confidential ||
+			techAsset.HighestIntegrity() == criticality.Critical ||
+			techAsset.HighestAvailability() == criticality.Critical {
 			impact = model.HighImpact
 			probability = model.VeryLikely
-		} else if techAsset.HighestConfidentiality() == model.StrictlyConfidential ||
-			techAsset.HighestIntegrity() == model.MissionCritical ||
-			techAsset.HighestAvailability() == model.MissionCritical {
+		} else if techAsset.HighestConfidentiality() == confidentiality.StrictlyConfidential ||
+			techAsset.HighestIntegrity() == criticality.MissionCritical ||
+			techAsset.HighestAvailability() == criticality.MissionCritical {
 			impact = model.VeryHighImpact
 			probability = model.VeryLikely
 		}
-		if techAsset.Confidentiality == model.Confidential ||
-			techAsset.Integrity == model.Critical ||
-			techAsset.Availability == model.Critical {
+		if techAsset.Confidentiality == confidentiality.Confidential ||
+			techAsset.Integrity == criticality.Critical ||
+			techAsset.Availability == criticality.Critical {
 			impact = model.HighImpact
 			probability = model.VeryLikely
-		} else if techAsset.Confidentiality == model.StrictlyConfidential ||
-			techAsset.Integrity == model.MissionCritical ||
-			techAsset.Availability == model.MissionCritical {
+		} else if techAsset.Confidentiality == confidentiality.StrictlyConfidential ||
+			techAsset.Integrity == criticality.MissionCritical ||
+			techAsset.Availability == criticality.MissionCritical {
 			impact = model.VeryHighImpact
 			probability = model.VeryLikely
 		}
@@ -83,14 +85,14 @@ func (r missingMonitoring) GenerateRisks() []model.Risk {
 			targetMonitor := false
 			impact := model.MediumImpact
 			probability := model.Likely
-			if techAsset.Confidentiality == model.Confidential ||
-				techAsset.Integrity == model.Critical ||
-				techAsset.Availability == model.Critical {
+			if techAsset.Confidentiality == confidentiality.Confidential ||
+				techAsset.Integrity == criticality.Critical ||
+				techAsset.Availability == criticality.Critical {
 				impact = model.HighImpact
 				probability = model.VeryLikely
-			} else if techAsset.Confidentiality == model.StrictlyConfidential ||
-				techAsset.Integrity == model.MissionCritical ||
-				techAsset.Availability == model.MissionCritical {
+			} else if techAsset.Confidentiality == confidentiality.StrictlyConfidential ||
+				techAsset.Integrity == criticality.MissionCritical ||
+				techAsset.Availability == criticality.MissionCritical {
 				impact = model.VeryHighImpact
 				probability = model.VeryLikely
 			}

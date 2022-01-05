@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
 )
 
 type useOfWeakCrypto string
@@ -41,18 +42,18 @@ func (r useOfWeakCrypto) GenerateRisks() []model.Risk {
 		}
 		if techAsset.Encryption != model.NoneEncryption {
 			var mostRelevantDataAssetId string
-			var highestConfidentiality model.Confidentiality = model.Public
+			var highestConfidentiality confidentiality.Confidentiality = confidentiality.Public
 			var impact model.RiskExploitationImpact
 			for _, data := range techAsset.DataAssetsStoredSorted() {
 				if data.Confidentiality >= highestConfidentiality {
 					mostRelevantDataAssetId = data.Id
 					highestConfidentiality = data.Confidentiality
 					switch data.Confidentiality {
-					case model.Restricted:
+					case confidentiality.Restricted:
 						impact = model.MediumImpact
-					case model.Confidential:
+					case confidentiality.Confidential:
 						impact = model.HighImpact
-					case model.StrictlyConfidential:
+					case confidentiality.StrictlyConfidential:
 						impact = model.VeryHighImpact
 					default:
 						impact = model.LowImpact

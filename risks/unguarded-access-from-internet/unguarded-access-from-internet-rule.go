@@ -4,6 +4,8 @@ import (
 	"sort"
 
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type unguardedAccessFromInternet string
@@ -28,15 +30,15 @@ func (r unguardedAccessFromInternet) Category() model.RiskCategory {
 		Function: model.Architecture,
 		STRIDE:   model.ElevationOfPrivilege,
 		DetectionLogic: "In-scope technical assets (excluding " + model.LoadBalancer.String() + ") with confidentiality rating " +
-			"of " + model.Confidential.String() + " (or higher) or with integrity rating of " + model.Critical.String() + " (or higher) when " +
+			"of " + confidentiality.Confidential.String() + " (or higher) or with integrity rating of " + criticality.Critical.String() + " (or higher) when " +
 			"accessed directly from the internet. All " +
 			model.WebServer.String() + ", " + model.WebApplication.String() + ", " + model.ReverseProxy.String() + ", " + model.WAF.String() + ", and " + model.Gateway.String() + " assets are exempted from this risk when " +
 			"they do not consist of custom developed code and " +
 			"the data-flow only consists of HTTP or FTP protocols. Access from " + model.Monitoring.String() + " systems " +
 			"as well as VPN-protected connections are exempted.",
 		RiskAssessment: "The matching technical assets are at " + model.LowSeverity.String() + " risk. When either the " +
-			"confidentiality rating is " + model.StrictlyConfidential.String() + " or the integrity rating " +
-			"is " + model.MissionCritical.String() + ", the risk-rating is considered " + model.MediumSeverity.String() + ". " +
+			"confidentiality rating is " + confidentiality.StrictlyConfidential.String() + " or the integrity rating " +
+			"is " + criticality.MissionCritical.String() + ", the risk-rating is considered " + model.MediumSeverity.String() + ". " +
 			"For assets with RAA values higher than 40 % the risk-rating increases.",
 		FalsePositives:             "When other means of filtering client requests are applied equivalent of " + model.ReverseProxy.String() + ", " + model.WAF.String() + ", or " + model.Gateway.String() + " components.",
 		ModelFailurePossibleReason: false,
@@ -71,11 +73,11 @@ func (r unguardedAccessFromInternet) GenerateRisks() []model.Risk {
 						incomingAccess.VPN {
 						continue
 					}
-					if technicalAsset.Confidentiality >= model.Confidential || technicalAsset.Integrity >= model.Critical {
+					if technicalAsset.Confidentiality >= confidentiality.Confidential || technicalAsset.Integrity >= criticality.Critical {
 						sourceAsset := model.ParsedModelRoot.TechnicalAssets[incomingAccess.SourceId]
 						if sourceAsset.Internet {
-							highRisk := technicalAsset.Confidentiality == model.StrictlyConfidential ||
-								technicalAsset.Integrity == model.MissionCritical
+							highRisk := technicalAsset.Confidentiality == confidentiality.StrictlyConfidential ||
+								technicalAsset.Integrity == criticality.MissionCritical
 							risks = append(risks, createRisk(technicalAsset, incomingAccess,
 								model.ParsedModelRoot.TechnicalAssets[incomingAccess.SourceId], highRisk))
 						}

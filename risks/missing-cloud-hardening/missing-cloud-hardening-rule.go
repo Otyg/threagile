@@ -4,6 +4,8 @@ import (
 	"sort"
 
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type missingCloudHardening string
@@ -370,14 +372,14 @@ func createRiskForSharedRuntime(sharedRuntime model.SharedRuntime, prefix, detai
 		title += ": <u>" + details + "</u>"
 	}
 	impact := model.MediumImpact
-	if sharedRuntime.HighestConfidentiality() >= model.Confidential ||
-		sharedRuntime.HighestIntegrity() >= model.Critical ||
-		sharedRuntime.HighestAvailability() >= model.Critical {
+	if sharedRuntime.HighestConfidentiality() >= confidentiality.Confidential ||
+		sharedRuntime.HighestIntegrity() >= criticality.Critical ||
+		sharedRuntime.HighestAvailability() >= criticality.Critical {
 		impact = model.HighImpact
 	}
-	if sharedRuntime.HighestConfidentiality() == model.StrictlyConfidential ||
-		sharedRuntime.HighestIntegrity() == model.MissionCritical ||
-		sharedRuntime.HighestAvailability() == model.MissionCritical {
+	if sharedRuntime.HighestConfidentiality() == confidentiality.StrictlyConfidential ||
+		sharedRuntime.HighestIntegrity() == criticality.MissionCritical ||
+		sharedRuntime.HighestAvailability() == criticality.MissionCritical {
 		impact = model.VeryHighImpact
 	}
 	// create risk
@@ -404,14 +406,14 @@ func createRiskForTrustBoundary(trustBoundary model.TrustBoundary, prefix, detai
 		title += ": <u>" + details + "</u>"
 	}
 	impact := model.MediumImpact
-	if trustBoundary.HighestConfidentiality() >= model.Confidential ||
-		trustBoundary.HighestIntegrity() >= model.Critical ||
-		trustBoundary.HighestAvailability() >= model.Critical {
+	if trustBoundary.HighestConfidentiality() >= confidentiality.Confidential ||
+		trustBoundary.HighestIntegrity() >= criticality.Critical ||
+		trustBoundary.HighestAvailability() >= criticality.Critical {
 		impact = model.HighImpact
 	}
-	if trustBoundary.HighestConfidentiality() == model.StrictlyConfidential ||
-		trustBoundary.HighestIntegrity() == model.MissionCritical ||
-		trustBoundary.HighestAvailability() == model.MissionCritical {
+	if trustBoundary.HighestConfidentiality() == confidentiality.StrictlyConfidential ||
+		trustBoundary.HighestIntegrity() == criticality.MissionCritical ||
+		trustBoundary.HighestAvailability() == criticality.MissionCritical {
 		impact = model.VeryHighImpact
 	}
 	// create risk
@@ -438,14 +440,14 @@ func createRiskForTechnicalAsset(technicalAsset model.TechnicalAsset, prefix, de
 		title += ": <u>" + details + "</u>"
 	}
 	impact := model.MediumImpact
-	if technicalAsset.HighestConfidentiality() >= model.Confidential ||
-		technicalAsset.HighestIntegrity() >= model.Critical ||
-		technicalAsset.HighestAvailability() >= model.Critical {
+	if technicalAsset.HighestConfidentiality() >= confidentiality.Confidential ||
+		technicalAsset.HighestIntegrity() >= criticality.Critical ||
+		technicalAsset.HighestAvailability() >= criticality.Critical {
 		impact = model.HighImpact
 	}
-	if technicalAsset.HighestConfidentiality() == model.StrictlyConfidential ||
-		technicalAsset.HighestIntegrity() == model.MissionCritical ||
-		technicalAsset.HighestAvailability() == model.MissionCritical {
+	if technicalAsset.HighestConfidentiality() == confidentiality.StrictlyConfidential ||
+		technicalAsset.HighestIntegrity() == criticality.MissionCritical ||
+		technicalAsset.HighestAvailability() == criticality.MissionCritical {
 		impact = model.VeryHighImpact
 	}
 	// create risk

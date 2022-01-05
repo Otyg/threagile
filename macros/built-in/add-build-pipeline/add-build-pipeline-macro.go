@@ -6,6 +6,8 @@ import (
 	"strings"
 
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 func GetMacroDetails() model.MacroDetails {
@@ -297,9 +299,9 @@ func applyChange(modelInput *model.ModelInput, changeLogCollector *[]string, dry
 			Origin:          "",
 			Owner:           owner,
 			Quantity:        model.Few.String(),
-			Confidentiality: model.Confidential.String(),
-			Integrity:       model.Critical.String(),
-			Availability:    model.Important.String(),
+			Confidentiality: confidentiality.Confidential.String(),
+			Integrity:       criticality.Critical.String(),
+			Availability:    criticality.Important.String(),
 			Justification_cia_rating: "Sourcecode is at least rated as 'critical' in terms of integrity, because any " +
 				"malicious modification of it might lead to a backdoored production system.",
 		}
@@ -319,9 +321,9 @@ func applyChange(modelInput *model.ModelInput, changeLogCollector *[]string, dry
 			Origin:          "",
 			Owner:           owner,
 			Quantity:        model.VeryFew.String(),
-			Confidentiality: model.Confidential.String(),
-			Integrity:       model.Critical.String(),
-			Availability:    model.Important.String(),
+			Confidentiality: confidentiality.Confidential.String(),
+			Integrity:       criticality.Critical.String(),
+			Availability:    criticality.Important.String(),
 			Justification_cia_rating: "Deployment units are at least rated as 'critical' in terms of integrity, because any " +
 				"malicious modification of it might lead to a backdoored production system.",
 		}
@@ -456,9 +458,9 @@ func applyChange(modelInput *model.ModelInput, changeLogCollector *[]string, dry
 			Machine:                    model.Physical.String(),
 			Encryption:                 encryption,
 			Owner:                      owner,
-			Confidentiality:            model.Confidential.String(),
-			Integrity:                  model.Critical.String(),
-			Availability:               model.Important.String(),
+			Confidentiality:            confidentiality.Confidential.String(),
+			Integrity:                  criticality.Critical.String(),
+			Availability:               criticality.Important.String(),
 			Justification_cia_rating: "Sourcecode processing components are at least rated as 'critical' in terms of integrity, because any " +
 				"malicious modification of it might lead to a backdoored production system.",
 			Multi_tenant:           false,
@@ -498,9 +500,9 @@ func applyChange(modelInput *model.ModelInput, changeLogCollector *[]string, dry
 			Machine:                    model.Virtual.String(),
 			Encryption:                 encryption,
 			Owner:                      owner,
-			Confidentiality:            model.Confidential.String(),
-			Integrity:                  model.Critical.String(),
-			Availability:               model.Important.String(),
+			Confidentiality:            confidentiality.Confidential.String(),
+			Integrity:                  criticality.Critical.String(),
+			Availability:               criticality.Important.String(),
 			Justification_cia_rating: "Sourcecode processing components are at least rated as 'critical' in terms of integrity, because any " +
 				"malicious modification of it might lead to a backdoored production system.",
 			Multi_tenant:           strings.ToLower(macroState["multi-tenant"][0]) == "yes",
@@ -541,9 +543,9 @@ func applyChange(modelInput *model.ModelInput, changeLogCollector *[]string, dry
 				Machine:                    model.Virtual.String(),
 				Encryption:                 encryption,
 				Owner:                      owner,
-				Confidentiality:            model.Confidential.String(),
-				Integrity:                  model.Critical.String(),
-				Availability:               model.Important.String(),
+				Confidentiality:            confidentiality.Confidential.String(),
+				Integrity:                  criticality.Critical.String(),
+				Availability:               criticality.Important.String(),
 				Justification_cia_rating: "Container registry components are at least rated as 'critical' in terms of integrity, because any " +
 					"malicious modification of it might lead to a backdoored production system.",
 				Multi_tenant:           strings.ToLower(macroState["multi-tenant"][0]) == "yes",
@@ -583,9 +585,9 @@ func applyChange(modelInput *model.ModelInput, changeLogCollector *[]string, dry
 				Machine:                    model.Virtual.String(),
 				Encryption:                 encryption,
 				Owner:                      owner,
-				Confidentiality:            model.Confidential.String(),
-				Integrity:                  model.MissionCritical.String(),
-				Availability:               model.MissionCritical.String(),
+				Confidentiality:            confidentiality.Confidential.String(),
+				Integrity:                  criticality.MissionCritical.String(),
+				Availability:               criticality.MissionCritical.String(),
 				Justification_cia_rating: "Container platform components are rated as 'mission-critical' in terms of integrity and availability, because any " +
 					"malicious modification of it might lead to a backdoored production system.",
 				Multi_tenant:           strings.ToLower(macroState["multi-tenant"][0]) == "yes",
@@ -837,9 +839,9 @@ func applyChange(modelInput *model.ModelInput, changeLogCollector *[]string, dry
 			Machine:                    model.Virtual.String(),
 			Encryption:                 encryption,
 			Owner:                      owner,
-			Confidentiality:            model.Confidential.String(),
-			Integrity:                  model.Critical.String(),
-			Availability:               model.Important.String(),
+			Confidentiality:            confidentiality.Confidential.String(),
+			Integrity:                  criticality.Critical.String(),
+			Availability:               criticality.Important.String(),
 			Justification_cia_rating: "Build pipeline components are at least rated as 'critical' in terms of integrity, because any " +
 				"malicious modification of it might lead to a backdoored production system.",
 			Multi_tenant:           strings.ToLower(macroState["multi-tenant"][0]) == "yes",
@@ -879,9 +881,9 @@ func applyChange(modelInput *model.ModelInput, changeLogCollector *[]string, dry
 			Machine:                    model.Virtual.String(),
 			Encryption:                 encryption,
 			Owner:                      owner,
-			Confidentiality:            model.Confidential.String(),
-			Integrity:                  model.Critical.String(),
-			Availability:               model.Important.String(),
+			Confidentiality:            confidentiality.Confidential.String(),
+			Integrity:                  criticality.Critical.String(),
+			Availability:               criticality.Important.String(),
 			Justification_cia_rating: "Artifact registry components are at least rated as 'critical' in terms of integrity, because any " +
 				"malicious modification of it might lead to a backdoored production system.",
 			Multi_tenant:           strings.ToLower(macroState["multi-tenant"][0]) == "yes",
@@ -922,9 +924,9 @@ func applyChange(modelInput *model.ModelInput, changeLogCollector *[]string, dry
 				Machine:                    model.Virtual.String(),
 				Encryption:                 encryption,
 				Owner:                      owner,
-				Confidentiality:            model.Confidential.String(),
-				Integrity:                  model.Important.String(),
-				Availability:               model.Operational.String(),
+				Confidentiality:            confidentiality.Confidential.String(),
+				Integrity:                  criticality.Important.String(),
+				Availability:               criticality.Operational.String(),
 				Justification_cia_rating: "Sourcecode inspection platforms are rated at least 'important' in terms of integrity, because any " +
 					"malicious modification of it might lead to vulnerabilities found by the scanner engine not being shown.",
 				Multi_tenant:           strings.ToLower(macroState["multi-tenant"][0]) == "yes",

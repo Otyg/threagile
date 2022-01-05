@@ -3,6 +3,8 @@ package model
 import (
 	"errors"
 	"strings"
+
+	"github.com/otyg/threagile/model/core"
 )
 
 type TechnicalAssetMachine int
@@ -14,8 +16,8 @@ const (
 	Serverless
 )
 
-func TechnicalAssetMachineValues() []TypeEnum {
-	return []TypeEnum{
+func TechnicalAssetMachineValues() []core.TypeEnum {
+	return []core.TypeEnum{
 		Physical,
 		Virtual,
 		Container,

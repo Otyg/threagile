@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/otyg/threagile/model"
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
 )
 
 type searchQueryInjection string
@@ -69,9 +71,9 @@ func createRisk(technicalAsset model.TechnicalAsset, incomingFlow model.Communic
 	title := "<b>Search Query Injection</b> risk at <b>" + caller.Title + "</b> against search engine server <b>" + technicalAsset.Title + "</b>" +
 		" via <b>" + incomingFlow.Title + "</b>"
 	impact := model.MediumImpact
-	if technicalAsset.HighestConfidentiality() == model.StrictlyConfidential || technicalAsset.HighestIntegrity() == model.MissionCritical {
+	if technicalAsset.HighestConfidentiality() == confidentiality.StrictlyConfidential || technicalAsset.HighestIntegrity() == criticality.MissionCritical {
 		impact = model.HighImpact
-	} else if technicalAsset.HighestConfidentiality() <= model.Internal && technicalAsset.HighestIntegrity() == model.Operational {
+	} else if technicalAsset.HighestConfidentiality() <= confidentiality.Internal && technicalAsset.HighestIntegrity() == criticality.Operational {
 		impact = model.LowImpact
 	}
 	risk := model.Risk{

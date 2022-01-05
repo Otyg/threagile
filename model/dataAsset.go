@@ -1,6 +1,11 @@
 package model
 
-import "sort"
+import (
+	"sort"
+
+	"github.com/otyg/threagile/model/confidentiality"
+	"github.com/otyg/threagile/model/criticality"
+)
 
 type InputDataAsset struct {
 	ID                       string   `json:"id"`
@@ -23,8 +28,8 @@ type DataAsset struct {
 	Tags                    []string
 	Origin, Owner           string
 	Quantity                Quantity
-	Confidentiality         Confidentiality
-	Integrity, Availability Criticality
+	Confidentiality         confidentiality.Confidentiality
+	Integrity, Availability criticality.Criticality
 	JustificationCiaRating  string
 }
 

@@ -1,22 +1,26 @@
-package model
+package criticality
 
 import (
 	"errors"
 	"strings"
+
+	"github.com/otyg/threagile/model/core"
 )
 
 type Criticality int
 
 const (
-	Archive Criticality = iota
+	Unknown Criticality = iota
+	Archive
 	Operational
 	Important
 	Critical
 	MissionCritical
 )
 
-func CriticalityValues() []TypeEnum {
-	return []TypeEnum{
+func CriticalityValues() []core.TypeEnum {
+	return []core.TypeEnum{
+		Unknown,
 		Archive,
 		Operational,
 		Important,
@@ -37,25 +41,25 @@ func ParseCriticality(value string) (criticality Criticality, err error) {
 
 func (what Criticality) String() string {
 	// NOTE: maintain list also in schema.json for validation in IDEs
-	return [...]string{"archive", "operational", "important", "critical", "mission-critical"}[what]
+	return [...]string{"unknown", "archive", "operational", "important", "critical", "mission-critical"}[what]
 }
 
 func (what Criticality) AttackerAttractivenessForAsset() float64 {
 	// fibonacci starting at 5
-	return [...]float64{5, 8, 13, 21, 34}[what]
+	return [...]float64{5, 8, 13, 21, 34, 55}[what]
 }
 func (what Criticality) AttackerAttractivenessForProcessedOrStoredData() float64 {
 	// fibonacci starting at 3
-	return [...]float64{3, 5, 8, 13, 21}[what]
+	return [...]float64{3, 5, 8, 13, 21, 34}[what]
 }
 func (what Criticality) AttackerAttractivenessForInOutTransferredData() float64 {
 	// fibonacci starting at 2
-	return [...]float64{2, 3, 5, 8, 13}[what]
+	return [...]float64{2, 3, 5, 8, 13, 21}[what]
 }
 
 func (what Criticality) RatingStringInScale() string {
 	result := "(rated "
-	if what == Archive {
+	if what == Archive || what == Unknown {
 		result += "1"
 	}
 	if what == Operational {
