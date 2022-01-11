@@ -128,6 +128,14 @@
       ],
       "uniqueItems": true
     },
+    "default_values": {
+      "description": "Default values for supported fields",
+      "type": [
+        "object",
+        "null"
+      ],
+      "uniqueItems": true
+    },
     "tags_available": {
       "description": "Tags available",
       "type": [
@@ -247,11 +255,7 @@
         "required": [
           "id",
           "description",
-          "usage",
-          "quantity",
-          "confidentiality",
-          "integrity",
-          "availability"
+          "quantity"
         ]
       }
     },
@@ -684,10 +688,6 @@
                 "protocol",
                 "authentication",
                 "authorization",
-                "vpn",
-                "ip_filtered",
-                "readonly",
-                "usage",
                 "data_assets_sent",
                 "data_assets_received"
               ]
@@ -697,21 +697,11 @@
             "id",
             "description",
             "type",
-            "usage",
-            "used_as_client_by_human",
-            "out_of_scope",
             "size",
             "technology",
             "internet",
             "machine",
-            "encryption",
             "owner",
-            "confidentiality",
-            "integrity",
-            "availability",
-            "multi_tenant",
-            "redundant",
-            "custom_developed_parts",
             "data_assets_processed",
             "data_assets_stored",
             "data_formats_accepted",

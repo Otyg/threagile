@@ -18,6 +18,7 @@ type ModelInput struct { // TODO: Eventually remove this and directly use Parsed
 	Questions                                          map[string]string
 	Abuse_cases                                        map[string]string
 	Security_requirements                              map[string]string
+	Default_values                                     map[string]string
 	Tags_available                                     []string
 	Data_assets                                        map[string]InputDataAsset
 	Technical_assets                                   map[string]InputTechnicalAsset
@@ -45,6 +46,7 @@ type ParsedModel struct {
 	Questions                                     map[string]string
 	AbuseCases                                    map[string]string
 	TagsAvailable                                 []string
+	DefaultValues                                 map[string]string
 	DataAssets                                    map[string]DataAsset
 	TechnicalAssets                               map[string]TechnicalAsset
 	TrustBoundaries                               map[string]TrustBoundary
