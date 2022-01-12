@@ -17,18 +17,19 @@ import (
 
 func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[string]RiskTracking) ParsedModel {
 	modelInput := ModelInput{}
-	var error error = yaml.Unmarshal(modelYaml, &modelInput)
-	support.CheckErr(error)
-	//fmt.Println(modelInput)
-	// Add check for threagile-version of model
-	model_version, error := version.NewVersion(modelInput.Threagile_version)
-	support.CheckErr(error)
-	main_version, error := version.NewVersion(ThreagileVersion)
-	support.CheckErr(error)
-	if model_version.GreaterThan(main_version) {
-		panic("Model file is created for a newer version of threagile: " + main_version.Original())
+	var yamlError error = yaml.Unmarshal(modelYaml, &modelInput)
+	support.CheckErr(yamlError)
+	if ThreagileVersion != "test" {
+		model_version, error := version.NewVersion(modelInput.Threagile_version)
+		support.CheckErr(error)
+		main_version, error := version.NewVersion(ThreagileVersion)
+		support.CheckErr(error)
+		if model_version.GreaterThan(main_version) {
+			panic("Model file is created for a newer version of threagile: " + main_version.Original())
+		}
 	}
-	var businessCriticality, err = criticality.ParseCriticality(modelInput.Business_criticality)
+
+	var businessCriticality, err = criticality.ParseCriticality(withDefault(modelInput.Business_criticality, "unknown"))
 	support.CheckErr(err)
 
 	reportDate := time.Now()
@@ -50,6 +51,7 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 		Questions:                      modelInput.Questions,
 		AbuseCases:                     modelInput.Abuse_cases,
 		SecurityRequirements:           modelInput.Security_requirements,
+		DefaultValues:                  modelInput.Default_values,
 		TagsAvailable:                  support.LowerCaseAndTrim(modelInput.Tags_available),
 		DiagramTweakNodesep:            modelInput.Diagram_tweak_nodesep,
 		DiagramTweakRanksep:            modelInput.Diagram_tweak_ranksep,
@@ -71,17 +73,15 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 	for title, asset := range modelInput.Data_assets {
 		id := fmt.Sprintf("%v", asset.ID)
 
-		usage, err := ParseUsage(asset.Usage)
+		usage, err := ParseUsage(withDefault(asset.Usage, getDefaultIfPresent("usage")))
 		support.CheckErr(err)
 		quantity, err := ParseQuantity(asset.Quantity)
 		support.CheckErr(err)
-
-		confidentiality, err := confidentiality.ParseConfidentiality(asset.Confidentiality)
+		confidentiality, err := confidentiality.ParseConfidentiality(withDefault(asset.Confidentiality, getDefaultIfPresent("confidentiality")))
 		support.CheckErr(err)
-		integrity, err := criticality.ParseCriticality(asset.Integrity)
+		integrity, err := criticality.ParseCriticality(withDefault(asset.Integrity, getDefaultIfPresent("integrity")))
 		support.CheckErr(err)
-
-		availability, err := criticality.ParseCriticality(asset.Availability)
+		availability, err := criticality.ParseCriticality(withDefault(asset.Availability, getDefaultIfPresent("availability")))
 		support.CheckErr(err)
 
 		support.CheckIdSyntax(id)
@@ -109,7 +109,7 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 	for title, asset := range modelInput.Technical_assets {
 		id := fmt.Sprintf("%v", asset.ID)
 
-		usage, err := ParseUsage(asset.Usage)
+		usage, err := ParseUsage(withDefault(asset.Usage, getDefaultIfPresent("usage")))
 		support.CheckErr(err)
 
 		var dataAssetsProcessed = make([]string, 0)
@@ -132,26 +132,26 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 			}
 		}
 
-		technicalAssetType, err := ParseTechnicalAssetType(asset.Type)
+		technicalAssetType, err := ParseTechnicalAssetType(withDefault(asset.Type, getDefaultIfPresent("technical_asset_type")))
 		support.CheckErr(err)
 
-		technicalAssetSize, err := ParseTechnicalAssetSize(asset.Size)
+		technicalAssetSize, err := ParseTechnicalAssetSize(withDefault(asset.Size, getDefaultIfPresent("technical_asset_size")))
 		support.CheckErr(err)
 
 		technicalAssetTechnology, err := ParseTechnicalAssetTechnology(asset.Technology)
 		support.CheckErr(err)
 
-		encryption, err := ParseEncryptionStyle(asset.Encryption)
+		encryption, err := ParseEncryptionStyle(withDefault(asset.Encryption, getDefaultIfPresent("technical_asset_encryption")))
 		support.CheckErr(err)
 
-		technicalAssetMachine, err := ParseTechnicalAssetMachine(asset.Machine)
-		support.CheckErr(err)
-		confidentiality, err := confidentiality.ParseConfidentiality(asset.Confidentiality)
-		support.CheckErr(err)
-		integrity, err := criticality.ParseCriticality(asset.Integrity)
+		technicalAssetMachine, err := ParseTechnicalAssetMachine(withDefault(asset.Machine, getDefaultIfPresent("technical_asset_machine")))
 		support.CheckErr(err)
 
-		availability, err := criticality.ParseCriticality(asset.Availability)
+		confidentiality, err := confidentiality.ParseConfidentiality(withDefault(asset.Confidentiality, getDefaultIfPresent("confidentiality")))
+		support.CheckErr(err)
+		integrity, err := criticality.ParseCriticality(withDefault(asset.Integrity, getDefaultIfPresent("integrity")))
+		support.CheckErr(err)
+		availability, err := criticality.ParseCriticality(withDefault(asset.Availability, getDefaultIfPresent("availability")))
 		support.CheckErr(err)
 
 		dataFormatsAccepted := make([]DataFormat, 0)
@@ -168,13 +168,13 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 			for commLinkTitle, commLink := range asset.Communication_links {
 				constraint := true
 				weight := 1
-				authentication, err := ParseAuthentication(commLink.Authentication)
+				authentication, err := ParseAuthentication(withDefault(commLink.Authentication, getDefaultIfPresent("authentication")))
 				support.CheckErr(err)
-				authorization, err := ParseAuthorization(commLink.Authorization)
+				authorization, err := ParseAuthorization(withDefault(commLink.Authorization, getDefaultIfPresent("authorization")))
 				support.CheckErr(err)
-				usage, err := ParseUsage(commLink.Usage)
+				usage, err := ParseUsage(withDefault(asset.Usage, getDefaultIfPresent("usage")))
 				support.CheckErr(err)
-				protocol, err := ParseProtocol(commLink.Protocol)
+				protocol, err := ParseProtocol(withDefault(commLink.Protocol, getDefaultIfPresent("protocol")))
 				support.CheckErr(err)
 				var dataAssetsSent []string
 				var dataAssetsReceived []string
@@ -534,9 +534,38 @@ func removePathElementsFromImageFiles(overview Overview) Overview {
 	return overview
 }
 
+func getDefaultIfPresent(defaultLabel string) string {
+	var defaultValue string
+	switch defaultLabel {
+	case "technical_asset_encryption", "confidentiality", "integrity", "availability":
+		defaultValue = setDefaultValue(defaultLabel, "unknown")
+	case "technical_asset_machine":
+		defaultValue = setDefaultValue(defaultLabel, "container")
+	case "technical_asset_type":
+		defaultValue = setDefaultValue(defaultLabel, "process")
+	case "technical_asset_size":
+		defaultValue = setDefaultValue(defaultLabel, "service")
+	case "usage":
+		defaultValue = setDefaultValue(defaultLabel, "business")
+	case "authentication", "authorization":
+		defaultValue = setDefaultValue(defaultLabel, "none")
+	case "protocol":
+		defaultValue = setDefaultValue(defaultLabel, "unknown-protocol")
+	}
+	return defaultValue
+}
+
+func setDefaultValue(defaultLabel string, defaultValueIfNotSet string) string {
+	if val, ok := ParsedModelRoot.DefaultValues[defaultLabel]; ok {
+		return val
+	} else {
+		return defaultValueIfNotSet
+	}
+}
+
 func withDefault(value string, defaultWhenEmpty string) string {
 	trimmed := strings.TrimSpace(value)
-	if len(trimmed) > 0 && trimmed != "<nil>" {
+	if len(trimmed) > 0 && trimmed != "<nil>" && value != "" {
 		return trimmed
 	}
 	return strings.TrimSpace(defaultWhenEmpty)

@@ -10,7 +10,8 @@ import (
 type EncryptionStyle int
 
 const (
-	NoneEncryption EncryptionStyle = iota
+	Unknown EncryptionStyle = iota
+	NoneEncryption
 	Transparent
 	DataWithSymmetricSharedKey
 	DataWithAsymmetricSharedKey
@@ -19,6 +20,7 @@ const (
 
 func EncryptionStyleValues() []core.TypeEnum {
 	return []core.TypeEnum{
+		Unknown,
 		NoneEncryption,
 		Transparent,
 		DataWithSymmetricSharedKey,
@@ -39,9 +41,9 @@ func ParseEncryptionStyle(value string) (encryptionStyle EncryptionStyle, err er
 
 func (what EncryptionStyle) String() string {
 	// NOTE: maintain list also in schema.json for validation in IDEs
-	return [...]string{"none", "transparent", "data-with-symmetric-shared-key", "data-with-asymmetric-shared-key", "data-with-enduser-individual-key"}[what]
+	return [...]string{"unknown", "none", "transparent", "data-with-symmetric-shared-key", "data-with-asymmetric-shared-key", "data-with-enduser-individual-key"}[what]
 }
 
 func (what EncryptionStyle) Title() string {
-	return [...]string{"None", "Transparent", "Data with Symmetric Shared Key", "Data with Asymmetric Shared Key", "Data with Enduser Individual Key"}[what]
+	return [...]string{"Unknown", "None", "Transparent", "Data with Symmetric Shared Key", "Data with Asymmetric Shared Key", "Data with Enduser Individual Key"}[what]
 }

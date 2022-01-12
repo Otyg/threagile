@@ -128,6 +128,179 @@
       ],
       "uniqueItems": true
     },
+    "default_values": {
+      "description": "Default values for supported fields",
+      "type": [
+        "object",
+        "null"
+      ],
+      "uniqueItems": true,
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "usage": {
+            "description": "Default value for usage fields",
+            "type": "string",
+            "enum": [
+              "business",
+              "devops"
+            ]
+          },
+          "confidentiality":{
+            "description": "Default value for confidentiality fields",
+            "type": "string",
+            "enum": [
+              "unknown",
+              "public",
+              "internal",
+              "restricted",
+              "confidential",
+              "strictly-confidential"
+            ]
+          },
+          "integrity": {
+            "type": "string",
+            "description": "Default value for integrity fields",
+            "enum":[
+              "unknown",
+              "archive",
+              "operational",
+              "important",
+              "critical",
+              "mission-critical"
+            ]
+          },
+          "availability": {
+            "type": "string",
+            "description": "Default value for availability fields",
+            "enum":[
+              "unknown",
+              "archive",
+              "operational",
+              "important",
+              "critical",
+              "mission-critical"
+            ]
+          },
+          "technical_asset_encryption": {
+            "type": "string",
+            "description": "Default value for encryption fields",
+            "enum":[
+              "unknown",
+              "none",
+              "transparent",
+              "data-with-symmetric-shared-key",
+              "data-with-asymmetric-shared-key",
+              "data-with-enduser-individual-key"
+            ]
+          },
+          "technical_asset_machine": {
+            "type": "string",
+            "description": "Default value for technical asset machine fields",
+            "enum":[
+              "physical",
+              "virtual",
+              "container",
+              "serverless"
+            ]
+          },
+          "technical_asset_type": {
+            "type": "string",
+            "description": "Default value for technical asset type fields",
+            "enum":[
+              "external-entity",
+              "process",
+              "datastore"
+            ]
+          },
+          "technical_asset_size": {
+            "type": "string",
+            "description": "Default value for technical asset size fields",
+            "enum":[
+              "system",
+              "service",
+              "application",
+              "component"
+            ]
+          },
+          "protocol": {
+            "description": "Default value for communication link protocol",
+            "type": "string",
+            "enum": [
+              "unknown-protocol",
+              "http",
+              "https",
+              "ws",
+              "wss",
+              "reverse-proxy-web-protocol",
+              "reverse-proxy-web-protocol-encrypted",
+              "mqtt",
+              "jdbc",
+              "jdbc-encrypted",
+              "odbc",
+              "odbc-encrypted",
+              "sql-access-protocol",
+              "sql-access-protocol-encrypted",
+              "nosql-access-protocol",
+              "nosql-access-protocol-encrypted",
+              "binary",
+              "binary-encrypted",
+              "text",
+              "text-encrypted",
+              "ssh",
+              "ssh-tunnel",
+              "smtp",
+              "smtp-encrypted",
+              "pop3",
+              "pop3-encrypted",
+              "imap",
+              "imap-encrypted",
+              "ftp",
+              "ftps",
+              "sftp",
+              "scp",
+              "ldap",
+              "ldaps",
+              "jms",
+              "nfs",
+              "smb",
+              "smb-encrypted",
+              "local-file-access",
+              "nrpe",
+              "xmpp",
+              "iiop",
+              "iiop-encrypted",
+              "jrmp",
+              "jrmp-encrypted",
+              "in-process-library-call",
+              "container-spawning"
+            ]
+          },
+          "authentication": {
+            "description": "Default value for communication link authentication",
+            "type": "string",
+            "enum": [
+              "none",
+              "credentials",
+              "session-id",
+              "token",
+              "client-certificate",
+              "two-factor",
+              "externalized"
+            ]
+          },
+          "authorization": {
+            "description": "Default value for communication link authorization",
+            "type": "string",
+            "enum": [
+              "none",
+              "technical-user",
+              "enduser-identity-propagation"
+            ]
+          }
+        }
+      }
+    },
     "tags_available": {
       "description": "Tags available",
       "type": [
@@ -247,11 +420,7 @@
         "required": [
           "id",
           "description",
-          "usage",
-          "quantity",
-          "confidentiality",
-          "integrity",
-          "availability"
+          "quantity"
         ]
       }
     },
@@ -684,10 +853,6 @@
                 "protocol",
                 "authentication",
                 "authorization",
-                "vpn",
-                "ip_filtered",
-                "readonly",
-                "usage",
                 "data_assets_sent",
                 "data_assets_received"
               ]
@@ -697,21 +862,11 @@
             "id",
             "description",
             "type",
-            "usage",
-            "used_as_client_by_human",
-            "out_of_scope",
             "size",
             "technology",
             "internet",
             "machine",
-            "encryption",
             "owner",
-            "confidentiality",
-            "integrity",
-            "availability",
-            "multi_tenant",
-            "redundant",
-            "custom_developed_parts",
             "data_assets_processed",
             "data_assets_stored",
             "data_formats_accepted",
