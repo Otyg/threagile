@@ -44,6 +44,7 @@ import (
 	"github.com/otyg/threagile/model/criticality"
 	"github.com/otyg/threagile/report"
 	"github.com/otyg/threagile/support"
+	"github.com/santhosh-tekuri/jsonschema/v5"
 
 	"golang.org/x/crypto/argon2"
 	"gopkg.in/yaml.v3"
@@ -2886,6 +2887,27 @@ func parseModel(inputFilename string) {
 		fmt.Println("Parsing model:", inputFilename)
 	}
 	modelYaml, err := ioutil.ReadFile(inputFilename)
+	support.CheckErr(err)
+	var validatorYaml interface{}
+	support.CheckErr(err)
+	err = yaml.Unmarshal([]byte(modelYaml), &validatorYaml)
+	support.CheckErr(err)
+	validatorYaml, err = support.ToStringKeys(validatorYaml)
+	support.CheckErr(err)
+	compiler := jsonschema.NewCompiler()
+	compiler.Draft = jsonschema.Draft2020
+	schemaFile, err := ioutil.ReadFile("schema.json")
+	support.CheckErr(err)
+	if err := compiler.AddResource("schema.json", strings.NewReader(string(schemaFile))); err != nil {
+		panic(err)
+	}
+	schema, err := compiler.Compile("schema.json")
+	if err != nil {
+		panic(err)
+	}
+	if err := schema.Validate(validatorYaml); err != nil {
+		panic(err)
+	}
 	if err == nil {
 		model.ParsedModelRoot = model.ParseModel(modelYaml, deferredRiskTrackingDueToWildcardMatching)
 	}

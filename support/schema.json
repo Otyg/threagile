@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/Otyg/threagile/master/support/schema.json",
   "title": "Threagile",
   "description": "Agile Threat Modeling",
@@ -857,22 +857,18 @@
                 "data_assets_received"
               ]
             }
-          },
-          "required": [
-            "id",
-            "description",
-            "type",
-            "size",
-            "technology",
-            "internet",
-            "machine",
-            "owner",
-            "data_assets_processed",
-            "data_assets_stored",
-            "data_formats_accepted",
-            "communication_links"
-          ]
-        }
+          }
+        },
+        "required": [
+          "id",
+          "description",
+          "technology",
+          "owner",
+          "data_assets_processed",
+          "data_assets_stored",
+          "data_formats_accepted",
+          "communication_links"
+        ]
       }
     },
     "trust_boundaries": {
