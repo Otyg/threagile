@@ -73,7 +73,7 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 	for title, asset := range modelInput.Data_assets {
 		id := fmt.Sprintf("%v", asset.ID)
 
-		usage, err := ParseUsage(withDefault(asset.Usage, "business"))
+		usage, err := ParseUsage(withDefault(asset.Usage, getDefaultIfPresent("usage")))
 		support.CheckErr(err)
 		quantity, err := ParseQuantity(asset.Quantity)
 		support.CheckErr(err)
@@ -109,7 +109,7 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 	for title, asset := range modelInput.Technical_assets {
 		id := fmt.Sprintf("%v", asset.ID)
 
-		usage, err := ParseUsage(withDefault(asset.Usage, "business"))
+		usage, err := ParseUsage(withDefault(asset.Usage, getDefaultIfPresent("usage")))
 		support.CheckErr(err)
 
 		var dataAssetsProcessed = make([]string, 0)
@@ -132,19 +132,19 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 			}
 		}
 
-		technicalAssetType, err := ParseTechnicalAssetType(asset.Type)
+		technicalAssetType, err := ParseTechnicalAssetType(withDefault(asset.Type, getDefaultIfPresent("technical_asset_type")))
 		support.CheckErr(err)
 
-		technicalAssetSize, err := ParseTechnicalAssetSize(asset.Size)
+		technicalAssetSize, err := ParseTechnicalAssetSize(withDefault(asset.Size, getDefaultIfPresent("technical_asset_size")))
 		support.CheckErr(err)
 
 		technicalAssetTechnology, err := ParseTechnicalAssetTechnology(asset.Technology)
 		support.CheckErr(err)
 
-		encryption, err := ParseEncryptionStyle(withDefault(asset.Encryption, getDefaultIfPresent("encryption")))
+		encryption, err := ParseEncryptionStyle(withDefault(asset.Encryption, getDefaultIfPresent("technical_asset_encryption")))
 		support.CheckErr(err)
 
-		technicalAssetMachine, err := ParseTechnicalAssetMachine(asset.Machine)
+		technicalAssetMachine, err := ParseTechnicalAssetMachine(withDefault(asset.Machine, getDefaultIfPresent("technical_asset_machine")))
 		support.CheckErr(err)
 
 		confidentiality, err := confidentiality.ParseConfidentiality(withDefault(asset.Confidentiality, getDefaultIfPresent("confidentiality")))
@@ -168,13 +168,13 @@ func ParseModel(modelYaml []byte, deferredRiskTrackingDueToWildcardMatching map[
 			for commLinkTitle, commLink := range asset.Communication_links {
 				constraint := true
 				weight := 1
-				authentication, err := ParseAuthentication(commLink.Authentication)
+				authentication, err := ParseAuthentication(withDefault(commLink.Authentication, getDefaultIfPresent("authentication")))
 				support.CheckErr(err)
-				authorization, err := ParseAuthorization(commLink.Authorization)
+				authorization, err := ParseAuthorization(withDefault(commLink.Authorization, getDefaultIfPresent("authorization")))
 				support.CheckErr(err)
-				usage, err := ParseUsage(withDefault(asset.Usage, "business"))
+				usage, err := ParseUsage(withDefault(asset.Usage, getDefaultIfPresent("usage")))
 				support.CheckErr(err)
-				protocol, err := ParseProtocol(commLink.Protocol)
+				protocol, err := ParseProtocol(withDefault(commLink.Protocol, getDefaultIfPresent("protocol")))
 				support.CheckErr(err)
 				var dataAssetsSent []string
 				var dataAssetsReceived []string
@@ -534,17 +534,33 @@ func removePathElementsFromImageFiles(overview Overview) Overview {
 	return overview
 }
 
-func getDefaultIfPresent(meh string) string {
+func getDefaultIfPresent(defaultLabel string) string {
 	var defaultValue string
-	switch meh {
-	case "encryption", "confidentiality", "integrity", "availability":
-		if val, ok := ParsedModelRoot.DefaultValues[meh]; ok {
-			defaultValue = val
-		} else {
-			defaultValue = "unknown"
-		}
+	switch defaultLabel {
+	case "technical_asset_encryption", "confidentiality", "integrity", "availability":
+		defaultValue = setDefaultValue(defaultLabel, "unknown")
+	case "technical_asset_machine":
+		defaultValue = setDefaultValue(defaultLabel, "container")
+	case "technical_asset_type":
+		defaultValue = setDefaultValue(defaultLabel, "process")
+	case "technical_asset_size":
+		defaultValue = setDefaultValue(defaultLabel, "service")
+	case "usage":
+		defaultValue = setDefaultValue(defaultLabel, "business")
+	case "authentication", "authorization":
+		defaultValue = setDefaultValue(defaultLabel, "none")
+	case "protocol":
+		defaultValue = setDefaultValue(defaultLabel, "unknown-protocol")
 	}
 	return defaultValue
+}
+
+func setDefaultValue(defaultLabel string, defaultValueIfNotSet string) string {
+	if val, ok := ParsedModelRoot.DefaultValues[defaultLabel]; ok {
+		return val
+	} else {
+		return defaultValueIfNotSet
+	}
 }
 
 func withDefault(value string, defaultWhenEmpty string) string {
