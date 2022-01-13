@@ -17,6 +17,7 @@ require (
 	github.com/owenrumney/go-sarif v1.0.12
 	github.com/phpdave11/gofpdi v1.0.13 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/santhosh-tekuri/jsonschema/v5 v5.0.0
 	github.com/ugorji/go v1.2.6 // indirect
 	github.com/wcharczuk/go-chart v2.0.1+incompatible
 	github.com/xuri/excelize/v2 v2.4.1

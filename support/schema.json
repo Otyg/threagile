@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/Otyg/threagile/master/support/schema.json",
   "title": "Threagile",
   "description": "Agile Threat Modeling",
@@ -130,13 +130,10 @@
     },
     "default_values": {
       "description": "Default values for supported fields",
-      "type": [
-        "object",
-        "null"
-      ],
+      "type": "object",
       "uniqueItems": true,
       "additionalProperties": {
-        "type": "object",
+        "type": "string",
         "properties": {
           "usage": {
             "description": "Default value for usage fields",
@@ -146,7 +143,7 @@
               "devops"
             ]
           },
-          "confidentiality":{
+          "confidentiality": {
             "description": "Default value for confidentiality fields",
             "type": "string",
             "enum": [
@@ -850,29 +847,22 @@
               "required": [
                 "target",
                 "description",
-                "protocol",
-                "authentication",
-                "authorization",
                 "data_assets_sent",
                 "data_assets_received"
               ]
             }
-          },
-          "required": [
-            "id",
-            "description",
-            "type",
-            "size",
-            "technology",
-            "internet",
-            "machine",
-            "owner",
-            "data_assets_processed",
-            "data_assets_stored",
-            "data_formats_accepted",
-            "communication_links"
-          ]
-        }
+          }
+        },
+        "required": [
+          "id",
+          "description",
+          "technology",
+          "owner",
+          "data_assets_processed",
+          "data_assets_stored",
+          "data_formats_accepted",
+          "communication_links"
+        ]
       }
     },
     "trust_boundaries": {
