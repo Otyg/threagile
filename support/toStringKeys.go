@@ -1,10 +1,24 @@
 package support
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+	"time"
+)
 
 func ToStringKeys(val interface{}) (interface{}, error) {
 	var err error
+	fmt.Printf("val: %T\n", val)
 	switch val := val.(type) {
+	case map[string]interface{}:
+		s := make(map[string]interface{})
+		for k, v := range val {
+			s[k], err = ToStringKeys(v)
+			if err != nil {
+				return nil, err
+			}
+		}
+		return s, nil
 	case map[interface{}]interface{}:
 		m := make(map[string]interface{})
 		for k, v := range val {
@@ -27,7 +41,10 @@ func ToStringKeys(val interface{}) (interface{}, error) {
 			}
 		}
 		return l, nil
+	case time.Time:
+		return val.Format("2006-01-02"), nil
 	default:
+		fmt.Println("In default")
 		return val, nil
 	}
 }
