@@ -36,7 +36,7 @@ func ParseConfidentiality(value string) (confidentiality Confidentiality, err er
 			return candidate.(Confidentiality), err
 		}
 	}
-	return confidentiality, errors.New("Unable to parse into type: " + value)
+	return confidentiality, errors.New("Unable to parse into confidentiality: " + value)
 }
 
 func (what Confidentiality) String() string {

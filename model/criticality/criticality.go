@@ -36,7 +36,7 @@ func ParseCriticality(value string) (criticality Criticality, err error) {
 			return candidate.(Criticality), err
 		}
 	}
-	return criticality, errors.New("Unable to parse into type: " + value)
+	return criticality, errors.New("Unable to parse into criticality: " + value)
 }
 
 func (what Criticality) String() string {
