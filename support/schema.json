@@ -132,8 +132,6 @@
       "description": "Default values for supported fields",
       "type": "object",
       "uniqueItems": true,
-      "additionalProperties": {
-        "type": "string",
         "properties": {
           "usage": {
             "description": "Default value for usage fields",
@@ -295,7 +293,6 @@
               "enduser-identity-propagation"
             ]
           }
-        }
       }
     },
     "tags_available": {

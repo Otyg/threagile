@@ -2896,6 +2896,8 @@ func parseModel(inputFilename string) {
 	support.CheckErr(err)
 	compiler := jsonschema.NewCompiler()
 	compiler.Draft = jsonschema.Draft2020
+	compiler.AssertContent = true
+	compiler.AssertFormat = true
 	schemaFile, err := ioutil.ReadFile("schema.json")
 	support.CheckErr(err)
 	if err := compiler.AddResource("schema.json", strings.NewReader(string(schemaFile))); err != nil {
