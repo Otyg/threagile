@@ -1,4 +1,4 @@
-threagile_version: 1.0.0
+threagile_version: 3.0.0
 
 # NOTE:
 #
@@ -17,22 +17,16 @@ threagile_version: 1.0.0
 
 title: Model Stub
 
-date: 2020-03-31
+date: "2020-03-31" # For some reason the validator will parse, and fail, this as time.Time if not quoted
 
 author:
   name: John Doe
   homepage: www.example.com
 
-
-
-
 management_summary_comment: >
   Just some <b>more</b> custom summary possible here...
 
-business_criticality: important # values: archive, operational, important, critical, mission-critical
-
-
-
+business_criticality: important # values: unknown, archive, operational, important, critical, mission-critical
 
 business_overview:
   description: Some more <i>demo text</i> here and even images...
@@ -40,31 +34,23 @@ business_overview:
 #    - custom-image-1.png: Some dummy image 1
 #    - custom-image-2.png: Some dummy image 2
 
-
 technical_overview:
   description: Some more <i>demo text</i> here and even images...
   images:
 #    - custom-image-1.png: Some dummy image 1
 #    - custom-image-2.png: Some dummy image 2
 
-
-
 questions: # simply use "" as answer to signal "unanswered"
   Some question without an answer?: ""
   Some question with an answer?: >
     Some answer
 
-
-
 abuse_cases:
   Some Abuse Case: >
     Some Description
 
-
 security_requirements:
   Some Security Requirement: Some Description
-
-
 
 # Tags can be used for anything, it's just a tag. Also risk rules can act based on tags if you like.
 # Tags can be used for example to name the products used (which is more concrete than the technology types that only specify the type)
@@ -72,15 +58,20 @@ tags_available:
   - some-tag
   - some-other-tag
 
-
-
+default_values: 
+  # possible keys: usage, confidentiality, integrity, availability, technical_asset_encryption,
+  # technical_asset_machine, technical_asset_type, technical_asset_size,
+  # protocol, authentication, authorization
+  # Booleans will default to false
+  confidentiality: confidential
+  technical_asset_type: process
+  usage: business
 
 data_assets:
-
   Some Data Asset:
     id: some-data
     description: Some Description
-    usage: business # values: business, devops
+    # usage: business # will use default value set above
     tags:
     origin: Some Origin
     owner: Some Owner
@@ -90,33 +81,30 @@ data_assets:
     availability: operational # values: archive, operational, important, critical, mission-critical
     justification_cia_rating: Some Justification
 
-
-
 technical_assets:
-
   Some Technical Asset:
     id: some-component
     description: Some Description
-    type: process # values: external-entity, process, datastore
+    # type: process # Will use default value above
     usage: business # values: business, devops
-    used_as_client_by_human: false
-    out_of_scope: false
+    # used_as_client_by_human: false
+    # out_of_scope: false
     justification_out_of_scope:
     size: component # values: system, service, application, component
     technology: web-service-rest # values: see help
     tags:
       - some-tag
       - some-other-tag
-    internet: false
+    # internet: false
     machine: virtual # values: physical, virtual, container, serverless
     encryption: none # values: none, transparent, data-with-symmetric-shared-key, data-with-asymmetric-shared-key, data-with-enduser-individual-key
     owner: Some Owner
-    confidentiality: confidential # values: public, internal, restricted, confidential, strictly-confidential
+    # confidentiality: confidential # will use default value
     integrity: critical # values: archive, operational, important, critical, mission-critical
     availability: critical # values: archive, operational, important, critical, mission-critical
     justification_cia_rating: Some Justification
-    multi_tenant: false
-    redundant: false
+    # multi_tenant: false
+    # redundant: false
     custom_developed_parts: true
     data_assets_processed: # sequence of IDs to reference
       - some-data
@@ -138,7 +126,6 @@ technical_assets:
         data_assets_sent: # sequence of IDs to reference
           - some-data
         data_assets_received: # sequence of IDs to reference
-
 
   Some Other Technical Asset:
     id: some-other-component
@@ -171,10 +158,7 @@ technical_assets:
       - xml
     communication_links:
 
-
-
 trust_boundaries:
-
   Some Trust Boundary:
     id: some-network
     description: Some Description
@@ -184,11 +168,7 @@ trust_boundaries:
       - some-component
     trust_boundaries_nested: # sequence of IDs to reference
 
-
-
-
 shared_runtimes:
-
   Some Shared Runtime:
     id: some-runtime
     description: Some Description
@@ -197,17 +177,14 @@ shared_runtimes:
       - some-component
       - some-other-component
 
-
-
-
 individual_risk_categories: # used for adding custom manually identified risks
-
   Some Individual Risk Example:
     id: something-strange
     description: Some text describing the risk category...
     impact: Some text describing the impact...
     asvs: V0 - Something Strange
     cheat_sheet: https://example.com
+    testing_guide: https://example.com/test
     action: Some text describing the action...
     mitigation: Some text describing the mitigation...
     check: Check if XYZ...
@@ -232,10 +209,6 @@ individual_risk_categories: # used for adding custom manually identified risks
         most_relevant_trust_boundary:
         most_relevant_shared_runtime:
 
-
-
-
-
 # NOTE:
 # For risk tracking each risk-id needs to be defined (the string with the @ sign in it). These unique risk IDs
 # are visible in the PDF report (the small grey string under each risk), the Excel (column "ID"), as well as the JSON responses.
@@ -245,18 +218,14 @@ individual_risk_categories: # used for adding custom manually identified risks
 # to use in the created Excel file. Alternatively a model macro "seed-risk-tracking" is available that helps in initially
 # seeding the risk tracking part here based on already identified and not yet handled risks.
 risk_tracking:
-
   unencrypted-asset@some-component: # wildcards "*" between the @ characters are possible
     status: accepted # values: unchecked, in-discussion, accepted, in-progress, mitigated, false-positive
     justification: Risk accepted as tolerable
     ticket: XYZ-1234
-    date: 2020-01-04
+    date: "2020-01-04"
     checked_by: John Doe
 
-
-
 #diagram_tweak_edge_layout: spline # values: spline, polyline, false, ortho (this suppresses edge labels), curved (this suppresses edge labels and can cause problems with edges)
-
 #diagram_tweak_suppress_edge_labels: true
 #diagram_tweak_layout_left_to_right: true
 #diagram_tweak_nodesep: 2
