@@ -9,11 +9,11 @@ Other IDEs like Eclipse, Visual Studio and YAML-supporting text editors like Ato
 Live template for a model base:
 ====================================================
 
-threagile_version: 1.0.0
+threagile_version: 3.0.0
 
 title: $title$
 
-date:
+date: # must be quoted
 
 author:
   name: $name$
@@ -67,6 +67,14 @@ security_requirements:
 # Tags can be used for anything, it's just a tag. Also risk rules can act based on tags if you like.
 tags_available:
 
+default_values: 
+  # possible keys: usage, confidentiality, integrity, availability, technical_asset_encryption,
+  # technical_asset_machine, technical_asset_type, technical_asset_size,
+  # protocol, authentication, authorization
+  # Booleans will default to false
+  confidentiality: confidential
+  technical_asset_type: process
+  usage: business
 
 data_assets:
 
@@ -217,6 +225,7 @@ Live template for an individual risk category:
     impact:
     asvs:
     cheat_sheet:
+    testing_guide:
     action:
     mitigation:
     check:
@@ -261,5 +270,5 @@ Live template for a risk tracking:
     status: $status$
     justification: $END$
     ticket:
-    date:
+    date: # must be quoted
     checked_by:
