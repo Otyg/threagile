@@ -2908,16 +2908,9 @@ func parseModel(inputFilename string) {
 		panic(err)
 	}
 	if err := schema.Validate(validatorYaml); err != nil {
-		if _, ok := err.(*jsonschema.ValidationError); ok {
-			for _, line := range strings.Split(err.(*jsonschema.ValidationError).GoString(), "\n") {
-				fmt.Println(line)
-			}
-		}
 		panic(err)
 	}
-	if err == nil {
-		model.ParsedModelRoot = model.ParseModel(modelYaml, deferredRiskTrackingDueToWildcardMatching)
-	}
+	model.ParsedModelRoot = model.ParseModel(modelYaml, deferredRiskTrackingDueToWildcardMatching)
 }
 
 func applyWildcardRiskTrackingEvaluation() {
