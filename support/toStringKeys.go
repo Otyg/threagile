@@ -8,6 +8,8 @@ import (
 func ToStringKeys(val interface{}) (interface{}, error) {
 	var err error
 	switch val := val.(type) {
+	case time.Time:
+		return val.Format("2006-01-02"), nil
 	case map[string]interface{}:
 		s := make(map[string]interface{})
 		for k, v := range val {
@@ -39,8 +41,6 @@ func ToStringKeys(val interface{}) (interface{}, error) {
 			}
 		}
 		return l, nil
-	case time.Time:
-		return val.Format("2006-01-02"), nil
 	default:
 		return val, nil
 	}
