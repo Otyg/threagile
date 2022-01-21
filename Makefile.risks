@@ -16,8 +16,6 @@ OBJS = $(addprefix $(PLUGIN_DIR)/, $(SRCS:go=so)) # obj/xxx.o obj/folder/xxx .o
 PHONY := $(TARGET)
 $(TARGET): $(OBJS)
 	GOOS=linux go version
-	GOOS=linux go mod tidy
-	GOOS=linux go test ./...
 
 $(PLUGIN_DIR)/%.so:%.go
 	GOOS=linux $(CC) $(FLAGS) ${LDFLAGS} ${GCFLAGS} ${ASMFLAGS} ${BUILDMODE} -o ${PLUGIN_DIR}${@F} $<
