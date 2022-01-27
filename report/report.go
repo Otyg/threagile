@@ -2256,7 +2256,10 @@ func createRiskCategories() {
 		colors.ColorRiskStatusMitigated(pdf)
 		text.WriteString("<br><br><br><b>Mitigation</b> (" + category.Function.Title() + "): " + category.Action + "<br><br>")
 		text.WriteString(category.Mitigation)
-
+		cre := category.CRE
+		if len(cre) > 0 {
+			text.WriteString("<br><br>CRE: " + support.GetHtmlLink(cre))
+		}
 		asvsChapter := category.ASVS
 		if len(asvsChapter) > 0 {
 			text.WriteString("<br><br>ASVS Chapter: " + support.GetHtmlLink(asvsChapter))
