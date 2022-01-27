@@ -19,6 +19,7 @@ func WriteOpenSarif(filename string) {
 		description.Text = category.Description +
 			"\nSTRIDE: " + strings.Title(category.STRIDE.String()) +
 			"\nCheck: " + category.Check +
+			"\nCRE: " + category.CRE +
 			"\nASVS: " + category.ASVS +
 			"\nCheatSheet: " + category.CheatSheet +
 			"\nTestingGuide: " + category.TestingGuide +
