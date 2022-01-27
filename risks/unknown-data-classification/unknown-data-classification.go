@@ -16,6 +16,7 @@ func (r unknownDataClassification) Category() model.RiskCategory {
 		Title:                      "Unknown Data Classification",
 		Description:                "To ensure correct handling and protection all data processed by the system should be classified in regards to confidentiality, integrity and availability.",
 		Impact:                     "Sensitive data might be leaked or altered by accident if not correctly classified",
+		CRE:                        "[765-788: Classify sensitive data in protection levels](https://www.opencre.org/cre/765-788)",
 		ASVS:                       "[v4.0.3-V1.8 - Data Protection and Privacy Architecture](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x10-V1-Architecture.md#v18-data-protection-and-privacy-architecture)",
 		CheatSheet:                 "[User Privacy Protection Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/User_Privacy_Protection_Cheat_Sheet.html)",
 		TestingGuide:               "",
