@@ -15,6 +15,7 @@ func (r accidentalLoggingOfSensitiveDataRule) Category() model.RiskCategory {
 		Title:                      "Logging of Sensitive Data",
 		Description:                "When storing or processing sensitive data there is a risk that the data is written to logfiles.",
 		Impact:                     "Bypassing access controls to the sensitive data",
+		CRE:                        "[240-274: Log only non-sensitive data](https://www.opencre.org/cre/240-274)",
 		ASVS:                       "[v4.0.2-V7.1 - Log Content](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x15-V7-Error-Logging.md#v71-log-content)",
 		CheatSheet:                 "[Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html#data-to-exclude)",
 		Action:                     "Logging and monitoring",
