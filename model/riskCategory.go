@@ -8,6 +8,7 @@ type RiskCategory struct {
 	Title                      string
 	Description                string
 	Impact                     string
+	CRE                        string
 	ASVS                       string
 	CheatSheet                 string
 	TestingGuide               string
@@ -27,6 +28,7 @@ type InputIndividualRiskCategory struct {
 	ID                            string                         `json:"id"`
 	Description                   string                         `json:"description"`
 	Impact                        string                         `json:"impact"`
+	CRE                           string                         `json:"cre"`
 	ASVS                          string                         `json:"asvs"`
 	Cheat_sheet                   string                         `json:"cheat_sheet"`
 	Testing_guide                 string                         `json:"testing_guide"`
