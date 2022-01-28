@@ -21,6 +21,7 @@ func (r containerPlatformEscapeRule) Category() model.RiskCategory {
 		Impact: "If this risk is unmitigated, attackers which have successfully compromised a container (via other vulnerabilities) " +
 			"might be able to deeply persist in the target system by executing code in many deployed containers " +
 			"and the container platform itself.",
+		CRE:        "[253-452: Securely automate build and deployment in pipeline](https://www.opencre.org/cre/253-452)",
 		ASVS:       "[v4.0.3-V14 - Configuration Verification Requirements](https://github.com/OWASP/ASVS/blob/v4.0.3_release/4.0/en/0x22-V14-Config.md)",
 		CheatSheet: "[Docker Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html)",
 		Action:     "Container Infrastructure Hardening",
