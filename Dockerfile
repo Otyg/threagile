@@ -7,8 +7,17 @@ ENV THREAGILE_VERSION=${THREAGILE_VERSION}
 WORKDIR /app
 COPY . /app
 RUN make
-FROM alpine
 
+FROM golang as build-risks
+ENV GO111MODULE=on
+ARG THREAGILE_VERSION=${THREAGILE_VERSION:-"test"}
+ENV THREAGILE_VERSION=${THREAGILE_VERSION}
+WORKDIR /app
+COPY . /app
+COPY ./Makefile.risks /app/Makefile
+RUN make
+
+FROM alpine
 LABEL type="threagile"
 LABEL org.opencontainers.image.authors="Christian Schneider <mail@christian-schneider.net>, Martin Vesterlund <Otyg@users.noreply.github.com>"
 LABEL org.opencontainers.image.url="https://github.com/threagile/threagile, https://github.com/Otyg/threagile"
@@ -26,9 +35,10 @@ RUN apk add libc6-compat
 RUN rm -rf /var/cache/apk/*
 
 WORKDIR /app
+RUN mkdir /app/risk-plugins
 COPY --from=build /app/threagile /app/threagile
 COPY --from=build /app/*.so /app/
-COPY --from=build /app/risk-plugins /app/risk-plugins
+COPY --from=build-risks /app/risk-plugins/* /app/risk-plugins/
 COPY --from=build /app/LICENSE.txt /app/LICENSE.txt
 COPY --from=build /app/report/template/background.pdf /app/background.pdf
 COPY --from=build /app/support/* /app/

@@ -56,10 +56,6 @@ func MakeID(val string) string {
 	return strings.Trim(reg.ReplaceAllString(strings.ToLower(val), "-"), "- ")
 }
 
-type TypeEnum interface {
-	String() string
-}
-
 func IsTaggedWithBaseTag(tags []string, basetag string) bool { // basetags are before the colon ":" like in "aws:ec2" it's "aws". The subtag is after the colon. Also a pure "aws" tag matches the basetag "aws"
 	basetag = strings.ToLower(strings.TrimSpace(basetag))
 	for _, tag := range tags {
